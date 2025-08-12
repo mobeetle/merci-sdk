@@ -9,8 +9,8 @@ import {
     createToolResultMessage,
     createUserMessage,
     createAssistantTextMessage
-} from './merci.2.11.0.mjs';
-import { token } from "./token.mjs";
+} from '../lib/merci.2.11.0.mjs';
+import { token } from "../secret/token.mjs";
 import * as readline from 'node:readline/promises';
 import { stdin as input, stdout as output } from 'node:process';
 

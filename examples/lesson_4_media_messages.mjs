@@ -3,8 +3,8 @@
 
 // --- IMPORTS ---
 // We import helpers for each distinct message type we will send.
-import { MerciClient, createMediaMessage, createUserMessage } from './merci.2.11.0.mjs';
-import { token } from "./token.mjs";
+import { MerciClient, createMediaMessage, createUserMessage } from '../lib/merci.2.11.0.mjs';
+import { token } from "../secret/token.mjs";
 
 // --- CONSTANTS ---
 // To process images, you MUST select a model with vision capabilities.

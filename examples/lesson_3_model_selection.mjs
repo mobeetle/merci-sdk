@@ -3,8 +3,8 @@
 
 // --- IMPORTS ---
 // We only need the basic client and message helpers for this lesson.
-import { MerciClient, createUserMessage } from './merci.2.11.0.mjs';
-import { token } from "./token.mjs"; // Your JWT is securely imported.
+import { MerciClient, createUserMessage } from '../lib/merci.2.11.0.mjs';
+import { token } from "../secret/token.mjs"; // Your JWT is securely imported.
 
 // --- CONSTANTS ---
 // We'll test a prompt against a variety of models to see how their responses differ.

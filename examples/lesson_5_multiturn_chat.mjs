@@ -3,8 +3,8 @@
 
 // --- IMPORTS ---
 // We need message helpers for both user and assistant roles.
-import { MerciClient, createUserMessage, createAssistantTextMessage } from './merci.2.11.0.mjs';
-import { token } from "./token.mjs";
+import { MerciClient, createUserMessage, createAssistantTextMessage } from '../lib/merci.2.11.0.mjs';
+import { token } from "../secret/token.mjs";
 import * as readline from 'node:readline/promises';
 import { stdin as input, stdout as output } from 'node:process';
 

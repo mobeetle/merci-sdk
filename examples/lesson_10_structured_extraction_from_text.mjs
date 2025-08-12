@@ -2,8 +2,8 @@
 // Merci SDK Tutorial: Lesson 10 - Structured Extraction from Text
 
 // --- IMPORTS ---
-import { MerciClient, createUserMessage } from './merci.2.11.0.mjs';
-import { token } from "./token.mjs";
+import { MerciClient, createUserMessage } from '../lib/merci.2.11.0.mjs';
+import { token } from "../secret/token.mjs";
 
 // --- CONSTANTS ---
 const MODEL = 'google-chat-gemini-flash-2.5';

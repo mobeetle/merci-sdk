@@ -2,8 +2,8 @@
 // Merci SDK Tutorial: Lesson 9 - Advanced Parallel Tool Calls
 
 // --- IMPORTS ---
-import { MerciClient } from './merci.2.11.0.mjs';
-import { token } from "./token.mjs";
+import { MerciClient } from '../lib/merci.2.11.0.mjs';
+import { token } from "../secret/token.mjs";
 
 // --- CONSTANTS ---
 // We use a model known for strong parallel tool-calling capabilities.

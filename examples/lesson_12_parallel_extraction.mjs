@@ -2,8 +2,8 @@
 // Merci SDK Tutorial: Lesson 12 - Advanced Parallel Extraction
 
 // --- IMPORTS ---
-import { MerciClient, createUserMessage } from './merci.2.11.0.mjs';
-import { token } from "./token.mjs";
+import { MerciClient, createUserMessage } from '../lib/merci.2.11.0.mjs';
+import { token } from "../secret/token.mjs";
 
 // --- CONSTANTS ---
 // Gemini models are excellent at following complex instructions and parallel function calling.

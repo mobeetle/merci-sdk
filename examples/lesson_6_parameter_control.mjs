@@ -2,8 +2,8 @@
 // Merci SDK Tutorial: Lesson 6 - The Parameter Builder Pattern
 
 // --- IMPORTS ---
-import { MerciClient, createUserMessage } from './merci.2.11.0.mjs';
-import { token } from "./token.mjs";
+import { MerciClient, createUserMessage } from '../lib/merci.2.11.0.mjs';
+import { token } from "../secret/token.mjs";
 
 // --- CONSTANTS ---
 const MODEL = 'google-chat-gemini-flash-2.5';
@@ -12,7 +12,7 @@ const MODEL = 'google-chat-gemini-flash-2.5';
  * A reusable helper function to run a chat experiment with specific parameters.
  * @param {MerciClient} client - The initialized Merci client.
  * @param {string} prompt - The user prompt.
- * @param {(builder: import('./merci.2.11.0.mjs').ParameterBuilder) => any} builderFn - A function that configures the ParameterBuilder.
+ * @param {(builder: import('../lib/merci.2.11.0.mjs').ParameterBuilder) => any} builderFn - A function that configures the ParameterBuilder.
  * @param {string} description - A description of the experiment.
  */
 async function runExperiment(client, prompt, builderFn, description) {

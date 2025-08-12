@@ -4,8 +4,8 @@
 // --- IMPORTS ---
 // For the high-level .run() agent, we only need the client and token.
 // The SDK handles the creation of tool messages internally.
-import { MerciClient, createUserMessage } from './merci.2.11.0.mjs';
-import { token } from "./token.mjs";
+import { MerciClient, createUserMessage } from '../lib/merci.2.11.0.mjs';
+import { token } from "../secret/token.mjs";
 
 // --- CONSTANTS ---
 // Focusing on the Gemini model as requested.

@@ -1,0 +1,1 @@
+export const token = "...COPY YOUR JWT HERE...";

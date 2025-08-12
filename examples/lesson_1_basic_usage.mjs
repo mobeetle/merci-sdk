@@ -3,8 +3,8 @@
 
 // --- IMPORTS ---
 // We import the main client and a helper function for creating messages.
-import { MerciClient, createUserMessage } from './merci.2.11.0.mjs';
-import { token } from "./token.mjs"; // Your JWT is securely imported.
+import { MerciClient, createUserMessage } from '../lib/merci.2.11.0.mjs';
+import { token } from "../secret/token.mjs"; // Your JWT is securely imported.
 
 // --- CONSTANTS ---
 // Centralize the model name for easy changes.
