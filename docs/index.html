@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html class="dark" lang="en">
+<head>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <title>Merci SDK - A Modern SDK for the JetBrains AI Platform</title>
+    <link href="https://fonts.googleapis.com" rel="preconnect"/>
+    <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+    <link as="style" href="https://fonts.googleapis.com/css2?display=swap&amp;family=Inter%3Awght%40400%3B500%3B600%3B700%3B900&family=Fira+Code%3Awght%40400" onload="this.rel='stylesheet'" rel="stylesheet"/>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class'
+        }
+    </script>
+    <style type="text/tailwindcss">
+        :root {
+            --primary-color: #3b82f6;
+            --secondary-color-light: #e0f2fe;
+            --secondary-color-dark: #1e3a8a;
+            --background-color-light: #f8fafc;
+            --text-primary-light: #1e293b;
+            --text-secondary-light: #64748b;
+            --border-color-light: #e5e7eb;
+            --card-background-light: #ffffff;
+            --header-background-light: rgba(248, 250, 252, 0.8);
+            --background-color-dark: #020617;
+            --text-primary-dark: #f8fafc;
+            --text-secondary-dark: #94a3b8;
+            --border-color-dark: #1e293b;
+            --card-background-dark: #0f172a;
+            --header-background-dark: rgba(2, 6, 23, 0.8);
+        }
+        html:not(.dark) {
+            --secondary-color: var(--secondary-color-light);
+            --background-color: var(--background-color-light);
+            --text-primary: var(--text-primary-light);
+            --text-secondary: var(--text-secondary-light);
+            --border-color: var(--border-color-light);
+            --card-background: var(--card-background-light);
+            --header-background: var(--header-background-light);
+        }
+        html.dark {
+            --secondary-color: var(--secondary-color-dark);
+            --background-color: var(--background-color-dark);
+            --text-primary: var(--text-primary-dark);
+            --text-secondary: var(--text-secondary-dark);
+            --border-color: var(--border-color-dark);
+            --card-background: var(--card-background-dark);
+            --header-background: var(--header-background-dark);
+        }
+        body {
+            font-family: "Inter", sans-serif;
+            background-color: var(--background-color);
+            color: var(--text-primary);
+            transition: background-color 0.3s, color 0.3s;
+        }
+        .button_primary {
+            @apply bg-[var(--primary-color)] text-white rounded-md px-6 py-3 text-base font-semibold hover:bg-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 transition-colors shadow-lg shadow-blue-500/20;
+        }
+        .button_secondary {
+            @apply bg-slate-700/50 text-slate-200 rounded-md px-6 py-3 text-base font-semibold border border-slate-600/80 hover:bg-slate-700 focus:outline-none focus:ring-2 focus:ring-slate-500/50 transition-colors;
+        }
+        html:not(.dark) .button_secondary {
+            @apply bg-slate-100 text-slate-700 border-slate-200 hover:bg-slate-200;
+        }
+        .card {
+            @apply bg-[var(--card-background)] border border-[var(--border-color)] rounded-xl shadow-sm p-6 transition-all;
+        }
+        .nav-link {
+            @apply text-sm font-medium text-[var(--text-secondary)] hover:text-[var(--primary-color)] transition-colors;
+        }
+        .nav-link-active {
+            @apply text-sm font-medium text-[var(--primary-color)];
+        }
+    </style>
+</head>
+<body class="overflow-x-hidden">
+<div class="flex min-h-screen flex-col">
+    <header class="sticky top-0 z-50 w-full border-b border-[var(--border-color)] bg-[var(--header-background)] backdrop-blur-lg">
+        <div class="container mx-auto flex h-16 items-center justify-between px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center gap-4">
+                <a class="flex items-center gap-2" href="./overview.html">
+                    <svg class="h-8 w-8 text-[var(--primary-color)]" fill="none" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M4 42.4379C4 42.4379 14.0962 36.0744 24 41.1692C35.0664 46.8624 44 42.2078 44 42.2078L44 7.01134C44 7.01134 35.068 11.6577 24.0031 5.96913C14.0971 0.876274 4 7.27094 4 7.27094L4 42.4379Z" fill="currentColor"></path>
+                    </svg>
+                    <h1 class="text-xl font-bold text-[var(--text-primary)]">Merci SDK</h1>
+                </a>
+            </div>
+            <nav class="hidden items-center gap-6 md:flex">
+                <a class="nav-link-active" href="./overview.html">Overview</a>
+                <a class="nav-link" href="./getting_started.html">Getting Started</a>
+                <a class="nav-link" href="./tutorials.html">Tutorials</a>
+                <a class="nav-link" href="./api_reference.html">API Reference</a>
+                <a class="nav-link" href="./contributing.html">Contributing</a>
+            </nav>
+            <div class="flex items-center gap-4">
+                <button id="theme-toggle" type="button" class="text-sm font-semibold rounded-md px-3 py-1.5 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-[var(--background-color)]
+                bg-slate-800 text-amber-500 hover:bg-slate-700 focus:ring-amber-500 border border-transparent
+                dark:bg-transparent dark:border-amber-500 dark:text-amber-500 dark:hover:bg-amber-500/10 dark:focus:ring-amber-500">
+                    Light Mode
+                </button>
+            </div>
+        </div>
+    </header>
+    <main class="flex-grow">
+        <section class="relative py-24 sm:py-32 lg:py-40 overflow-hidden">
+            <div class="absolute inset-0 -z-10">
+                <!-- Light Mode Background -->
+                <div class="block dark:hidden absolute inset-0 bg-white">
+                    <div class="absolute bottom-0 left-0 right-0 top-0 bg-[linear-gradient(to_right,#fde68a_1px,transparent_1px),linear-gradient(to_bottom,#fde68a_1px,transparent_1px)] bg-[size:4rem_4rem] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_0%,#000_70%,transparent_100%)]"></div>
+                    <div class="absolute inset-0 bg-[radial-gradient(circle_at_bottom_right,_rgba(236,72,153,0.4)_0%,_transparent_40%)]"></div>
+                    <div class="absolute inset-0 bg-[radial-gradient(circle_at_top_left,_rgba(251,146,60,0.4)_0%,_transparent_50%)]"></div>
+                    <div class="absolute inset-0 bg-[radial-gradient(circle_at_center,_rgba(163,230,53,0.3)_0%,_transparent_40%)]"></div>
+                </div>
+                <!-- Dark Mode Background -->
+                <div class="hidden dark:block absolute inset-0 bg-slate-950">
+                    <div class="absolute bottom-0 left-0 right-0 top-0 bg-[linear-gradient(to_right,#4f4f4f2e_1px,transparent_1px),linear-gradient(to_bottom,#4f4f4f2e_1px,transparent_1px)] bg-[size:4rem_4rem] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_0%,#000_70%,transparent_100%)]"></div>
+                    <div class="absolute inset-0 bg-[radial-gradient(circle_at_bottom_left,_rgba(88,28,135,0.4)_0%,_transparent_40%)]"></div>
+                    <div class="absolute inset-0 bg-[radial-gradient(circle_at_top_right,_rgba(59,130,246,0.3)_0%,_transparent_50%)]"></div>
+                    <div class="absolute inset-0 bg-[radial-gradient(circle_at_center,_rgba(120,50,50,0.2)_0%,_transparent_40%)]"></div>
+                </div>
+            </div>
+            <div class="relative z-10 container mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="max-w-3xl">
+                    <h1 class="text-4xl font-extrabold tracking-tight sm:text-5xl md:text-6xl text-[var(--text-primary)]">
+                        A Modern SDK for the JetBrains AI Platform
+                    </h1>
+                    <p class="mt-6 max-w-2xl text-lg text-[var(--text-secondary)]">
+                        Fluent, robust, and designed for modern JavaScript with first-class support for streaming, tool use, and advanced model control.
+                    </p>
+                    <div class="mt-10 flex items-center gap-4">
+                        <a href="./getting_started.html" class="button_primary">Get Started</a>
+                        <a href="./tutorials.html" class="button_secondary">View Tutorials</a>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="py-24 sm:py-32">
+            <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="text-center max-w-3xl mx-auto">
+                    <h2 class="text-3xl font-bold tracking-tight text-[var(--text-primary)] sm:text-4xl">Focus on your logic. Let Merci do the rest.</h2>
+                    <p class="mt-4 text-lg text-[var(--text-secondary)]">
+                        The SDK's high-level agent (`.run()`) handles the entire multi-step tool-use process automatically, turning complex logic into just a few lines of code.
+                    </p>
+                </div>
+                <div class="mt-12">
+                    <div class="bg-[#0D1117] border border-slate-800 rounded-xl shadow-2xl shadow-blue-900/20">
+                        <div class="flex items-center gap-2 px-4 py-2 border-b border-slate-800">
+                            <div class="w-3 h-3 bg-red-500 rounded-full"></div>
+                            <div class="w-3 h-3 bg-yellow-500 rounded-full"></div>
+                            <div class="w-3 h-3 bg-green-500 rounded-full"></div>
+                        </div>
+                        <div class="p-6 font-mono text-sm text-slate-300 overflow-x-auto">
+<pre><code><span class="text-purple-400">import</span> { MerciClient } <span class="text-purple-400">from</span> <span class="text-green-400">'./merci.2.11.0.mjs'</span>;
+
+<span class="text-gray-500">// 1. Define your tools with simple objects</span>
+<span class="text-purple-400">const</span> weatherTool = {
+  name: <span class="text-green-400">'get_current_weather'</span>,
+  description: <span class="text-green-400">'Get weather for a city'</span>,
+  parameters: { <span class="text-gray-500">/* ... */</span> },
+  execute: <span class="text-purple-400">async</span> ({ city }) => { <span class="text-gray-500">/* ... API call logic ... */</span> },
+};
+
+<span class="text-purple-400">const</span> client = <span class="text-blue-400">new</span> <span class="text-yellow-300">MerciClient</span>({ token });
+
+<span class="text-gray-500">// 2. Configure the agent with your tools</span>
+<span class="text-purple-400">const</span> agent = client
+  .chat(<span class="text-green-400">'google-chat-gemini-flash-2.5'</span>)
+  .withTools([weatherTool]);
+
+<span class="text-gray-500">// 3. Run it! The SDK handles the entire conversation.</span>
+<span class="text-purple-400">const</span> finalAnswer = <span class="text-purple-400">await</span> agent.run(<span class="text-green-400">"What's the weather like in Paris?"</span>);
+
+console.<span class="text-yellow-300">log</span>(finalAnswer);
+<span class="text-gray-500">// > The weather in Paris is sunny with a temperature of 14°C.</span></code></pre>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="py-24 sm:py-32">
+            <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="text-center">
+                    <h2 class="text-3xl font-bold tracking-tight text-[var(--text-primary)]">Everything You Need for Modern AI Development</h2>
+                    <p class="mt-3 max-w-2xl mx-auto text-lg text-[var(--text-secondary)]">Discover the powerful features that make the Merci SDK the best choice for your projects.</p>
+                </div>
+                <div class="mt-12 grid gap-8 md:grid-cols-2 lg:grid-cols-3">
+                    <div class="card">
+                        <div class="rounded-lg bg-[var(--primary-color)]/10 p-3 w-min text-[var(--primary-color)]"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z"/><path d="M5 3v4"/><path d="M19 17v4"/><path d="M3 5h4"/><path d="M17 19h4"/></svg></div>
+                        <h3 class="mt-4 text-lg font-semibold text-[var(--text-primary)]">Fluent & Intuitive API</h3>
+                        <p class="mt-1 text-[var(--text-secondary)]">Chainable methods like `client.chat().withTools()` make building requests simple and readable.</p>
+                    </div>
+                    <div class="card">
+                        <div class="rounded-lg bg-[var(--primary-color)]/10 p-3 w-min text-[var(--primary-color)]"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 7 17l-5-5"/><path d="m22 10-7.5 7.5L9 12"/></svg></div>
+                        <h3 class="mt-4 text-lg font-semibold text-[var(--text-primary)]">First-class Streaming</h3>
+                        <p class="mt-1 text-[var(--text-secondary)]">Built from the ground up with async iterators for handling real-time responses efficiently.</p>
+                    </div>
+                    <div class="card">
+                        <div class="rounded-lg bg-[var(--primary-color)]/10 p-3 w-min text-[var(--primary-color)]"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10z"/><path d="M16 12l-4-4-4 4"/><path d="M12 16V8"/></svg></div>
+                        <h3 class="mt-4 text-lg font-semibold text-[var(--text-primary)]">Powerful Tool Use</h3>
+                        <p class="mt-1 text-[var(--text-secondary)]">High-level agent (`.run()`) and low-level manual controls for simple or complex agentic behavior.</p>
+                    </div>
+                    <div class="card">
+                        <div class="rounded-lg bg-[var(--primary-color)]/10 p-3 w-min text-[var(--primary-color)]"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><path d="m3.27 6.96 8.73 5.05 8.73-5.05"/><path d="M12 22.08V12"/></svg></div>
+                        <h3 class="mt-4 text-lg font-semibold text-[var(--text-primary)]">Intelligent Parameter Handling</h3>
+                        <p class="mt-1 text-[var(--text-secondary)]">Automatically filters unsupported parameters per model, preventing API errors and providing helpful warnings.</p>
+                    </div>
+                    <div class="card">
+                        <div class="rounded-lg bg-[var(--primary-color)]/10 p-3 w-min text-[var(--primary-color)]"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 6v12a3 3 0 1 0 3-3H6a3 3 0 1 0 3 3V6a3 3 0 1 0-3 3h12a3 3 0 1 0-3-3"/></svg></div>
+                        <h3 class="mt-4 text-lg font-semibold text-[var(--text-primary)]">Automatic Authentication</h3>
+                        <p class="mt-1 text-[var(--text-secondary)]">Seamlessly handles JWT refreshing in the background, so you don't have to worry about expired tokens.</p>
+                    </div>
+                    <div class="card">
+                        <div class="rounded-lg bg-[var(--primary-color)]/10 p-3 w-min text-[var(--primary-color)]"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><line x1="10" y1="9" x2="8" y2="9"/></svg></div>
+                        <h3 class="mt-4 text-lg font-semibold text-[var(--text-primary)]">Modern & Typed</h3>
+                        <p class="mt-1 text-[var(--text-secondary)]">Written in modern ES Modules and includes a full TypeScript declaration file for an excellent developer experience.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+    <footer class="border-t border-[var(--border-color)] bg-[var(--card-background)]">
+        <div class="container mx-auto px-4 py-6 sm:px-6 lg:px-8">
+            <p class="text-center text-sm text-[var(--text-secondary)]">© 2024 Merci SDK. All rights reserved.</p>
+        </div>
+    </footer>
+</div>
+<script>
+    (function() {
+        const themeToggleBtn = document.getElementById('theme-toggle');
+        const htmlEl = document.documentElement;
+
+        const toggleTheme = () => {
+            htmlEl.classList.toggle('dark');
+            const isDarkMode = htmlEl.classList.contains('dark');
+            themeToggleBtn.textContent = isDarkMode ? 'Light Mode' : 'Dark Mode';
+        };
+
+        themeToggleBtn.addEventListener('click', toggleTheme);
+    })();
+</script>
+</body>
+</html>

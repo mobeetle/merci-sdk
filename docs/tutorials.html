@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html class="dark" lang="en">
+<head>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <title>Tutorials - Merci SDK</title>
+    <link href="https://fonts.googleapis.com" rel="preconnect"/>
+    <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+    <link as="style" href="https://fonts.googleapis.com/css2?display=swap&amp;family=Inter%3Awght%40400%3B500%3B600%3B700%3B900" onload="this.rel='stylesheet'" rel="stylesheet"/>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class'
+        }
+    </script>
+    <style type="text/tailwindcss">
+        :root {
+            --primary-color: #3b82f6;
+            --background-color-light: #f8fafc;
+            --text-primary-light: #1e293b;
+            --text-secondary-light: #64748b;
+            --border-color-light: #e5e7eb;
+            --card-background-light: #ffffff;
+            --header-background-light: rgba(248, 250, 252, 0.8);
+            --background-color-dark: #020617;
+            --text-primary-dark: #f8fafc;
+            --text-secondary-dark: #94a3b8;
+            --border-color-dark: #1e293b;
+            --card-background-dark: #0f172a;
+            --header-background-dark: rgba(2, 6, 23, 0.8);
+        }
+        html:not(.dark) {
+            --background-color: var(--background-color-light);
+            --text-primary: var(--text-primary-light);
+            --text-secondary: var(--text-secondary-light);
+            --border-color: var(--border-color-light);
+            --card-background: var(--card-background-light);
+            --header-background: var(--header-background-light);
+        }
+        html.dark {
+            --background-color: var(--background-color-dark);
+            --text-primary: var(--text-primary-dark);
+            --text-secondary: var(--text-secondary-dark);
+            --border-color: var(--border-color-dark);
+            --card-background: var(--card-background-dark);
+            --header-background: var(--header-background-dark);
+        }
+        body {
+            font-family: "Inter", sans-serif;
+            background-color: var(--background-color);
+            color: var(--text-primary);
+            transition: background-color 0.3s, color 0.3s;
+        }
+        .card {
+            @apply bg-[var(--card-background)] border border-[var(--border-color)] rounded-xl shadow-sm p-6 transition-all;
+        }
+        .nav-link {
+            @apply text-sm font-medium text-[var(--text-secondary)] hover:text-[var(--primary-color)] transition-colors;
+        }
+        .nav-link-active {
+            @apply text-sm font-medium text-[var(--primary-color)];
+        }
+    </style>
+</head>
+<body>
+<div class="flex min-h-screen flex-col">
+    <header class="sticky top-0 z-50 w-full border-b border-[var(--border-color)] bg-[var(--header-background)] backdrop-blur-lg">
+        <div class="container mx-auto flex h-16 items-center justify-between px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center gap-4">
+                <a class="flex items-center gap-2" href="./overview.html">
+                    <svg class="h-8 w-8 text-[var(--primary-color)]" fill="none" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M4 42.4379C4 42.4379 14.0962 36.0744 24 41.1692C35.0664 46.8624 44 42.2078 44 42.2078L44 7.01134C44 7.01134 35.068 11.6577 24.0031 5.96913C14.0971 0.876274 4 7.27094 4 7.27094L4 42.4379Z" fill="currentColor"></path>
+                    </svg>
+                    <h1 class="text-xl font-bold text-[var(--text-primary)]">Merci SDK</h1>
+                </a>
+            </div>
+            <nav class="hidden items-center gap-6 md:flex">
+                <a class="nav-link" href="./overview.html">Overview</a>
+                <a class="nav-link" href="./getting_started.html">Getting Started</a>
+                <a class="nav-link-active" href="./tutorials.html">Tutorials</a>
+                <a class="nav-link" href="./api_reference.html">API Reference</a>
+                <a class="nav-link" href="./contributing.html">Contributing</a>
+            </nav>
+            <div class="flex items-center gap-4">
+                <button id="theme-toggle" type="button" class="text-sm font-semibold rounded-md px-3 py-1.5 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-[var(--background-color)]
+                bg-slate-800 text-amber-500 hover:bg-slate-700 focus:ring-amber-500 border border-transparent
+                dark:bg-transparent dark:border-amber-500 dark:text-amber-500 dark:hover:bg-amber-500/10 dark:focus:ring-amber-500">
+                    Light Mode
+                </button>
+            </div>
+        </div>
+    </header>
+    <main class="container mx-auto px-4 py-12 sm:px-6 lg:px-8 flex-grow">
+        <div class="max-w-4xl mx-auto">
+            <div class="text-center mb-12">
+                <h1 class="text-3xl font-bold tracking-tight text-[var(--text-primary)] mb-2">SDK Tutorials</h1>
+                <p class="text-lg text-[var(--text-secondary)] max-w-2xl mx-auto">
+                    A collection of step-by-step guides designed to take you from basic usage to advanced agentic patterns. Each lesson introduces one new concept.
+                </p>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <a class="card block hover:shadow-lg hover:border-[var(--primary-color)]/50 hover:-translate-y-1 group" href="./lesson_1.html">
+                    <div class="flex justify-between items-start">
+                        <div>
+                            <h3 class="text-lg font-semibold text-[var(--text-primary)] group-hover:text-[var(--primary-color)] transition-colors">1. Basic Usage</h3>
+                            <p class="text-[var(--text-secondary)] mt-1">Initializing the client and making a basic streaming request.</p>
+                        </div>
+                        <span class="text-xs font-mono bg-[var(--primary-color)]/10 text-[var(--primary-color)] px-2 py-1 rounded-full">Beginner</span>
+                    </div>
+                </a>
+                <a class="card block hover:shadow-lg hover:border-[var(--primary-color)]/50 hover:-translate-y-1 group" href="./lesson_2.html">
+                    <h3 class="text-lg font-semibold text-[var(--text-primary)] group-hover:text-[var(--primary-color)] transition-colors">2. System Messages</h3>
+                    <p class="text-[var(--text-secondary)] mt-1">Guiding the AI's personality and behavior with system prompts.</p>
+                </a>
+                <a class="card block hover:shadow-lg hover:border-[var(--primary-color)]/50 hover:-translate-y-1 group" href="./lesson_3.html">
+                    <h3 class="text-lg font-semibold text-[var(--text-primary)] group-hover:text-[var(--primary-color)] transition-colors">3. Model Selection</h3>
+                    <p class="text-[var(--text-secondary)] mt-1">How to switch between different models (Google, OpenAI, Anthropic).</p>
+                </a>
+                <a class="card block hover:shadow-lg hover:border-[var(--primary-color)]/50 hover:-translate-y-1 group" href="./lesson_4.html">
+                    <h3 class="text-lg font-semibold text-[var(--text-primary)] group-hover:text-[var(--primary-color)] transition-colors">4. Media Messages</h3>
+                    <p class="text-[var(--text-secondary)] mt-1">Sending images to multimodal (vision) models.</p>
+                </a>
+                <a class="card block hover:shadow-lg hover:border-[var(--primary-color)]/50 hover:-translate-y-1 group" href="./lesson_5.html">
+                    <h3 class="text-lg font-semibold text-[var(--text-primary)] group-hover:text-[var(--primary-color)] transition-colors">5. Multi-turn Chat</h3>
+                    <p class="text-[var(--text-secondary)] mt-1">Building an interactive chat by maintaining conversation history.</p>
+                </a>
+                <a class="card block hover:shadow-lg hover:border-[var(--primary-color)]/50 hover:-translate-y-1 group" href="./lesson_6.html">
+                    <h3 class="text-lg font-semibold text-[var(--text-primary)] group-hover:text-[var(--primary-color)] transition-colors">6. Parameter Control</h3>
+                    <p class="text-[var(--text-secondary)] mt-1">Controlling creativity and output with parameters like `temperature`.</p>
+                </a>
+                <a class="card block hover:shadow-lg hover:border-[var(--primary-color)]/50 hover:-translate-y-1 group" href="./lesson_7.html">
+                    <div class="flex justify-between items-start">
+                        <div>
+                            <h3 class="text-lg font-semibold text-[var(--text-primary)] group-hover:text-[var(--primary-color)] transition-colors">7. JSON Output</h3>
+                            <p class="text-[var(--text-secondary)] mt-1">Forcing guaranteed, parsable JSON output from the model.</p>
+                        </div>
+                        <span class="text-xs font-mono bg-green-500/10 text-green-500 px-2 py-1 rounded-full">Intermediate</span>
+                    </div>
+                </a>
+                <a class="card block hover:shadow-lg hover:border-[var(--primary-color)]/50 hover:-translate-y-1 group" href="./lesson_8.html">
+                    <h3 class="text-lg font-semibold text-[var(--text-primary)] group-hover:text-[var(--primary-color)] transition-colors">8. Basic Tool Usage</h3>
+                    <p class="text-[var(--text-secondary)] mt-1">Basic tool use with the high-level `.run()` agent.</p>
+                </a>
+                <a class="card block hover:shadow-lg hover:border-[var(--primary-color)]/50 hover:-translate-y-1 group" href="./lesson_9.html">
+                    <h3 class="text-lg font-semibold text-[var(--text-primary)] group-hover:text-[var(--primary-color)] transition-colors">9. Advanced Parallel Tools</h3>
+                    <p class="text-[var(--text-secondary)] mt-1">Making multiple, concurrent tool calls for complex queries.</p>
+                </a>
+                <a class="card block hover:shadow-lg hover:border-[var(--primary-color)]/50 hover:-translate-y-1 group" href="./lesson_10.html">
+                    <h3 class="text-lg font-semibold text-[var(--text-primary)] group-hover:text-[var(--primary-color)] transition-colors">10. Structured Extraction</h3>
+                    <p class="text-[var(--text-secondary)] mt-1">Using a tool's schema to extract structured data from text.</p>
+                </a>
+                <a class="card block hover:shadow-lg hover:border-[var(--primary-color)]/50 hover:-translate-y-1 group" href="./lesson_11.html">
+                    <div class="flex justify-between items-start">
+                        <div>
+                            <h3 class="text-lg font-semibold text-[var(--text-primary)] group-hover:text-[var(--primary-color)] transition-colors">11. Multi-Turn Clarification</h3>
+                            <p class="text-[var(--text-secondary)] mt-1">Building an agent that can ask clarifying questions before using a tool.</p>
+                        </div>
+                        <span class="text-xs font-mono bg-orange-500/10 text-orange-500 px-2 py-1 rounded-full">Advanced</span>
+                    </div>
+                </a>
+                <a class="card block hover:shadow-lg hover:border-[var(--primary-color)]/50 hover:-translate-y-1 group" href="./lesson_12.html">
+                    <h3 class="text-lg font-semibold text-[var(--text-primary)] group-hover:text-[var(--primary-color)] transition-colors">12. Parallel Extraction</h3>
+                    <p class="text-[var(--text-secondary)] mt-1">A powerful pattern for extracting multiple items in a single pass.</p>
+                </a>
+            </div>
+        </div>
+    </main>
+    <footer class="border-t border-[var(--border-color)] bg-[var(--card-background)]">
+        <div class="container mx-auto px-4 py-6 sm:px-6 lg:px-8">
+            <p class="text-center text-sm text-[var(--text-secondary)]">© 2024 Merci SDK. All rights reserved.</p>
+        </div>
+    </footer>
+</div>
+<script>
+    (function() {
+        const themeToggleBtn = document.getElementById('theme-toggle');
+        const htmlEl = document.documentElement;
+
+        const toggleTheme = () => {
+            htmlEl.classList.toggle('dark');
+            const isDarkMode = htmlEl.classList.contains('dark');
+            themeToggleBtn.textContent = isDarkMode ? 'Light Mode' : 'Dark Mode';
+        };
+
+        themeToggleBtn.addEventListener('click', toggleTheme);
+    })();
+</script>
+</body>
+</html>

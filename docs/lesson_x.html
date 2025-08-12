@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html class="dark" lang="en"><head>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <title>Merci SDK Tutorial - Lesson 1</title>
+    <link href="data:image/x-icon;base64," rel="icon" type="image/x-icon"/>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link href="https://fonts.googleapis.com" rel="preconnect"/>
+    <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+    <style type="text/tailwindcss">
+        :root {
+            --primary-color: #0d7ff2;
+            --secondary-color: #1e3a8a;--background-color: #f8fafc;
+            --text-primary: #1e293b;
+            --text-secondary: #64748b;
+            --accent-color: #bfdbfe;
+        }
+        .dark:root {
+            --background-color: #020617;
+            --text-primary: #f8fafc;
+            --text-secondary: #94a3b8;
+            --secondary-color: #1e293b;
+            --accent-color: #1e293b;
+        }
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--background-color);
+            color: var(--text-primary);
+            transition: background-color 0.3s, color 0.3s;
+        }
+        .main_container {
+            @apply container mx-auto px-4 py-8;
+        }
+        .card {
+            @apply bg-white dark:bg-slate-900 rounded-lg shadow-sm p-6;
+        }
+        .button_primary {
+            @apply bg-[var(--primary-color)] text-white rounded-md px-4 py-2 hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50;
+        }
+        .button_secondary {
+            @apply bg-[var(--secondary-color)] text-[var(--primary-color)] rounded-md px-4 py-2 hover:bg-blue-100 dark:hover:bg-slate-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50;
+        }
+        .input {
+            @apply bg-white dark:bg-slate-800 border border-gray-300 dark:border-slate-600 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500;
+        }
+        .typography_h1 {
+            @apply text-3xl font-bold text-[var(--text-primary)];
+        }
+        .typography_h2 {
+            @apply text-2xl font-semibold text-[var(--text-primary)];
+        }
+        .typography_body {
+            @apply text-base text-[var(--text-secondary)];
+        }
+        .code-block {
+            @apply bg-[#0d1117] text-white p-4 rounded-md font-mono text-sm overflow-x-auto;
+        }
+    </style>
+</head>
+<body class="bg-[var(--background-color)]">
+<div class="relative flex size-full min-h-screen flex-col group/design-root overflow-x-hidden">
+    <header class="sticky top-0 z-10 w-full bg-white/80 dark:bg-slate-900/80 backdrop-blur-md">
+        <div class="container mx-auto flex items-center justify-between whitespace-nowrap border-b border-solid border-gray-200 dark:border-slate-700 px-10 py-4">
+            <div class="flex items-center gap-4">
+                <div class="size-6 text-[var(--primary-color)]">
+                    <svg fill="none" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M4 42.4379C4 42.4379 14.0962 36.0744 24 41.1692C35.0664 46.8624 44 42.2078 44 42.2078L44 7.01134C44 7.01134 35.068 11.6577 24.0031 5.96913C14.0971 0.876274 4 7.27094 4 7.27094L4 42.4379Z" fill="currentColor"></path>
+                    </svg>
+                </div>
+                <h2 class="text-xl font-bold leading-tight tracking-[-0.015em] text-[var(--text-primary)]">Merci SDK</h2>
+            </div>
+            <div class="flex items-center gap-8">
+                <nav class="hidden md:flex items-center gap-9">
+                    <a class="text-sm font-medium text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors" href="#">Docs</a>
+                    <a class="text-sm font-medium text-[var(--text-primary)]" href="#">Tutorials</a>
+                    <a class="text-sm font-medium text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors" href="#">API</a>
+                    <a class="text-sm font-medium text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors" href="#">Playground</a>
+                </nav>
+                <div class="flex items-center gap-4">
+                    <button class="relative inline-flex items-center h-6 rounded-full w-11 transition-colors bg-gray-200 dark:bg-slate-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500" id="theme-toggle">
+                        <span class="sr-only">Toggle theme</span>
+                        <span class="inline-block w-4 h-4 transform bg-white rounded-full transition-transform translate-x-1 dark:translate-x-6"></span>
+                    </button>
+                    <button class="button_primary">Sign in</button>
+                </div>
+            </div>
+        </div>
+    </header>
+    <main class="main_container">
+        <div class="max-w-4xl mx-auto">
+            <div class="mb-8">
+                <nav class="flex items-center gap-2 text-sm font-medium text-[var(--text-secondary)]">
+                    <a class="hover:text-[var(--text-primary)] transition-colors" href="#">Tutorials</a>
+                    <span>/</span>
+                    <span class="text-[var(--text-primary)]">Lesson 1</span>
+                </nav>
+            </div>
+            <article>
+                <header class="mb-8">
+                    <h1 class="typography_h1 mb-2">Lesson 1: Hello, world!</h1>
+                    <p class="typography_body">In this lesson, you will learn how to create a simple "Hello, world!" application using the Merci SDK. This application will demonstrate the basic structure of a Merci program and how to interact with the JetBrains AI Platform.</p>
+                </header>
+                <section class="mb-12">
+                    <h2 class="typography_h2 mb-4">Code</h2>
+                    <p class="typography_body mb-4">Here's the code for the "Hello, world!" application. This code should be in a file named <code>lesson_1.mjs</code>.</p>
+                    <div class="code-block">
+<pre><code>import { merci } from '@jetbrains/merci-sdk';
+async function main() {
+  const response = await merci.sayHello('World');
+  console.log(response);
+}
+main();</code></pre>
+                    </div>
+                </section>
+                <section>
+                    <h2 class="typography_h2 mb-4">Expected Output</h2>
+                    <p class="typography_body mb-4">When you run the <code>lesson_1.mjs</code> file, you should see the following output in your console:</p>
+                    <div class="code-block">
+                        <pre><code>Hello, World!</code></pre>
+                    </div>
+                </section>
+            </article>
+        </div>
+    </main>
+</div>
+<script>
+    const themeToggle = document.getElementById('theme-toggle');
+    const htmlElement = document.documentElement;
+    themeToggle.addEventListener('click', () => {
+        htmlElement.classList.toggle('dark');
+    });
+</script>
+
+</body></html>

@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html class="dark" lang="en">
+<head>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <title>Lesson 10: Structured Extraction - Merci SDK</title>
+    <link href="https://fonts.googleapis.com" rel="preconnect"/>
+    <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+    <link as="style" href="https://fonts.googleapis.com/css2?display=swap&amp;family=Inter%3Awght%40400%3B500%3B600%3B700%3B900&family=Fira+Code%3Awght%40400" onload="this.rel='stylesheet'" rel="stylesheet"/>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class'
+        }
+    </script>
+    <style type="text/tailwindcss">
+        :root {
+            --primary-color: #3b82f6;
+            --background-color-light: #f8fafc;
+            --text-primary-light: #1e293b;
+            --text-secondary-light: #64748b;
+            --border-color-light: #e5e7eb;
+            --card-background-light: #ffffff;
+            --header-background-light: rgba(248, 250, 252, 0.8);
+            --code-background-light: #f1f5f9;
+            --background-color-dark: #020617;
+            --text-primary-dark: #f8fafc;
+            --text-secondary-dark: #94a3b8;
+            --border-color-dark: #1e293b;
+            --card-background-dark: #0f172a;
+            --header-background-dark: rgba(2, 6, 23, 0.8);
+        }
+        html:not(.dark) {
+            --background-color: var(--background-color-light);
+            --text-primary: var(--text-primary-light);
+            --text-secondary: var(--text-secondary-light);
+            --border-color: var(--border-color-light);
+            --card-background: var(--card-background-light);
+            --header-background: var(--header-background-light);
+            --code-background: var(--code-background-light);
+        }
+        html.dark {
+            --background-color: var(--background-color-dark);
+            --text-primary: var(--text-primary-dark);
+            --text-secondary: var(--text-secondary-dark);
+            --border-color: var(--border-color-dark);
+            --card-background: var(--card-background-dark);
+            --header-background: var(--header-background-dark);
+            --code-background: #1e293b;
+        }
+        body {
+            font-family: "Inter", sans-serif;
+            background-color: var(--background-color);
+            color: var(--text-primary);
+        }
+        .code-block-wrapper {
+            @apply relative;
+        }
+        .code-block {
+            @apply bg-[#0D1117] text-slate-300 p-4 pt-12 rounded-md font-mono text-sm my-4 overflow-x-auto border border-slate-800;
+        }
+        .nav-link {
+            @apply text-sm font-medium text-[var(--text-secondary)] hover:text-[var(--primary-color)] transition-colors;
+        }
+        .nav-link-active {
+            @apply text-sm font-medium text-[var(--primary-color)];
+        }
+        h2 { @apply text-2xl font-bold tracking-tight text-[var(--text-primary)] mt-10 mb-4; }
+        code.inline { @apply font-mono text-sm bg-[var(--code-background)] font-semibold p-1 rounded-md text-sky-600 dark:text-sky-400; }
+    </style>
+</head>
+<body>
+<div class="flex min-h-screen flex-col">
+    <header class="sticky top-0 z-50 w-full border-b border-[var(--border-color)] bg-[var(--header-background)] backdrop-blur-lg">
+        <div class="container mx-auto flex h-16 items-center justify-between px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center gap-4">
+                <a class="flex items-center gap-2" href="./overview.html">
+                    <svg class="h-8 w-8 text-[var(--primary-color)]" fill="none" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M4 42.4379C4 42.4379 14.0962 36.0744 24 41.1692C35.0664 46.8624 44 42.2078 44 42.2078L44 7.01134C44 7.01134 35.068 11.6577 24.0031 5.96913C14.0971 0.876274 4 7.27094 4 7.27094L4 42.4379Z" fill="currentColor"></path>
+                    </svg>
+                    <h1 class="text-xl font-bold text-[var(--text-primary)]">Merci SDK</h1>
+                </a>
+            </div>
+            <nav class="hidden items-center gap-6 md:flex">
+                <a class="nav-link" href="./overview.html">Overview</a>
+                <a class="nav-link" href="./getting_started.html">Getting Started</a>
+                <a class="nav-link-active" href="./tutorials.html">Tutorials</a>
+                <a class="nav-link" href="./api_reference.html">API Reference</a>
+                <a class="nav-link" href="./contributing.html">Contributing</a>
+            </nav>
+            <div class="flex items-center gap-4">
+                <button id="theme-toggle" type="button" class="text-sm font-semibold rounded-md px-3 py-1.5 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-[var(--background-color)]
+                bg-slate-800 text-amber-500 hover:bg-slate-700 focus:ring-amber-500 border border-transparent
+                dark:bg-transparent dark:border-amber-500 dark:text-amber-500 dark:hover:bg-amber-500/10 dark:focus:ring-amber-500">
+                    Light Mode
+                </button>
+            </div>
+        </div>
+    </header>
+    <main class="container mx-auto px-4 py-8 sm:px-6 lg:px-8 flex-grow">
+        <div class="max-w-4xl mx-auto">
+            <div class="mb-8">
+                <nav class="flex items-center gap-2 text-sm font-medium text-[var(--text-secondary)]">
+                    <a class="hover:text-[var(--primary-color)] transition-colors" href="./tutorials.html">Tutorials</a>
+                    <span>/</span>
+                    <span class="text-[var(--text-primary)]">Lesson 10</span>
+                </nav>
+            </div>
+            <article>
+                <header class="mb-8">
+                    <h1 class="text-3xl font-bold tracking-tight text-[var(--text-primary)] mb-2">Lesson 10: Structured Extraction from Text</h1>
+                    <p class="text-lg text-[var(--text-secondary)]">Learn a powerful pattern for extracting structured data from unstructured text by defining a tool with a specific JSON schema and instructing the model to populate it.</p>
+                </header>
+
+                <section class="mb-12">
+                    <h2>Code: <code class="inline">lesson_10_structured_extraction_from_text.mjs</code></h2>
+                    <p class="text-[var(--text-secondary)] mb-4">In this pattern, the tool's <code class="inline">execute</code> function is not needed. We define the tool solely for its <code class="inline">parameters</code> schema. We then manually process the stream, intercept the <code class="inline">tool_calls</code> event, and parse the arguments to get our structured data, without ever executing the tool itself.</p>
+                    <div class="code-block-wrapper">
+                        <button class="copy-code-btn absolute top-6 right-2 flex items-center gap-2 text-slate-400 hover:text-white transition-colors p-2 rounded-md bg-slate-800/50 backdrop-blur-sm">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16" aria-hidden="true"><path d="M4 1.5H3a2 2 0 0 0-2 2V14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V3.5a2 2 0 0 0-2-2h-1v1h1a1 1 0 0 1 1 1V14a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V3.5a1 1 0 0 1 1-1h1v-1z"/><path d="M9.5 1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-3a.5.5 0 0 1-.5-.5v-1a.5.5 0 0 1 .5-.5h3zM-1 8a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 0 1h-1A.5.5 0 0 1-1 8z"/></svg>
+                            <span>Copy</span>
+                        </button>
+                        <div class="code-block">
+<pre><code><span class="text-purple-400">import</span> { MerciClient, createUserMessage } <span class="text-purple-400">from</span> <span class="text-green-400">'./merci.2.11.0.mjs'</span>;
+<span class="text-purple-400">import</span> { token } <span class="text-purple-400">from</span> <span class="text-green-400">'./token.mjs'</span>;
+
+<span class="text-gray-500">// NOTE: No `execute` function is needed for this pattern!</span>
+<span class="text-purple-400">const</span> actionItemExtractorTool = {
+    name: <span class="text-green-400">'extract_action_items'</span>,
+    description: <span class="text-green-400">'A tool to hold the extracted action items from a text.'</span>,
+    parameters: { <span class="text-gray-500">/* ... JSON Schema for action items ... */</span> },
+};
+
+<span class="text-purple-400">async function</span> <span class="text-yellow-300">main</span>() {
+    <span class="text-purple-400">const</span> client = <span class="text-blue-400">new</span> <span class="text-yellow-300">MerciClient</span>({ token });
+    <span class="text-purple-400">const</span> meetingMinutes = <span class="text-green-400">`...`</span>;
+    <span class="text-purple-400">const</span> userPrompt = <span class="text-green-400">`Use the 'extract_action_items' tool to extract all action items from the text.`</span>;
+
+    <span class="text-purple-400">const</span> chatSession = client.<span class="text-yellow-300">chat</span>(MODEL).<span class="text-yellow-300">withTools</span>([actionItemExtractorTool]);
+    <span class="text-purple-400">const</span> messages = [<span class="text-yellow-300">createUserMessage</span>(userPrompt)];
+
+    <span class="text-purple-400">let</span> extractedData = <span class="text-blue-400">null</span>;
+    <span class="text-purple-400">for await</span> (<span class="text-purple-400">const</span> event <span class="text-purple-400">of</span> chatSession.<span class="text-yellow-300">stream</span>(messages)) {
+        <span class="text-purple-400">if</span> (event.type === <span class="text-green-400">'tool_calls'</span>) {
+            <span class="text-gray-500">// Intercept the call and parse the arguments</span>
+            extractedData = JSON.<span class="text-yellow-300">parse</span>(event.calls[0].arguments);
+            <span class="text-purple-400">break</span>; <span class="text-gray-500">// We have our data, no need to continue.</span>
+        }
+    }
+    console.<span class="text-yellow-300">log</span>(extractedData);
+}
+
+<span class="text-yellow-300">main</span>();
+</code></pre>
+                        </div>
+                    </div>
+                </section>
+
+                <section>
+                    <h2>Extracted Data</h2>
+                    <p class="text-[var(--text-secondary)] mb-4">The model will populate the JSON schema defined in the tool's parameters with the information it finds in the text, resulting in a clean, structured object.</p>
+                    <div class="code-block-wrapper">
+                        <button class="copy-code-btn absolute top-6 right-2 flex items-center gap-2 text-slate-400 hover:text-white transition-colors p-2 rounded-md bg-slate-800/50 backdrop-blur-sm">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16" aria-hidden="true"><path d="M4 1.5H3a2 2 0 0 0-2 2V14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V3.5a2 2 0 0 0-2-2h-1v1h1a1 1 0 0 1 1 1V14a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V3.5a1 1 0 0 1 1-1h1v-1z"/><path d="M9.5 1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-3a.5.5 0 0 1-.5-.5v-1a.5.5 0 0 1 .5-.5h3zM-1 8a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 0 1h-1A.5.5 0 0 1-1 8z"/></svg>
+                            <span>Copy</span>
+                        </button>
+                        <div class="code-block">
+<pre><code>{
+  "action_items": [
+    {
+      "task": "Draft the initial project specification",
+      "assigned_to": "Frank",
+      "due_date": "2024-11-04",
+      "priority": "High"
+    },
+    {
+      "task": "Coordinate with the design team for new branding assets",
+      "assigned_to": "Eve",
+      "due_date": "2024-11-08",
+      "priority": "Medium"
+    },
+    {
+      "task": "Book a venue for the end-of-year party",
+      "assigned_to": "David",
+      "due_date": "2024-11-15",
+      "priority": "Low"
+    }
+  ]
+}
+</code></pre>
+                        </div>
+                    </div>
+                </section>
+            </article>
+        </div>
+    </main>
+    <footer class="border-t border-[var(--border-color)] bg-[var(--card-background)]">
+        <div class="container mx-auto px-4 py-6 sm:px-6 lg:px-8">
+            <p class="text-center text-sm text-[var(--text-secondary)]">© 2024 Merci SDK. All rights reserved.</p>
+        </div>
+    </footer>
+</div>
+<script>
+    (function() {
+        // Theme Toggler
+        const themeToggleBtn = document.getElementById('theme-toggle');
+        const htmlEl = document.documentElement;
+
+        const toggleTheme = () => {
+            htmlEl.classList.toggle('dark');
+            const isDarkMode = htmlEl.classList.contains('dark');
+            themeToggleBtn.textContent = isDarkMode ? 'Light Mode' : 'Dark Mode';
+        };
+
+        themeToggleBtn.addEventListener('click', toggleTheme);
+
+        // Copy Code Button
+        const allCopyButtons = document.querySelectorAll('.copy-code-btn');
+        allCopyButtons.forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                const codeBlock = e.currentTarget.nextElementSibling.querySelector('code');
+                const codeText = codeBlock.textContent;
+                navigator.clipboard.writeText(codeText).then(() => {
+                    const originalContent = e.currentTarget.innerHTML;
+                    e.currentTarget.innerHTML = `
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="text-green-400" viewBox="0 0 16 16" aria-hidden="true">
+                            <path d="M13.854 3.646a.5.5 0 0 1 0 .708l-7 7a.5.5 0 0 1-.708 0l-3.5-3.5a.5.5 0 1 1 .708-.708L6.5 10.293l6.646-6.647a.5.5 0 0 1 .708 0z"/>
+                        </svg>
+                        <span class="text-green-400">Copied!</span>
+                    `;
+                    setTimeout(() => {
+                        e.currentTarget.innerHTML = originalContent;
+                    }, 2000);
+                });
+            });
+        });
+    })();
+</script>
+</body>
+</html>
