@@ -93,7 +93,7 @@ You should see output like this:
 
 A collection of step-by-step guides is available to take you from basic usage to advanced agentic patterns. Each lesson introduces one new concept.
 
-**[View the Full Tutorials Here](./docs/tutorials.html)**
+**[View the Full Tutorials Here](../docs/tutorials.html)**
 
 Topics include:
 
@@ -105,7 +105,7 @@ Topics include:
 
 This section provides a high-level overview of the Merci SDK's classes, methods, and types.
 
-**[View the Full API Reference Here](./docs/api_reference.html)**
+**[View the Full API Reference Here](../docs/api_reference.html)**
 
 ### `MerciClient`
 
