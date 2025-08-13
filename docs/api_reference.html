@@ -101,13 +101,27 @@
                     <ul class="list-disc list-inside text-[var(--text-secondary)] space-y-2">
                         <li><span class="param-name">profile</span> <span class="param-type">{string}</span> - The identifier for the model to use (e.g., <code class="inline">'google-chat-gemini-flash-2.5'</code>, <code class="inline">'openai-gpt-5-mini'</code>).</li>
                     </ul>
-                    <div class="lesson-link">📚 See <a href="./tutorials.html" class="font-semibold hover:underline">Lesson 3: Model Selection</a> for a comparison of different model profiles.</div>
+                    <div class="lesson-link">📚 See <a href="./lesson_3.html" class="font-semibold hover:underline">Lesson 3: Model Selection</a> for a comparison of different model profiles.</div>
+
+                    <h3 id="merci-client-auth">Authentication & Token Management</h3>
+                    <p class="text-[var(--text-secondary)]">The SDK handles token expiration and refreshing automatically. When an API request fails with a 401 Unauthorized status, the client transparently performs the following actions:</p>
+                    <ol class="list-decimal list-inside text-[var(--text-secondary)] space-y-2 mt-4 pl-4">
+                        <li>Catches the 401 error.</li>
+                        <li>Emits the <code class="inline">token_refresh_start</code> event.</li>
+                        <li>Makes a request to the refresh endpoint to obtain a new JWT.</li>
+                        <li>If successful, it emits the <code class="inline">token_refresh_success</code> event with the new token.</li>
+                        <li>Automatically retries the original failed request with the new token.</li>
+                    </ol>
+                    <p class="text-[var(--text-secondary)] mt-4">This entire process is seamless, but you can use the events to monitor it and persist the new token.</p>
+                    <div class="lesson-link">📚 See <a href="./lesson_13.html" class="font-semibold hover:underline">Lesson 13: Automated Token Management</a> for a practical example of this flow.</div>
 
                     <h3 id="merci-client-events">Events</h3>
                     <p class="text-[var(--text-secondary)] mb-4">The client is an <code class="inline">EventEmitter</code> that provides hooks for observability. Use <code class="inline">client.on('eventName', callback)</code> to listen.</p>
                     <ul class="list-disc list-inside text-[var(--text-secondary)] space-y-3">
                         <li><span class="param-name">api_request</span> - Fired just before an API request is sent. Payload: <code class="inline">{ url, method, body }</code>.</li>
                         <li><span class="param-name">api_response</span> - Fired when an API response is received. Payload: <code class="inline">{ url, status, ok }</code>.</li>
+                        <li><span class="param-name">token_refresh_start</span> - Fired when the SDK detects an expired token and begins the refresh process.</li>
+                        <li><span class="param-name">token_refresh_success</span> - Fired after a new token has been successfully obtained. Payload: <code class="inline">(newToken: string)</code>.</li>
                         <li><span class="param-name">error</span> - Fired when an API or SDK-internal error occurs. Payload: <code class="inline">APIError</code> instance.</li>
                         <li><span class="param-name">tool_start</span> - Fired when the <code class="inline">.run()</code> method begins executing tool calls. Payload: <code class="inline">{ calls: ToolCall[] }</code>.</li>
                         <li><span class="param-name">tool_finish</span> - Fired when the <code class="inline">.run()</code> method finishes executing tool calls. Payload: <code class="inline">{ results: ToolExecutionResult[] }</code>.</li>
@@ -123,28 +137,28 @@
                     <h4>.withTools(tools)</h4>
                     <p class="text-[var(--text-secondary)] mb-4">Equips the session with a set of tools the model can use. This is the foundation for building agents.</p>
                     <div class="code-block"><pre><code>.withTools(tools: <span class="text-yellow-300">ToolDefinition</span>[]): <span class="text-blue-400">this</span></code></pre></div>
-                    <div class="lesson-link">📚 See <a href="./tutorials.html" class="font-semibold hover:underline">Lesson 8: Basic Tool Usage</a> and <a href="./tutorials.html" class="font-semibold hover:underline">Lesson 9: Advanced Parallel Tools</a>.</div>
+                    <div class="lesson-link">📚 See <a href="./lesson_8.html" class="font-semibold hover:underline">Lesson 8: Basic Tool Usage</a> and <a href="./lesson_9.html" class="font-semibold hover:underline">Lesson 9: Advanced Parallel Tools</a>.</div>
 
                     <h4>.withSystemMessage(content)</h4>
                     <p class="text-[var(--text-secondary)] mb-4">Configures a system message to guide the AI's behavior, setting its persona, rules, or context for the entire conversation.</p>
                     <div class="code-block"><pre><code>.withSystemMessage(content: <span class="text-green-400">string</span>): <span class="text-blue-400">this</span></code></pre></div>
-                    <div class="lesson-link">📚 See <a href="./tutorials.html" class="font-semibold hover:underline">Lesson 2: System Messages</a> for a practical example.</div>
+                    <div class="lesson-link">📚 See <a href="./lesson_2.html" class="font-semibold hover:underline">Lesson 2: System Messages</a> for a practical example.</div>
 
                     <h4>.withParameters(builderFn)</h4>
                     <p class="text-[var(--text-secondary)] mb-4">Configures advanced model parameters for the request using a fluent builder. This allows for fine-grained control over the model's output.</p>
                     <div class="code-block"><pre><code>.withParameters(builderFn: (builder: <span class="text-yellow-300">ParameterBuilder</span>) => <span class="text-yellow-300">ParameterBuilder</span>): <span class="text-blue-400">this</span></code></pre></div>
-                    <div class="lesson-link">📚 See <a href="./tutorials.html" class="font-semibold hover:underline">Lesson 6: Parameter Control</a> for examples of temperature, and <a href="./tutorials.html" class="font-semibold hover:underline">Lesson 7: Guaranteed JSON Output</a> for the <code class="inline">.asJson()</code> method.</div>
+                    <div class="lesson-link">📚 See <a href="./lesson_6.html" class="font-semibold hover:underline">Lesson 6: Parameter Control</a> for examples of temperature, and <a href="./lesson_7.html" class="font-semibold hover:underline">Lesson 7: Guaranteed JSON Output</a> for the <code class="inline">.asJson()</code> method.</div>
 
                     <h3 id="chat-session-execution">Execution Methods</h3>
                     <h4>.stream(input)</h4>
                     <p class="text-[var(--text-secondary)] mb-4">The primary, low-level method for executing a request. It returns an async iterator that yields events in real-time as they are received from the model. This is ideal for UIs that display a typing effect or for complex agentic loops that need to inspect the model's output piece by piece.</p>
                     <div class="code-block"><pre><code>.stream(input: <span class="text-green-400">string</span> | <span class="text-yellow-300">ChatMessage</span>[]): <span class="text-yellow-300">AsyncIterable</span>&lt;<span class="text-yellow-300">StreamEvent</span>&gt;</code></pre></div>
-                    <div class="lesson-link">📚 See <a href="./tutorials.html" class="font-semibold hover:underline">Lesson 11: Multi-Turn Clarification</a> for an advanced use case of manual stream handling.</div>
+                    <div class="lesson-link">📚 See <a href="./lesson_11.html" class="font-semibold hover:underline">Lesson 11: Multi-Turn Clarification</a> for an advanced use case of manual stream handling.</div>
 
                     <h4>.run(input)</h4>
                     <p class="text-[var(--text-secondary)] mb-4">A high-level "agent" method that automates the entire multi-step tool-use process. It handles the back-and-forth conversation with the model required to execute tools and synthesize a final answer. Use this for simplicity when you want a final text answer based on tool execution.</p>
                     <div class="code-block"><pre><code>.run(input: <span class="text-green-400">string</span> | <span class="text-yellow-300">ChatMessage</span>[]): <span class="text-yellow-300">Promise</span>&lt;<span class="text-green-400">string</span>&gt;</code></pre></div>
-                    <div class="lesson-link">📚 See <a href="./tutorials.html" class="font-semibold hover:underline">Lesson 8: Basic Tool Usage</a> for a clear example of the <code class="inline">.run()</code> method.</div>
+                    <div class="lesson-link">📚 See <a href="./lesson_8.html" class="font-semibold hover:underline">Lesson 8: Basic Tool Usage</a> for a clear example of the <code class="inline">.run()</code> method.</div>
                 </section>
 
                 <section id="parameter-builder">
@@ -177,13 +191,13 @@
 <span class="text-yellow-300">createAssistantToolCallMessage</span>(id: <span class="text-green-400">string</span>, toolName: <span class="text-green-400">string</span>, content: <span class="text-green-400">string</span>): <span class="text-yellow-300">AssistantToolCallMessage</span>
 <span class="text-yellow-300">createToolResultMessage</span>(id: <span class="text-green-400">string</span>, toolName: <span class="text-green-400">string</span>, result: <span class="text-green-400">string</span>): <span class="text-yellow-300">ToolResultMessage</span>
 <span class="text-yellow-300">createMediaMessage</span>(source: <span class="text-green-400">string</span> | <span class="text-yellow-300">Buffer</span>, mime?: <span class="text-green-400">string</span>): <span class="text-yellow-300">Promise</span>&lt;<span class="text-yellow-300">MediaMessage</span>&gt;</code></pre></div>
-                    <div class="lesson-link">📚 See <a href="./tutorials.html" class="font-semibold hover:underline">Lesson 4: Media Messages</a> for usage of <code class="inline">createMediaMessage</code>.</div>
+                    <div class="lesson-link">📚 See <a href="./lesson_4.html" class="font-semibold hover:underline">Lesson 4: Media Messages</a> for usage of <code class="inline">createMediaMessage</code>.</div>
 
                     <h3 id="tool-helpers">Tool Helpers</h3>
                     <h4>executeTools(toolCalls, toolLibrary)</h4>
                     <p class="text-[var(--text-secondary)] mb-4">A utility to execute a batch of tool calls requested by the model, often used in manual streaming loops.</p>
                     <div class="code-block"><pre><code><span class="text-yellow-300">executeTools</span>(toolCalls: <span class="text-yellow-300">ToolCall</span>[], toolLibrary: <span class="text-yellow-300">ToolDefinition</span>[]): <span class="text-yellow-300">Promise</span>&lt;<span class="text-yellow-300">ToolExecutionResult</span>[]&gt;</code></pre></div>
-                    <div class="lesson-link">📚 See <a href="./tutorials.html" class="font-semibold hover:underline">Lesson 11: Multi-Turn Clarification</a> for a practical implementation.</div>
+                    <div class="lesson-link">📚 See <a href="./lesson_11.html" class="font-semibold hover:underline">Lesson 11: Multi-Turn Clarification</a> for a practical implementation.</div>
                 </section>
 
                 <section id="type-definitions">
