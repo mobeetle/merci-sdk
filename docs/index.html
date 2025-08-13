@@ -104,7 +104,13 @@
     <main class="flex-grow">
         <section class="relative py-24 sm:py-32 lg:py-40 overflow-hidden">
             <div class="absolute inset-0 -z-10">
-                <!-- Background Gradients -->
+                <!-- Light Mode Background -->
+                <div class="block dark:hidden absolute inset-0 bg-[var(--background-color-light)]">
+                    <div class="absolute bottom-0 left-0 right-0 top-0 bg-[linear-gradient(to_right,theme(colors.slate.100)_1px,transparent_1px),linear-gradient(to_bottom,theme(colors.slate.100)_1px,transparent_1px)] bg-[size:4rem_4rem] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_0%,#000_70%,transparent_100%)]"></div>
+                    <div class="absolute inset-0 bg-[radial-gradient(circle_at_bottom_right,_rgba(59,130,246,0.1)_0%,_transparent_40%)]"></div>
+                    <div class="absolute inset-0 bg-[radial-gradient(circle_at_top_left,_rgba(14,165,233,0.1)_0%,_transparent_50%)]"></div>
+                </div>
+                <!-- Dark Mode Background -->
                 <div class="hidden dark:block absolute inset-0 bg-slate-950">
                     <div class="absolute bottom-0 left-0 right-0 top-0 bg-[linear-gradient(to_right,#4f4f4f2e_1px,transparent_1px),linear-gradient(to_bottom,#4f4f4f2e_1px,transparent_1px)] bg-[size:4rem_4rem] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_0%,#000_70%,transparent_100%)]"></div>
                     <div class="absolute inset-0 bg-[radial-gradient(circle_at_bottom_left,_rgba(88,28,135,0.4)_0%,_transparent_40%)]"></div>
