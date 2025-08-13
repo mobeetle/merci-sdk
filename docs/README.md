@@ -101,6 +101,7 @@ Topics include:
 *   **Basics**: System Messages, Model Selection, Media Messages, and Multi-turn Chat.
 *   **Advanced Patterns**: Guaranteed JSON Output, Structured Extraction, and Parallel Extraction.
 *   **Agentic Flows**: Basic Tool Usage, Advanced Parallel Tools, and Multi-Turn Clarification.
+*   **SDK Features**: Automated Token Management.
 
 ## 📖 API Reference
 
