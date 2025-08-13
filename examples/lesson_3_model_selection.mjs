@@ -4,15 +4,14 @@
 // --- IMPORTS ---
 // We only need the basic client and message helpers for this lesson.
 import { MerciClient, createUserMessage } from '../lib/merci.2.11.0.mjs';
-import { token } from "../secret/token.mjs"; // Your JWT is securely imported.
+import { token } from '../secret/token.mjs';
 
-// --- CONSTANTS ---
-// We'll test a prompt against a variety of models to see how their responses differ.
 const MODELS_TO_TEST = [
     'google-chat-gemini-flash-2.5',
     'openai-gpt-5-mini',
     'anthropic-claude-3.5-haiku'
 ];
+
 
 /**
  * A reusable helper function to run a chat request against a specific model.
@@ -52,10 +51,6 @@ async function runModelExperiment(client, modelName, prompt) {
 }
 
 
-/**
- * The main entry point for the tutorial lesson.
- * This lesson demonstrates how easy it is to switch models and the impact it has on the output.
- */
 async function main() {
     console.log(`--- Merci SDK Tutorial: Lesson 3 - Model Selection ---`);
 
@@ -71,7 +66,7 @@ async function main() {
 
 
     // --- STEPS 3-5 are handled inside the loop by our helper function ---
-    console.log('\n[STEP 3-5] Running experiments for each model...');
+    console.log('\n[STEP 3] Running experiments for each model...');
     const results = [];
     for (const model of MODELS_TO_TEST) {
         const response = await runModelExperiment(client, model, userPrompt);
@@ -93,13 +88,4 @@ async function main() {
 
 }
 
-// --- EXECUTION ---
-// The .catch() ensures any top-level errors in main() are caught.
-main().catch(error => {
-    console.error('\n\n[FATAL ERROR] A critical error occurred in the main execution block.');
-    console.error('  Message:', error.message);
-    if (error.stack) {
-        console.error('  Stack:', error.stack);
-    }
-    process.exit(1);
-});
+main().catch(console.error);

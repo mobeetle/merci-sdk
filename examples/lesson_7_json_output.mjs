@@ -3,10 +3,8 @@
 
 // --- IMPORTS ---
 import { MerciClient, createUserMessage } from '../lib/merci.2.11.0.mjs';
-import { token } from "../secret/token.mjs";
+import { token } from '../secret/token.mjs';
 
-// --- CONSTANTS ---
-// Models with a dedicated JSON mode are ideal for this.
 const MODEL = 'google-chat-gemini-flash-2.5';
 
 async function main() {
@@ -50,7 +48,7 @@ ${unstructuredText}
                 rawResponse += event.content;
             }
         }
-        console.log('[INFO] Stream finished. Raw response received.');
+        console.log('[INFO] Stream finished. Response fully received.');
         console.log('-------------------------------------------\nRaw response from model:\n' + rawResponse + '\n-------------------------------------------');
 
         // --- STEP 6: DISPLAY THE FINAL OUTPUT (PARSED) ---
@@ -68,14 +66,20 @@ ${unstructuredText}
         }
 
     } catch (error) {
-        // --- ROBUST ERROR HANDLING ---
         console.error('\n\n[FATAL ERROR] An error occurred during the operation.');
         console.error('  Message:', error.message);
-        if (error.status) { console.error('  API Status:', error.status); }
-        if (error.details) { console.error('  Details:', JSON.stringify(error.details, null, 2)); }
-        process.exit(1);
+        if (error.status) {
+            console.error('  API Status:', error.status);
+        }
+        if (error.details) {
+            console.error('  Details:', JSON.stringify(error.details, null, 2));
+        }
+        if (error.stack) {
+            console.error('  Stack:', error.stack);
+        }
+        console.error('\n  Possible causes: Invalid token, network issues, or an API service problem.');
+        process.exit(1); // Exit with a non-zero code to indicate failure.
     }
 }
 
-// --- EXECUTION ---
 main().catch(console.error);

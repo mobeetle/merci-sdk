@@ -4,18 +4,11 @@
 // --- IMPORTS ---
 // We import the main client and a helper function for creating messages.
 import { MerciClient, createUserMessage } from '../lib/merci.2.11.0.mjs';
-import { token } from "../secret/token.mjs"; // Your JWT is securely imported.
+import { token } from '../secret/token.mjs';
 
-// --- CONSTANTS ---
-// Centralize the model name for easy changes.
 const MODEL = 'google-chat-gemini-flash-2.5';
 
-/**
- * The main entry point for our first example.
- * Using an async function allows us to leverage top-level await for clean, readable code.
- */
 async function main() {
-    // Each lesson has a clear title.
     console.log(`--- Merci SDK Tutorial: Lesson 1 - Basic Usage (Model: ${MODEL}) ---`);
 
     try {
@@ -61,16 +54,14 @@ async function main() {
         process.stdout.write('\n'); // Newline after the full response
         console.log('\n[INFO] Stream finished. Response fully received.');
 
-        // --- STEP 6: DISPLAY THE FINAL OUTPUT ---
-        // A clear summary of the interaction.
+
+        // --- FINAL RESULT ---
         console.log('\n\n--- FINAL RESULT ---');
         console.log(`👤 User > ${userPrompt}`);
         console.log(`🤖 Assistant > ${finalResponse}`);
         console.log('--------------------');
 
     } catch (error) {
-        // --- ROBUST ERROR HANDLING ---
-        // This block is crucial for debugging and production stability.
         console.error('\n\n[FATAL ERROR] An error occurred during the operation.');
         console.error('  Message:', error.message);
         if (error.status) {
@@ -87,6 +78,4 @@ async function main() {
     }
 }
 
-// --- EXECUTION ---
-// The .catch() ensures any unhandled promise rejections from main() are caught.
 main().catch(console.error);

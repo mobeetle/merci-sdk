@@ -7,7 +7,7 @@
     <link href="https://fonts.googleapis.com" rel="preconnect"/>
     <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
     <link as="style" href="https://fonts.googleapis.com/css2?display=swap&amp;family=Inter%3Awght%40400%3B500%3B600%3B700%3B900&family=Fira+Code%3Awght%40400" onload="this.rel='stylesheet'" rel="stylesheet"/>
-    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <script src="https://cdn.tailwindcss.com/"></script>
     <script>
         tailwind.config = {
             darkMode: 'class'
@@ -104,19 +104,11 @@
     <main class="flex-grow">
         <section class="relative py-24 sm:py-32 lg:py-40 overflow-hidden">
             <div class="absolute inset-0 -z-10">
-                <!-- Light Mode Background -->
-                <div class="block dark:hidden absolute inset-0 bg-white">
-                    <div class="absolute bottom-0 left-0 right-0 top-0 bg-[linear-gradient(to_right,#fde68a_1px,transparent_1px),linear-gradient(to_bottom,#fde68a_1px,transparent_1px)] bg-[size:4rem_4rem] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_0%,#000_70%,transparent_100%)]"></div>
-                    <div class="absolute inset-0 bg-[radial-gradient(circle_at_bottom_right,_rgba(236,72,153,0.4)_0%,_transparent_40%)]"></div>
-                    <div class="absolute inset-0 bg-[radial-gradient(circle_at_top_left,_rgba(251,146,60,0.4)_0%,_transparent_50%)]"></div>
-                    <div class="absolute inset-0 bg-[radial-gradient(circle_at_center,_rgba(163,230,53,0.3)_0%,_transparent_40%)]"></div>
-                </div>
-                <!-- Dark Mode Background -->
+                <!-- Background Gradients -->
                 <div class="hidden dark:block absolute inset-0 bg-slate-950">
                     <div class="absolute bottom-0 left-0 right-0 top-0 bg-[linear-gradient(to_right,#4f4f4f2e_1px,transparent_1px),linear-gradient(to_bottom,#4f4f4f2e_1px,transparent_1px)] bg-[size:4rem_4rem] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_0%,#000_70%,transparent_100%)]"></div>
                     <div class="absolute inset-0 bg-[radial-gradient(circle_at_bottom_left,_rgba(88,28,135,0.4)_0%,_transparent_40%)]"></div>
                     <div class="absolute inset-0 bg-[radial-gradient(circle_at_top_right,_rgba(59,130,246,0.3)_0%,_transparent_50%)]"></div>
-                    <div class="absolute inset-0 bg-[radial-gradient(circle_at_center,_rgba(120,50,50,0.2)_0%,_transparent_40%)]"></div>
                 </div>
             </div>
             <div class="relative z-10 container mx-auto px-4 sm:px-6 lg:px-8">
@@ -125,10 +117,13 @@
                         A Modern SDK for the JetBrains AI Platform
                     </h1>
                     <p class="mt-6 max-w-2xl text-lg text-[var(--text-secondary)]">
-                        Fluent, robust, and designed for modern JavaScript with first-class support for streaming, tool use, and advanced model control.
+                        Fluent, robust, and designed for modern JavaScript. Zero dependencies, first-class support for streaming, tool use, and advanced model control.
                     </p>
                     <div class="mt-10 flex items-center gap-4">
-                        <a href="./getting_started.html" class="button_primary">Get Started</a>
+                        <a href="https://github.com/mobeetle/merci-sdk/" target="_blank" rel="noopener noreferrer" class="button_primary inline-flex items-center gap-2">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 16 16"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.012 8.012 0 0 0 16 8c0-4.42-3.58-8-8-8z"/></svg>
+                            View on GitHub
+                        </a>
                         <a href="./tutorials.html" class="button_secondary">View Tutorials</a>
                     </div>
                 </div>
@@ -138,42 +133,23 @@
         <section class="py-24 sm:py-32">
             <div class="container mx-auto px-4 sm:px-6 lg:px-8">
                 <div class="text-center max-w-3xl mx-auto">
-                    <h2 class="text-3xl font-bold tracking-tight text-[var(--text-primary)] sm:text-4xl">Focus on your logic. Let Merci do the rest.</h2>
+                    <h2 class="text-3xl font-bold tracking-tight text-[var(--text-primary)] sm:text-4xl">Get Started in Seconds</h2>
                     <p class="mt-4 text-lg text-[var(--text-secondary)]">
-                        The SDK's high-level agent (`.run()`) handles the entire multi-step tool-use process automatically, turning complex logic into just a few lines of code.
+                        No package managers, no build steps. Just copy the library file from the <a href="https://github.com/mobeetle/merci-sdk/tree/main/lib" target="_blank" rel="noopener noreferrer" class="text-[var(--primary-color)] hover:underline">/lib</a> folder on GitHub and start building.
                     </p>
                 </div>
-                <div class="mt-12">
-                    <div class="bg-[#0D1117] border border-slate-800 rounded-xl shadow-2xl shadow-blue-900/20">
-                        <div class="flex items-center gap-2 px-4 py-2 border-b border-slate-800">
-                            <div class="w-3 h-3 bg-red-500 rounded-full"></div>
-                            <div class="w-3 h-3 bg-yellow-500 rounded-full"></div>
-                            <div class="w-3 h-3 bg-green-500 rounded-full"></div>
-                        </div>
-                        <div class="p-6 font-mono text-sm text-slate-300 overflow-x-auto">
-<pre><code><span class="text-purple-400">import</span> { MerciClient } <span class="text-purple-400">from</span> <span class="text-green-400">'./merci.2.11.0.mjs'</span>;
-
-<span class="text-gray-500">// 1. Define your tools with simple objects</span>
-<span class="text-purple-400">const</span> weatherTool = {
-  name: <span class="text-green-400">'get_current_weather'</span>,
-  description: <span class="text-green-400">'Get weather for a city'</span>,
-  parameters: { <span class="text-gray-500">/* ... */</span> },
-  execute: <span class="text-purple-400">async</span> ({ city }) => { <span class="text-gray-500">/* ... API call logic ... */</span> },
-};
-
-<span class="text-purple-400">const</span> client = <span class="text-blue-400">new</span> <span class="text-yellow-300">MerciClient</span>({ token });
-
-<span class="text-gray-500">// 2. Configure the agent with your tools</span>
-<span class="text-purple-400">const</span> agent = client
-  .chat(<span class="text-green-400">'google-chat-gemini-flash-2.5'</span>)
-  .withTools([weatherTool]);
-
-<span class="text-gray-500">// 3. Run it! The SDK handles the entire conversation.</span>
-<span class="text-purple-400">const</span> finalAnswer = <span class="text-purple-400">await</span> agent.run(<span class="text-green-400">"What's the weather like in Paris?"</span>);
-
-console.<span class="text-yellow-300">log</span>(finalAnswer);
-<span class="text-gray-500">// > The weather in Paris is sunny with a temperature of 14°C.</span></code></pre>
-                        </div>
+                <div class="mt-12 max-w-4xl mx-auto grid gap-8 md:grid-cols-3">
+                    <div class="card text-center">
+                        <h3 class="font-mono text-lg font-semibold text-[var(--text-primary)]">merci.2.11.0.mjs</h3>
+                        <p class="mt-1 text-sm text-[var(--text-secondary)]">The full library file with comments, ideal for development and learning.</p>
+                    </div>
+                    <div class="card text-center">
+                        <h3 class="font-mono text-lg font-semibold text-[var(--text-primary)]">merci.2.11.0-min.mjs</h3>
+                        <p class="mt-1 text-sm text-[var(--text-secondary)]">A minified version for production use, ensuring the smallest footprint.</p>
+                    </div>
+                    <div class="card text-center">
+                        <h3 class="font-mono text-lg font-semibold text-[var(--text-primary)]">merci.2.11.0.d.ts</h3>
+                        <p class="mt-1 text-sm text-[var(--text-secondary)]">Full TypeScript definitions for a superior developer experience with autocompletion.</p>
                     </div>
                 </div>
             </div>
@@ -192,9 +168,9 @@ console.<span class="text-yellow-300">log</span>(finalAnswer);
                         <p class="mt-1 text-[var(--text-secondary)]">Chainable methods like `client.chat().withTools()` make building requests simple and readable.</p>
                     </div>
                     <div class="card">
-                        <div class="rounded-lg bg-[var(--primary-color)]/10 p-3 w-min text-[var(--primary-color)]"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 7 17l-5-5"/><path d="m22 10-7.5 7.5L9 12"/></svg></div>
-                        <h3 class="mt-4 text-lg font-semibold text-[var(--text-primary)]">First-class Streaming</h3>
-                        <p class="mt-1 text-[var(--text-secondary)]">Built from the ground up with async iterators for handling real-time responses efficiently.</p>
+                        <div class="rounded-lg bg-[var(--primary-color)]/10 p-3 w-min text-[var(--primary-color)]"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.72"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.72-1.72"/></svg></div>
+                        <h3 class="mt-4 text-lg font-semibold text-[var(--text-primary)]">Zero Dependencies</h3>
+                        <p class="mt-1 text-[var(--text-secondary)]">Lightweight and self-contained. No `node_modules`, no package manager required. Just pure JavaScript.</p>
                     </div>
                     <div class="card">
                         <div class="rounded-lg bg-[var(--primary-color)]/10 p-3 w-min text-[var(--primary-color)]"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10z"/><path d="M16 12l-4-4-4 4"/><path d="M12 16V8"/></svg></div>
@@ -222,7 +198,7 @@ console.<span class="text-yellow-300">log</span>(finalAnswer);
     </main>
     <footer class="border-t border-[var(--border-color)] bg-[var(--card-background)]">
         <div class="container mx-auto px-4 py-6 sm:px-6 lg:px-8">
-            <p class="text-center text-sm text-[var(--text-secondary)]">© 2024 Merci SDK. All rights reserved.</p>
+            <p class="text-center text-sm text-[var(--text-secondary)]">© 2025 Lukáš Michna (Mobeetle). All rights reserved.</p>
         </div>
     </footer>
 </div>

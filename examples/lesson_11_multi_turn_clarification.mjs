@@ -10,25 +10,31 @@ import {
     createUserMessage,
     createAssistantTextMessage
 } from '../lib/merci.2.11.0.mjs';
-import { token } from "../secret/token.mjs";
+import { token } from '../secret/token.mjs';
 import * as readline from 'node:readline/promises';
 import { stdin as input, stdout as output } from 'node:process';
 
-// --- CONSTANTS ---
 const MODEL = 'google-chat-gemini-flash-2.5';
 
 // --- TOOL DEFINITION ---
 const calendarTool = {
     name: 'create_calendar_event',
     description: 'Schedules a new event in the user\'s calendar.',
-    parameters: { /* ... (omitted for brevity, same as original) ... */ },
+    parameters: {
+        type: 'object',
+        properties: {
+            title: { type: 'string', description: 'The title of the event.' },
+            date: { type: 'string', description: 'The date of the event in YYYY-MM-DD format.' },
+            time: { type: 'string', description: 'The start time of the event (e.g., "14:30").' },
+            duration_minutes: { type: 'number', description: 'The duration of the event in minutes.' },
+        },
+        required: ['title', 'date', 'time', 'duration_minutes'],
+    },
     execute: async ({ title, date, time, duration_minutes }) => {
         console.log(`\n[TOOL EXECUTE] ✅ Success! Creating event: "${title}" on ${date} at ${time} for ${duration_minutes} minutes.`);
         return { status: 'success', eventId: `evt_${Date.now()}` };
     },
 };
-const fullCalendarTool = { name: 'create_calendar_event', description: 'Schedules a new event in the user\'s calendar.', parameters: { type: 'object', properties: { title: { type: 'string', description: 'The title of the event.' }, date: { type: 'string', description: 'The date of the event in YYYY-MM-DD format.' }, time: { type: 'string', description: 'The start time of the event (accept all formats and infer the correct time).' }, duration_minutes: { type: 'number', description: 'The duration of the event in minutes.' }, }, required: ['title', 'date', 'time', 'duration_minutes'], }, execute: async ({ title, date, time, duration_minutes }) => { console.log(`\n[TOOL EXECUTE] ✅ Success! Creating event: "${title}" on ${date} at ${time} for ${duration_minutes} minutes.`); return { status: 'success', eventId: `evt_${Date.now()}` }; }, };
-
 
 async function main() {
     console.log(`--- Merci SDK Lesson 11: Multi-Turn Tool Clarification (Model: ${MODEL}) ---`);
@@ -38,15 +44,17 @@ async function main() {
     const messages = [];
 
     try {
-        // --- STEP 1 & 3: INITIALIZE CLIENT AND CONFIGURE SESSION ---
+        // --- STEP 1: INITIALIZE CLIENT AND CONFIGURE SESSION ---
+        console.log('[STEP 1] Initializing client and configuring session...');
         const client = new MerciClient({ token });
-        const chatSession = client.chat(MODEL).withTools([fullCalendarTool]);
+        const chatSession = client.chat(MODEL).withTools([calendarTool]);
 
-        // --- INTERACTIVE LOOP (STEPS 2, 4, 5) ---
+        // --- INTERACTIVE LOOP (STEPS 2, 3, 4, 5) ---
         let userInput = "Can you add an event to my calendar?"; // Initial prompt
-        console.log(`👤 You > ${userInput}`);
+        console.log(`\n👤 You > ${userInput}`);
 
         while (true) {
+            // STEP 2 (Loop): Add user message to history
             if (userInput) {
                 messages.push(createUserMessage(userInput));
             }
@@ -55,6 +63,7 @@ async function main() {
             let currentTurnText = '';
             process.stdout.write('🤖 Assistant > ');
 
+            // STEP 3 (Loop): Stream model response
             const stream = chatSession.stream(messages);
             for await (const event of stream) {
                 if (event.type === 'text') {
@@ -66,12 +75,14 @@ async function main() {
             }
             process.stdout.write('\n');
 
+            // STEP 4 (Loop): Add assistant's text response to history
             if (currentTurnText) {
                 messages.push(createAssistantTextMessage(currentTurnText));
             }
 
+            // STEP 5 (Loop): Handle tool calls if any
             if (toolCalls.length > 0) {
-                const toolResults = await executeTools(toolCalls, [fullCalendarTool]);
+                const toolResults = await executeTools(toolCalls, [calendarTool]);
                 toolResults.forEach((result, index) => {
                     const call = toolCalls[index];
                     const resultValue = result.success ? result.result : { error: result.error };
@@ -82,19 +93,30 @@ async function main() {
                 continue;
             }
 
-            userInput = await rl.question('\n👤 You > ');
+            // Get next user input
+            userInput = await rl.question('👤 You > ');
             if (['exit', 'quit'].includes(userInput.toLowerCase())) {
                 break;
             }
         }
     } catch (error) {
-        // --- ROBUST ERROR HANDLING ---
-        console.error('\n[FATAL ERROR] The chat session has crashed:', error);
+        console.error('\n\n[FATAL ERROR] An error occurred during the operation.');
+        console.error('  Message:', error.message);
+        if (error.status) {
+            console.error('  API Status:', error.status);
+        }
+        if (error.details) {
+            console.error('  Details:', JSON.stringify(error.details, null, 2));
+        }
+        if (error.stack) {
+            console.error('  Stack:', error.stack);
+        }
+        console.error('\n  Possible causes: Invalid token, network issues, or an API service problem.');
+        process.exit(1); // Exit with a non-zero code to indicate failure.
     } finally {
         console.log('\nConversation ended. Goodbye!');
         rl.close();
     }
 }
 
-// --- EXECUTION ---
 main().catch(console.error);

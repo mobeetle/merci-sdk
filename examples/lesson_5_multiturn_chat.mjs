@@ -3,17 +3,13 @@
 
 // --- IMPORTS ---
 // We need message helpers for both user and assistant roles.
-import { MerciClient, createUserMessage, createAssistantTextMessage } from '../lib/merci.2.11.0.mjs';
-import { token } from "../secret/token.mjs";
+import { MerciClient, createAssistantTextMessage, createUserMessage } from '../lib/merci.2.11.0.mjs';
+import { token } from '../secret/token.mjs';
 import * as readline from 'node:readline/promises';
 import { stdin as input, stdout as output } from 'node:process';
 
-// --- CONSTANTS ---
 const MODEL = 'google-chat-gemini-flash-2.5';
 
-/**
- * The main function to run the interactive chat application.
- */
 async function main() {
     console.log(`--- Merci SDK Tutorial: Lesson 5 - Multi-Turn Chat (Model: ${MODEL}) ---`);
     console.log("Type 'exit' or 'quit' to end the conversation.\n");
@@ -28,13 +24,13 @@ async function main() {
         const client = new MerciClient({ token });
         client.on('error', (error) => console.error(`\n[SDK Internal Error]`, error.message));
 
-        // --- STEP 3: CONFIGURE THE CHAT SESSION ---
+        // --- STEP 2: CONFIGURE THE CHAT SESSION ---
         // The session is created once and reused for the entire conversation.
         const chatSession = client.chat(MODEL);
 
         // --- STEPS 2, 4, 5 are inside the loop (REPL: Read-Eval-Print Loop) ---
         while (true) {
-            // STEP 2 (Loop): Get user input.
+            // STEP 3 (Loop): Get user input.
             const userInput = await rl.question('👤 You > ');
 
             if (['exit', 'quit'].includes(userInput.toLowerCase())) {
@@ -77,5 +73,4 @@ async function main() {
     }
 }
 
-// --- EXECUTION ---
 main().catch(console.error);

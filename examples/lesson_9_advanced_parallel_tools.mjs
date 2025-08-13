@@ -3,10 +3,8 @@
 
 // --- IMPORTS ---
 import { MerciClient } from '../lib/merci.2.11.0.mjs';
-import { token } from "../secret/token.mjs";
+import { token } from '../secret/token.mjs';
 
-// --- CONSTANTS ---
-// We use a model known for strong parallel tool-calling capabilities.
 const MODEL = 'google-chat-gemini-pro-2.5';
 
 // --- TOOL DEFINITIONS ---
@@ -51,36 +49,37 @@ const calculatorTool = {
     }
 };
 
-
 async function main() {
     console.log(`--- Merci SDK Lesson 9: Advanced Parallel Tool Calls (Model: ${MODEL}) ---`);
 
     try {
         // --- STEP 1: INITIALIZE THE CLIENT ---
+        console.log('[STEP 1] Initializing MerciClient...');
         const client = new MerciClient({ token });
         client.on('tool_start', ({ calls }) => { console.log(`\n[EVENT: tool_start] 🤖 Model has requested ${calls.length} tool(s) to be run in parallel.`); calls.forEach(call => console.log(`  - Calling Tool: ${call.name} with args: ${call.arguments}`)); });
         client.on('tool_finish', ({ results }) => { console.log(`[EVENT: tool_finish] ✅ Finished executing ${results.length} tool(s).`); });
 
         // --- STEP 2: DEFINE PROMPT AND TOOLS ---
+        console.log('[STEP 2] Preparing prompt and tools...');
         const allTools = [weatherTool, flightTool, calculatorTool];
         const userPrompt = "What's the weather in Paris, how much is a flight from London to Paris, and what is the total cost if I also need to buy a souvenir for 25 EUR?";
 
         // --- STEP 3: CONFIGURE THE CHAT SESSION (AGENT) ---
-        // We configure the agent with our suite of tools and enable parallel calls.
+        console.log('[STEP 3] Configuring the agent for parallel tool calls...');
         const agent = client
             .chat(MODEL)
             .withTools(allTools)
             .withParameters(builder => builder.parallelToolCalls(true));
 
-        // --- STEPS 4 & 5 are handled by `.run()` ---
-        // THIS IS THE CORRECTED LINE:
+        // --- STEPS 4 & 5: RUN THE AGENT ---
+        console.log('[STEP 4] Running the agent...');
         console.log(`\n👤 User > ${userPrompt}\n`);
         const startTime = Date.now();
-        // The .run() method handles the entire agentic loop, including parallel execution.
         const finalAnswer = await agent.run(userPrompt);
         const endTime = Date.now();
 
         // --- STEP 6: DISPLAY THE FINAL OUTPUT ---
+        console.log('[STEP 5] Analyzing results...');
         const duration = ((endTime - startTime) / 1000).toFixed(2);
         console.log('\n\n--- FINAL RESULT ---');
         console.log(`🤖 Assistant > ${finalAnswer}`);
@@ -92,13 +91,20 @@ async function main() {
         console.log('--------------------------------------------------');
 
     } catch (error) {
-        // --- ROBUST ERROR HANDLING ---
-        console.error("\n[FATAL ERROR] An unexpected error occurred:", error.message);
-        if (error.details) { console.error("  API Details:", JSON.stringify(error.details, null, 2)); }
-        console.error(error.stack);
-        process.exit(1);
+        console.error('\n\n[FATAL ERROR] An error occurred during the operation.');
+        console.error('  Message:', error.message);
+        if (error.status) {
+            console.error('  API Status:', error.status);
+        }
+        if (error.details) {
+            console.error('  Details:', JSON.stringify(error.details, null, 2));
+        }
+        if (error.stack) {
+            console.error('  Stack:', error.stack);
+        }
+        console.error('\n  Possible causes: Invalid token, network issues, or an API service problem.');
+        process.exit(1); // Exit with a non-zero code to indicate failure.
     }
 }
 
-// --- EXECUTION ---
 main().catch(console.error);

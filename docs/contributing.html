@@ -7,7 +7,7 @@
     <link href="https://fonts.googleapis.com" rel="preconnect"/>
     <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
     <link as="style" href="https://fonts.googleapis.com/css2?display=swap&amp;family=Inter%3Awght%40400%3B500%3B600%3B700%3B900" onload="this.rel='stylesheet'" rel="stylesheet"/>
-    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <script src="https://cdn.tailwindcss.com/"></script>
     <script>
         tailwind.config = {
             darkMode: 'class'
@@ -22,6 +22,7 @@
             --border-color-light: #e5e7eb;
             --card-background-light: #ffffff;
             --header-background-light: rgba(248, 250, 252, 0.8);
+            --code-background-light: #f1f5f9;
             --background-color-dark: #020617;
             --text-primary-dark: #f8fafc;
             --text-secondary-dark: #94a3b8;
@@ -30,36 +31,16 @@
             --header-background-dark: rgba(2, 6, 23, 0.8);
         }
         html:not(.dark) {
-            --background-color: var(--background-color-light);
-            --text-primary: var(--text-primary-light);
-            --text-secondary: var(--text-secondary-light);
-            --border-color: var(--border-color-light);
-            --card-background: var(--card-background-light);
-            --header-background: var(--header-background-light);
+            --background-color: var(--background-color-light); --text-primary: var(--text-primary-light); --text-secondary: var(--text-secondary-light); --border-color: var(--border-color-light); --card-background: var(--card-background-light); --header-background: var(--header-background-light); --code-background: var(--code-background-light);
         }
         html.dark {
-            --background-color: var(--background-color-dark);
-            --text-primary: var(--text-primary-dark);
-            --text-secondary: var(--text-secondary-dark);
-            --border-color: var(--border-color-dark);
-            --card-background: var(--card-background-dark);
-            --header-background: var(--header-background-dark);
+            --background-color: var(--background-color-dark); --text-primary: var(--text-primary-dark); --text-secondary: var(--text-secondary-dark); --border-color: var(--border-color-dark); --card-background: var(--card-background-dark); --header-background: var(--header-background-dark); --code-background: #1e293b;
         }
-        body {
-            font-family: "Inter", sans-serif;
-            background-color: var(--background-color);
-            color: var(--text-primary);
-            transition: background-color 0.3s, color 0.3s;
-        }
-        .card {
-            @apply bg-[var(--card-background)] border border-[var(--border-color)] rounded-xl shadow-sm p-6 transition-all;
-        }
-        .nav-link {
-            @apply text-sm font-medium text-[var(--text-secondary)] hover:text-[var(--primary-color)] transition-colors;
-        }
-        .nav-link-active {
-            @apply text-sm font-medium text-[var(--primary-color)];
-        }
+        body { font-family: "Inter", sans-serif; background-color: var(--background-color); color: var(--text-primary); transition: background-color 0.3s, color 0.3s; }
+        .card { @apply bg-[var(--card-background)] border border-[var(--border-color)] rounded-xl shadow-sm p-6 transition-all; }
+        .nav-link { @apply text-sm font-medium text-[var(--text-secondary)] hover:text-[var(--primary-color)] transition-colors; }
+        .nav-link-active { @apply text-sm font-medium text-[var(--primary-color)]; }
+        code.inline { @apply font-mono text-sm bg-[var(--code-background)] font-semibold p-1 rounded-md text-sky-600 dark:text-sky-400; }
     </style>
 </head>
 <body>
@@ -80,11 +61,7 @@
                 <a class="nav-link-active" href="./contributing.html">Contributing</a>
             </nav>
             <div class="flex items-center gap-4">
-                <button id="theme-toggle" type="button" class="text-sm font-semibold rounded-md px-3 py-1.5 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-[var(--background-color)]
-                bg-slate-800 text-amber-500 hover:bg-slate-700 focus:ring-amber-500 border border-transparent
-                dark:bg-transparent dark:border-amber-500 dark:text-amber-500 dark:hover:bg-amber-500/10 dark:focus:ring-amber-500">
-                    Light Mode
-                </button>
+                <button id="theme-toggle" type="button" class="text-sm font-semibold rounded-md px-3 py-1.5 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-[var(--background-color)] bg-slate-800 text-amber-500 hover:bg-slate-700 focus:ring-amber-500 border border-transparent dark:bg-transparent dark:border-amber-500 dark:text-amber-500 dark:hover:bg-amber-500/10 dark:focus:ring-amber-500">Light Mode</button>
             </div>
         </div>
     </header>
@@ -94,7 +71,7 @@
                 <p class="text-base font-semibold uppercase tracking-wider text-[var(--primary-color)]">Get Involved</p>
                 <h1 class="text-3xl font-bold tracking-tight text-[var(--text-primary)] mt-2">Contributing to Merci SDK</h1>
                 <p class="text-lg text-[var(--text-secondary)] mx-auto mt-4 max-w-2xl">
-                    We're excited to have you join our community! Your contributions help make the Merci SDK better for everyone.
+                    We're excited to have you join our community! Your contributions help make the Merci SDK better for everyone. All contributions are welcome, from bug reports to new features.
                 </p>
             </div>
             <div class="space-y-10">
@@ -103,18 +80,42 @@
                         <span class="text-2xl">🐞</span> Reporting Bugs
                     </h2>
                     <p class="text-[var(--text-secondary)] pt-4">
-                        If you encounter a bug, please report it by creating a new issue on our
-                        <a class="font-medium text-[var(--primary-color)] hover:underline" href="#">GitHub repository</a>. When reporting a bug, please include as much detail as possible, such as the steps to reproduce the bug, the expected behavior, and the actual behavior. This will help us to quickly identify and fix the issue.
+                        Found a problem? Please let us know by creating a new issue on our
+                        <a class="font-medium text-[var(--primary-color)] hover:underline" href="https://github.com/mobeetle/merci-sdk/issues" target="_blank" rel="noopener noreferrer">GitHub Issues page</a>.
+                        When reporting a bug, please include as much detail as possible:
+                    </p>
+                    <ul class="list-disc list-inside text-[var(--text-secondary)] pt-4 pl-4 space-y-2">
+                        <li>A clear and descriptive title.</li>
+                        <li>The SDK version you are using.</li>
+                        <li>Your Node.js version.</li>
+                        <li>A code snippet or steps to reproduce the bug.</li>
+                        <li>The expected behavior vs. the actual behavior.</li>
+                    </ul>
+                </div>
+                <div class="card">
+                    <h2 class="text-2xl font-semibold text-[var(--text-primary)] border-b border-[var(--border-color)] pb-4 flex items-center gap-3">
+                        <span class="text-2xl">💡</span> Suggesting Enhancements
+                    </h2>
+                    <p class="text-[var(--text-secondary)] pt-4">
+                        Have an idea for a new feature or an improvement to an existing one? We'd love to hear it. Please submit it by creating a new issue on our
+                        <a class="font-medium text-[var(--primary-color)] hover:underline" href="https://github.com/mobeetle/merci-sdk/issues" target="_blank" rel="noopener noreferrer">GitHub Issues page</a>.
+                        Describe the problem you're trying to solve and how your proposed feature would help.
                     </p>
                 </div>
                 <div class="card">
                     <h2 class="text-2xl font-semibold text-[var(--text-primary)] border-b border-[var(--border-color)] pb-4 flex items-center gap-3">
-                        <span class="text-2xl">💡</span> Submitting Feature Requests
+                        <span class="text-2xl">🚀</span> Submitting Pull Requests
                     </h2>
-                    <p class="text-[var(--text-secondary)] pt-4">
-                        We welcome feature requests! If you have an idea for a new feature, please submit it by creating a new issue on our
-                        <a class="font-medium text-[var(--primary-color)] hover:underline" href="#">GitHub repository</a>. When submitting a feature request, please provide a clear and concise description of the feature, as well as any relevant use cases or examples.
+                    <p class="text-[var(--text-secondary)] pt-4 mb-4">
+                        If you'd like to contribute code, please follow these steps:
                     </p>
+                    <ol class="list-decimal list-inside text-[var(--text-secondary)] pl-4 space-y-2">
+                        <li>Fork the repository on GitHub.</li>
+                        <li>Create a new branch for your feature or bug fix: <code class="inline">git checkout -b feature/your-feature-name</code>.</li>
+                        <li>Make your changes and commit them with a clear, descriptive message.</li>
+                        <li>Push your branch to your fork: <code class="inline">git push origin feature/your-feature-name</code>.</li>
+                        <li>Open a pull request from your fork to the main Merci SDK repository.</li>
+                    </ol>
                 </div>
                 <div class="card">
                     <h2 class="text-2xl font-semibold text-[var(--text-primary)] border-b border-[var(--border-color)] pb-4 flex items-center gap-3">
@@ -122,7 +123,7 @@
                     </h2>
                     <p class="text-[var(--text-secondary)] pt-4">
                         This project is licensed under the Apache 2.0 License. See the
-                        <a class="font-medium text-[var(--primary-color)] hover:underline" href="#">LICENSE</a> file for more information. By contributing to this project, you agree that your contributions will be licensed under its Apache 2.0 License.
+                        <a class="font-medium text-[var(--primary-color)] hover:underline" href="https://github.com/mobeetle/merci-sdk/blob/main/LICENSE" target="_blank" rel="noopener noreferrer">LICENSE</a> file for more information. By contributing to this project, you agree that your contributions will be licensed under its Apache 2.0 License.
                     </p>
                 </div>
             </div>
@@ -130,7 +131,7 @@
     </main>
     <footer class="border-t border-[var(--border-color)] bg-[var(--card-background)]">
         <div class="container mx-auto px-4 py-6 sm:px-6 lg:px-8">
-            <p class="text-center text-sm text-[var(--text-secondary)]">© 2024 Merci SDK. All rights reserved.</p>
+            <p class="text-center text-sm text-[var(--text-secondary)]">© 2025 Lukáš Michna (Mobeetle). All rights reserved.</p>
         </div>
     </footer>
 </div>

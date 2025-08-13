@@ -5,10 +5,8 @@
 // For the high-level .run() agent, we only need the client and token.
 // The SDK handles the creation of tool messages internally.
 import { MerciClient, createUserMessage } from '../lib/merci.2.11.0.mjs';
-import { token } from "../secret/token.mjs";
+import { token } from '../secret/token.mjs';
 
-// --- CONSTANTS ---
-// Focusing on the Gemini model as requested.
 const MODEL = 'google-chat-gemini-flash-2.5';
 
 // --- TOOL DEFINITION ---
@@ -62,34 +60,33 @@ async function main() {
             .withTools(tools);
 
         // --- STEPS 4 & 5: RUN THE AGENT ---
-        // This is the simplest and most powerful part. The `.run()` method handles
-        // the entire multi-step process automatically:
-        // 1. Sends the prompt to the model.
-        // 2. Receives the model's decision to call a tool.
-        // 3. Executes the correct tool with the right arguments.
-        // 4. Sends the tool's result back to the model.
-        // 5. Receives the model's final, synthesized answer and returns it.
-        console.log('[STEPS 4 & 5] Running the agent to get the final answer...');
+        // The `.run()` method handles the entire multi-step process automatically.
+        console.log('[STEP 4] Running the agent to get the final answer...');
         console.log(`\n👤 User > ${userPrompt}`);
         const finalAnswer = await agent.run(userPrompt);
 
         // --- STEP 6: DISPLAY THE FINAL OUTPUT ---
-        // The `finalAnswer` is not the raw tool output, but the LLM's
-        // natural language response based on that output.
+        // The `finalAnswer` is the LLM's natural language response based on the tool output.
         console.log('\n\n--- FINAL RESULT ---');
+        console.log(`👤 User > ${userPrompt}`);
         console.log(`🤖 Assistant > ${finalAnswer}`);
         console.log('--------------------');
 
     } catch (error) {
-        // --- ROBUST ERROR HANDLING ---
         console.error('\n\n[FATAL ERROR] An error occurred during the operation.');
         console.error('  Message:', error.message);
-        if (error.status) { console.error('  API Status:', error.status); }
-        if (error.details) { console.error('  Details:', JSON.stringify(error.details, null, 2)); }
-        if (error.stack) { console.error('  Stack:', error.stack); }
-        process.exit(1);
+        if (error.status) {
+            console.error('  API Status:', error.status);
+        }
+        if (error.details) {
+            console.error('  Details:', JSON.stringify(error.details, null, 2));
+        }
+        if (error.stack) {
+            console.error('  Stack:', error.stack);
+        }
+        console.error('\n  Possible causes: Invalid token, network issues, or an API service problem.');
+        process.exit(1); // Exit with a non-zero code to indicate failure.
     }
 }
 
-// --- EXECUTION ---
 main().catch(console.error);

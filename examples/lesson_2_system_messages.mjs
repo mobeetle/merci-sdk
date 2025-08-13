@@ -4,19 +4,11 @@
 // --- IMPORTS ---
 // We import the same tools as before.
 import { MerciClient, createUserMessage } from '../lib/merci.2.11.0.mjs';
-import { token } from "../secret/token.mjs"; // Your JWT is securely imported.
+import { token } from '../secret/token.mjs';
 
-// --- CONSTANTS ---
-// Some models are better at following creative persona instructions.
-// Let's use one that's known for strong instruction-following.
 const MODEL = 'google-chat-gemini-flash-2.5';
 
-/**
- * In this lesson, we'll give the LLM a personality and a set of rules
- * using a "system message" to guide its behavior for consistent results.
- */
 async function main() {
-    // The title reflects the current lesson.
     console.log(`--- Merci SDK Tutorial: Lesson 2 - Using System Messages (Model: ${MODEL}) ---`);
 
     try {
@@ -64,8 +56,8 @@ async function main() {
         process.stdout.write('\n');
         console.log('\n[INFO] Stream finished. Response fully received.');
 
-        // --- STEP 6: DISPLAY THE FINAL OUTPUT ---
-        // We'll now display the system prompt as well to see the full context.
+
+        // --- FINAL RESULT ---
         console.log('\n\n--- FINAL RESULT ---');
         console.log(`📜 System > ${systemPrompt}`);
         console.log(`👤 User > ${userPrompt}`);
@@ -74,8 +66,6 @@ async function main() {
         console.log('\nNotice how the response is completely different from Lesson 1, even with the same user prompt!');
 
     } catch (error) {
-        // --- ROBUST ERROR HANDLING ---
-        // This block is crucial for debugging and production stability.
         console.error('\n\n[FATAL ERROR] An error occurred during the operation.');
         console.error('  Message:', error.message);
         if (error.status) {
@@ -92,6 +82,4 @@ async function main() {
     }
 }
 
-// --- EXECUTION ---
-// The .catch() ensures any unhandled promise rejections from main() are caught.
 main().catch(console.error);

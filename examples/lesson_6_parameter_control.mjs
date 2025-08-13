@@ -3,16 +3,16 @@
 
 // --- IMPORTS ---
 import { MerciClient, createUserMessage } from '../lib/merci.2.11.0.mjs';
-import { token } from "../secret/token.mjs";
+import { token } from '../secret/token.mjs';
 
-// --- CONSTANTS ---
 const MODEL = 'google-chat-gemini-flash-2.5';
+
 
 /**
  * A reusable helper function to run a chat experiment with specific parameters.
  * @param {MerciClient} client - The initialized Merci client.
  * @param {string} prompt - The user prompt.
- * @param {(builder: import('../lib/merci.2.11.0.mjs').ParameterBuilder) => any} builderFn - A function that configures the ParameterBuilder.
+ * @param {(builder: import('../lib/merci.2.11.0.mjs').ParameterBuilder) => any} builderFn - A function that aconfigures the ParameterBuilder.
  * @param {string} description - A description of the experiment.
  */
 async function runExperiment(client, prompt, builderFn, description) {
@@ -41,16 +41,19 @@ async function main() {
 
     try {
         // --- STEP 1: INITIALIZE THE CLIENT ---
+        console.log('[STEP 1] Initializing MerciClient...');
         const client = new MerciClient({ token });
         client.on('parameter_warning', (warning) => {
             console.warn(`\n[SDK WARNING] ${warning.message}`);
         });
 
         // --- STEP 2: DEFINE PROMPT AND INPUT DATA ---
+        console.log('[STEP 2] Preparing prompt and input data...');
         const storyPrompt = "Tell me a very short story about a robot who discovers music.";
         const jsonPrompt = "Extract the name, age, and city from this text: 'Anna is 32 and lives in Paris.' into a JSON object.";
 
         // --- EXPERIMENT 1: Focused and Deterministic Output ---
+        console.log('[STEP 3] Configuring the chat session...');
         await runExperiment(
             client,
             storyPrompt,
@@ -59,6 +62,7 @@ async function main() {
         );
 
         // --- EXPERIMENT 2: Creative and Unpredictable ---
+        console.log('[STEP 4] ...');
         await runExperiment(
             client,
             storyPrompt,
@@ -67,6 +71,7 @@ async function main() {
         );
 
         // --- EXPERIMENT 3: Forcing JSON Output ---
+        console.log('[STEP 5] ...');
         await runExperiment(
             client,
             jsonPrompt,
@@ -77,6 +82,7 @@ async function main() {
         // --- EXPERIMENT 4: Demonstrating an Unsupported Parameter ---
         // The 'seed' parameter is not supported by this Gemini model.
         // The SDK is smart enough to detect this, emit a warning, and filter it out.
+        console.log('[STEP 6] ...');
         await runExperiment(
             client,
             storyPrompt,
@@ -85,14 +91,20 @@ async function main() {
         );
 
     } catch (error) {
-        // --- ROBUST ERROR HANDLING ---
         console.error('\n\n[FATAL ERROR] An error occurred during the operation.');
         console.error('  Message:', error.message);
-        if (error.status) { console.error('  API Status:', error.status); }
-        if (error.details) { console.error('  Details:', JSON.stringify(error.details, null, 2)); }
-        process.exit(1);
+        if (error.status) {
+            console.error('  API Status:', error.status);
+        }
+        if (error.details) {
+            console.error('  Details:', JSON.stringify(error.details, null, 2));
+        }
+        if (error.stack) {
+            console.error('  Stack:', error.stack);
+        }
+        console.error('\n  Possible causes: Invalid token, network issues, or an API service problem.');
+        process.exit(1); // Exit with a non-zero code to indicate failure.
     }
 }
 
-// --- EXECUTION ---
 main().catch(console.error);

@@ -4,20 +4,10 @@
 // --- IMPORTS ---
 // We import helpers for each distinct message type we will send.
 import { MerciClient, createMediaMessage, createUserMessage } from '../lib/merci.2.11.0.mjs';
-import { token } from "../secret/token.mjs";
+import { token } from '../secret/token.mjs';
 
-// --- CONSTANTS ---
-// To process images, you MUST select a model with vision capabilities.
 const MODEL = 'openai-gpt-5-mini';
 
-// ==============================================================================
-// == PRE-REQUISITE: CREATE AN IMAGE FILE                                      ==
-// == Before running, create `image.png` or change `imagePath` below.        ==
-// ==============================================================================
-
-/**
- * This lesson demonstrates the correct way to send images to a multimodal LLM.
- */
 async function main() {
     console.log(`--- Merci SDK Tutorial: Lesson 4 - Media Messages (Model: ${MODEL}) ---`);
 
@@ -61,7 +51,8 @@ async function main() {
         process.stdout.write('\n');
         console.log('\n[INFO] Stream finished. Response fully received.');
 
-        // --- STEP 6: DISPLAY THE FINAL OUTPUT ---
+
+        // --- FINAL RESULT ---
         console.log('\n\n--- FINAL RESULT ---');
         console.log(`🖼️ Media > ${imagePath}`);
         console.log(`👤 User > ${userPrompt}`);
@@ -77,12 +68,18 @@ async function main() {
         }
         console.error('\n\n[FATAL ERROR] An error occurred during the operation.');
         console.error('  Message:', error.message);
-        if (error.status) { console.error('  API Status:', error.status); }
-        if (error.details) { console.error('  Details:', JSON.stringify(error.details, null, 2)); }
-        if (error.stack) { console.error('  Stack:', error.stack); }
-        process.exit(1);
+        if (error.status) {
+            console.error('  API Status:', error.status);
+        }
+        if (error.details) {
+            console.error('  Details:', JSON.stringify(error.details, null, 2));
+        }
+        if (error.stack) {
+            console.error('  Stack:', error.stack);
+        }
+        console.error('\n  Possible causes: Invalid token, network issues, or an API service problem.');
+        process.exit(1); // Exit with a non-zero code to indicate failure.
     }
 }
 
-// --- EXECUTION ---
 main().catch(console.error);

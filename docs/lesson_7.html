@@ -2,16 +2,14 @@
 <html class="dark" lang="en">
 <head>
     <meta charset="utf-8"/>
-    <meta content="width=device-width, initial-scale-1.0" name="viewport"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
     <title>Lesson 7: Guaranteed JSON Output - Merci SDK</title>
     <link href="https://fonts.googleapis.com" rel="preconnect"/>
     <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
     <link as="style" href="https://fonts.googleapis.com/css2?display=swap&amp;family=Inter%3Awght%40400%3B500%3B600%3B700%3B900&family=Fira+Code%3Awght%40400" onload="this.rel='stylesheet'" rel="stylesheet"/>
     <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
     <script>
-        tailwind.config = {
-            darkMode: 'class'
-        }
+        tailwind.config = { darkMode: 'class' }
     </script>
     <style type="text/tailwindcss">
         :root {
@@ -31,40 +29,16 @@
             --header-background-dark: rgba(2, 6, 23, 0.8);
         }
         html:not(.dark) {
-            --background-color: var(--background-color-light);
-            --text-primary: var(--text-primary-light);
-            --text-secondary: var(--text-secondary-light);
-            --border-color: var(--border-color-light);
-            --card-background: var(--card-background-light);
-            --header-background: var(--header-background-light);
-            --code-background: var(--code-background-light);
+            --background-color: var(--background-color-light); --text-primary: var(--text-primary-light); --text-secondary: var(--text-secondary-light); --border-color: var(--border-color-light); --card-background: var(--card-background-light); --header-background: var(--header-background-light); --code-background: var(--code-background-light);
         }
         html.dark {
-            --background-color: var(--background-color-dark);
-            --text-primary: var(--text-primary-dark);
-            --text-secondary: var(--text-secondary-dark);
-            --border-color: var(--border-color-dark);
-            --card-background: var(--card-background-dark);
-            --header-background: var(--header-background-dark);
-            --code-background: #1e293b;
+            --background-color: var(--background-color-dark); --text-primary: var(--text-primary-dark); --text-secondary: var(--text-secondary-dark); --border-color: var(--border-color-dark); --card-background: var(--card-background-dark); --header-background: var(--header-background-dark); --code-background: #1e293b;
         }
-        body {
-            font-family: "Inter", sans-serif;
-            background-color: var(--background-color);
-            color: var(--text-primary);
-        }
-        .code-block-wrapper {
-            @apply relative;
-        }
-        .code-block {
-            @apply bg-[#0D1117] text-slate-300 p-4 pt-12 rounded-md font-mono text-sm my-4 overflow-x-auto border border-slate-800;
-        }
-        .nav-link {
-            @apply text-sm font-medium text-[var(--text-secondary)] hover:text-[var(--primary-color)] transition-colors;
-        }
-        .nav-link-active {
-            @apply text-sm font-medium text-[var(--primary-color)];
-        }
+        body { font-family: "Inter", sans-serif; background-color: var(--background-color); color: var(--text-primary); }
+        .code-block-wrapper { @apply relative; }
+        .code-block { @apply bg-[#0D1117] text-slate-300 p-4 pt-12 rounded-md font-mono text-sm my-4 overflow-x-auto border border-slate-800; }
+        .nav-link { @apply text-sm font-medium text-[var(--text-secondary)] hover:text-[var(--primary-color)] transition-colors; }
+        .nav-link-active { @apply text-sm font-medium text-[var(--primary-color)]; }
         h2 { @apply text-2xl font-bold tracking-tight text-[var(--text-primary)] mt-10 mb-4; }
         code.inline { @apply font-mono text-sm bg-[var(--code-background)] font-semibold p-1 rounded-md text-sky-600 dark:text-sky-400; }
     </style>
@@ -87,11 +61,7 @@
                 <a class="nav-link" href="./contributing.html">Contributing</a>
             </nav>
             <div class="flex items-center gap-4">
-                <button id="theme-toggle" type="button" class="text-sm font-semibold rounded-md px-3 py-1.5 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-[var(--background-color)]
-                bg-slate-800 text-amber-500 hover:bg-slate-700 focus:ring-amber-500 border border-transparent
-                dark:bg-transparent dark:border-amber-500 dark:text-amber-500 dark:hover:bg-amber-500/10 dark:focus:ring-amber-500">
-                    Light Mode
-                </button>
+                <button id="theme-toggle" type="button" class="text-sm font-semibold rounded-md px-3 py-1.5 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-[var(--background-color)] bg-slate-800 text-amber-500 hover:bg-slate-700 focus:ring-amber-500 border border-transparent dark:bg-transparent dark:border-amber-500 dark:text-amber-500 dark:hover:bg-amber-500/10 dark:focus:ring-amber-500">Light Mode</button>
             </div>
         </div>
     </header>
@@ -119,8 +89,8 @@
                             <span>Copy</span>
                         </button>
                         <div class="code-block">
-<pre><code><span class="text-purple-400">import</span> { MerciClient, createUserMessage } <span class="text-purple-400">from</span> <span class="text-green-400">'./merci.2.11.0.mjs'</span>;
-<span class="text-purple-400">import</span> { token } <span class="text-purple-400">from</span> <span class="text-green-400">'./token.mjs'</span>;
+<pre><code><span class="text-purple-400">import</span> { MerciClient, createUserMessage } <span class="text-purple-400">from</span> <span class="text-green-400">'../lib/merci.2.11.0.mjs'</span>;
+<span class="text-purple-400">import</span> { token } <span class="text-purple-400">from</span> <span class="text-green-400">'../secret/token.mjs'</span>;
 
 <span class="text-purple-400">async function</span> <span class="text-yellow-300">main</span>() {
     <span class="text-purple-400">const</span> client = <span class="text-blue-400">new</span> <span class="text-yellow-300">MerciClient</span>({ token });
@@ -181,25 +151,21 @@
     </main>
     <footer class="border-t border-[var(--border-color)] bg-[var(--card-background)]">
         <div class="container mx-auto px-4 py-6 sm:px-6 lg:px-8">
-            <p class="text-center text-sm text-[var(--text-secondary)]">© 2024 Merci SDK. All rights reserved.</p>
+            <p class="text-center text-sm text-[var(--text-secondary)]">© 2025 Lukáš Michna (Mobeetle). All rights reserved.</p>
         </div>
     </footer>
 </div>
 <script>
     (function() {
-        // Theme Toggler
         const themeToggleBtn = document.getElementById('theme-toggle');
         const htmlEl = document.documentElement;
-
         const toggleTheme = () => {
             htmlEl.classList.toggle('dark');
             const isDarkMode = htmlEl.classList.contains('dark');
             themeToggleBtn.textContent = isDarkMode ? 'Light Mode' : 'Dark Mode';
         };
-
         themeToggleBtn.addEventListener('click', toggleTheme);
 
-        // Copy Code Button
         const allCopyButtons = document.querySelectorAll('.copy-code-btn');
         allCopyButtons.forEach(btn => {
             btn.addEventListener('click', (e) => {
@@ -207,15 +173,8 @@
                 const codeText = codeBlock.textContent;
                 navigator.clipboard.writeText(codeText).then(() => {
                     const originalContent = e.currentTarget.innerHTML;
-                    e.currentTarget.innerHTML = `
-                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="text-green-400" viewBox="0 0 16 16" aria-hidden="true">
-                            <path d="M13.854 3.646a.5.5 0 0 1 0 .708l-7 7a.5.5 0 0 1-.708 0l-3.5-3.5a.5.5 0 1 1 .708-.708L6.5 10.293l6.646-6.647a.5.5 0 0 1 .708 0z"/>
-                        </svg>
-                        <span class="text-green-400">Copied!</span>
-                    `;
-                    setTimeout(() => {
-                        e.currentTarget.innerHTML = originalContent;
-                    }, 2000);
+                    e.currentTarget.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="text-green-400" viewBox="0 0 16 16" aria-hidden="true"><path d="M13.854 3.646a.5.5 0 0 1 0 .708l-7 7a.5.5 0 0 1-.708 0l-3.5-3.5a.5.5 0 1 1 .708-.708L6.5 10.293l6.646-6.647a.5.5 0 0 1 .708 0z"/></svg><span class="text-green-400">Copied!</span>`;
+                    setTimeout(() => { e.currentTarget.innerHTML = originalContent; }, 2000);
                 });
             });
         });

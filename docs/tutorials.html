@@ -7,7 +7,7 @@
     <link href="https://fonts.googleapis.com" rel="preconnect"/>
     <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
     <link as="style" href="https://fonts.googleapis.com/css2?display=swap&amp;family=Inter%3Awght%40400%3B500%3B600%3B700%3B900" onload="this.rel='stylesheet'" rel="stylesheet"/>
-    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <script src="https://cdn.tailwindcss.com/"></script>
     <script>
         tailwind.config = {
             darkMode: 'class'
@@ -30,36 +30,15 @@
             --header-background-dark: rgba(2, 6, 23, 0.8);
         }
         html:not(.dark) {
-            --background-color: var(--background-color-light);
-            --text-primary: var(--text-primary-light);
-            --text-secondary: var(--text-secondary-light);
-            --border-color: var(--border-color-light);
-            --card-background: var(--card-background-light);
-            --header-background: var(--header-background-light);
+            --background-color: var(--background-color-light); --text-primary: var(--text-primary-light); --text-secondary: var(--text-secondary-light); --border-color: var(--border-color-light); --card-background: var(--card-background-light); --header-background: var(--header-background-light);
         }
         html.dark {
-            --background-color: var(--background-color-dark);
-            --text-primary: var(--text-primary-dark);
-            --text-secondary: var(--text-secondary-dark);
-            --border-color: var(--border-color-dark);
-            --card-background: var(--card-background-dark);
-            --header-background: var(--header-background-dark);
+            --background-color: var(--background-color-dark); --text-primary: var(--text-primary-dark); --text-secondary: var(--text-secondary-dark); --border-color: var(--border-color-dark); --card-background: var(--card-background-dark); --header-background: var(--header-background-dark);
         }
-        body {
-            font-family: "Inter", sans-serif;
-            background-color: var(--background-color);
-            color: var(--text-primary);
-            transition: background-color 0.3s, color 0.3s;
-        }
-        .card {
-            @apply bg-[var(--card-background)] border border-[var(--border-color)] rounded-xl shadow-sm p-6 transition-all;
-        }
-        .nav-link {
-            @apply text-sm font-medium text-[var(--text-secondary)] hover:text-[var(--primary-color)] transition-colors;
-        }
-        .nav-link-active {
-            @apply text-sm font-medium text-[var(--primary-color)];
-        }
+        body { font-family: "Inter", sans-serif; background-color: var(--background-color); color: var(--text-primary); transition: background-color 0.3s, color 0.3s; }
+        .card { @apply flex flex-col bg-[var(--card-background)] border border-[var(--border-color)] rounded-xl shadow-sm p-6 transition-all duration-300; }
+        .nav-link { @apply text-sm font-medium text-[var(--text-secondary)] hover:text-[var(--primary-color)] transition-colors; }
+        .nav-link-active { @apply text-sm font-medium text-[var(--primary-color)]; }
     </style>
 </head>
 <body>
@@ -80,92 +59,134 @@
                 <a class="nav-link" href="./contributing.html">Contributing</a>
             </nav>
             <div class="flex items-center gap-4">
-                <button id="theme-toggle" type="button" class="text-sm font-semibold rounded-md px-3 py-1.5 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-[var(--background-color)]
-                bg-slate-800 text-amber-500 hover:bg-slate-700 focus:ring-amber-500 border border-transparent
-                dark:bg-transparent dark:border-amber-500 dark:text-amber-500 dark:hover:bg-amber-500/10 dark:focus:ring-amber-500">
-                    Light Mode
-                </button>
+                <button id="theme-toggle" type="button" class="text-sm font-semibold rounded-md px-3 py-1.5 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-[var(--background-color)] bg-slate-800 text-amber-500 hover:bg-slate-700 focus:ring-amber-500 border border-transparent dark:bg-transparent dark:border-amber-500 dark:text-amber-500 dark:hover:bg-amber-500/10 dark:focus:ring-amber-500">Light Mode</button>
             </div>
         </div>
     </header>
     <main class="container mx-auto px-4 py-12 sm:px-6 lg:px-8 flex-grow">
-        <div class="max-w-4xl mx-auto">
-            <div class="text-center mb-12">
-                <h1 class="text-3xl font-bold tracking-tight text-[var(--text-primary)] mb-2">SDK Tutorials</h1>
-                <p class="text-lg text-[var(--text-secondary)] max-w-2xl mx-auto">
+        <div class="max-w-5xl mx-auto">
+            <div class="text-center mb-16">
+                <h1 class="text-4xl font-bold tracking-tight text-[var(--text-primary)] mb-2">SDK Tutorials</h1>
+                <p class="text-lg text-[var(--text-secondary)] max-w-3xl mx-auto">
                     A collection of step-by-step guides designed to take you from basic usage to advanced agentic patterns. Each lesson introduces one new concept.
                 </p>
             </div>
+
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <a class="card block hover:shadow-lg hover:border-[var(--primary-color)]/50 hover:-translate-y-1 group" href="./lesson_1.html">
-                    <div class="flex justify-between items-start">
-                        <div>
-                            <h3 class="text-lg font-semibold text-[var(--text-primary)] group-hover:text-[var(--primary-color)] transition-colors">1. Basic Usage</h3>
-                            <p class="text-[var(--text-secondary)] mt-1">Initializing the client and making a basic streaming request.</p>
-                        </div>
-                        <span class="text-xs font-mono bg-[var(--primary-color)]/10 text-[var(--primary-color)] px-2 py-1 rounded-full">Beginner</span>
+                <!-- Lesson 1 -->
+                <a class="card hover:shadow-lg hover:border-[var(--primary-color)]/50 hover:-translate-y-1 group" href="./lesson_1.html">
+                    <div class="flex-grow">
+                        <div class="rounded-lg bg-blue-500/10 p-3 w-min text-blue-500 mb-4"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polygon points="10 8 16 12 10 16 10 8"/></svg></div>
+                        <h3 class="text-lg font-semibold text-[var(--text-primary)] group-hover:text-[var(--primary-color)] transition-colors">1. Basic Usage</h3>
+                        <p class="text-[var(--text-secondary)] mt-1 text-sm">Initialize the client and make a basic streaming request.</p>
                     </div>
+                    <div class="mt-4 pt-4 border-t border-[var(--border-color)]"><span class="text-xs font-mono bg-blue-500/10 text-blue-600 dark:text-blue-400 px-2 py-1 rounded-full">Basics</span></div>
                 </a>
-                <a class="card block hover:shadow-lg hover:border-[var(--primary-color)]/50 hover:-translate-y-1 group" href="./lesson_2.html">
-                    <h3 class="text-lg font-semibold text-[var(--text-primary)] group-hover:text-[var(--primary-color)] transition-colors">2. System Messages</h3>
-                    <p class="text-[var(--text-secondary)] mt-1">Guiding the AI's personality and behavior with system prompts.</p>
-                </a>
-                <a class="card block hover:shadow-lg hover:border-[var(--primary-color)]/50 hover:-translate-y-1 group" href="./lesson_3.html">
-                    <h3 class="text-lg font-semibold text-[var(--text-primary)] group-hover:text-[var(--primary-color)] transition-colors">3. Model Selection</h3>
-                    <p class="text-[var(--text-secondary)] mt-1">How to switch between different models (Google, OpenAI, Anthropic).</p>
-                </a>
-                <a class="card block hover:shadow-lg hover:border-[var(--primary-color)]/50 hover:-translate-y-1 group" href="./lesson_4.html">
-                    <h3 class="text-lg font-semibold text-[var(--text-primary)] group-hover:text-[var(--primary-color)] transition-colors">4. Media Messages</h3>
-                    <p class="text-[var(--text-secondary)] mt-1">Sending images to multimodal (vision) models.</p>
-                </a>
-                <a class="card block hover:shadow-lg hover:border-[var(--primary-color)]/50 hover:-translate-y-1 group" href="./lesson_5.html">
-                    <h3 class="text-lg font-semibold text-[var(--text-primary)] group-hover:text-[var(--primary-color)] transition-colors">5. Multi-turn Chat</h3>
-                    <p class="text-[var(--text-secondary)] mt-1">Building an interactive chat by maintaining conversation history.</p>
-                </a>
-                <a class="card block hover:shadow-lg hover:border-[var(--primary-color)]/50 hover:-translate-y-1 group" href="./lesson_6.html">
-                    <h3 class="text-lg font-semibold text-[var(--text-primary)] group-hover:text-[var(--primary-color)] transition-colors">6. Parameter Control</h3>
-                    <p class="text-[var(--text-secondary)] mt-1">Controlling creativity and output with parameters like `temperature`.</p>
-                </a>
-                <a class="card block hover:shadow-lg hover:border-[var(--primary-color)]/50 hover:-translate-y-1 group" href="./lesson_7.html">
-                    <div class="flex justify-between items-start">
-                        <div>
-                            <h3 class="text-lg font-semibold text-[var(--text-primary)] group-hover:text-[var(--primary-color)] transition-colors">7. JSON Output</h3>
-                            <p class="text-[var(--text-secondary)] mt-1">Forcing guaranteed, parsable JSON output from the model.</p>
-                        </div>
-                        <span class="text-xs font-mono bg-green-500/10 text-green-500 px-2 py-1 rounded-full">Intermediate</span>
+                <!-- Lesson 2 -->
+                <a class="card hover:shadow-lg hover:border-[var(--primary-color)]/50 hover:-translate-y-1 group" href="./lesson_2.html">
+                    <div class="flex-grow">
+                        <div class="rounded-lg bg-blue-500/10 p-3 w-min text-blue-500 mb-4"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></div>
+                        <h3 class="text-lg font-semibold text-[var(--text-primary)] group-hover:text-[var(--primary-color)] transition-colors">2. System Messages</h3>
+                        <p class="text-[var(--text-secondary)] mt-1 text-sm">Guide the AI's personality and behavior with system prompts.</p>
                     </div>
+                    <div class="mt-4 pt-4 border-t border-[var(--border-color)]"><span class="text-xs font-mono bg-blue-500/10 text-blue-600 dark:text-blue-400 px-2 py-1 rounded-full">Basics</span></div>
                 </a>
-                <a class="card block hover:shadow-lg hover:border-[var(--primary-color)]/50 hover:-translate-y-1 group" href="./lesson_8.html">
-                    <h3 class="text-lg font-semibold text-[var(--text-primary)] group-hover:text-[var(--primary-color)] transition-colors">8. Basic Tool Usage</h3>
-                    <p class="text-[var(--text-secondary)] mt-1">Basic tool use with the high-level `.run()` agent.</p>
-                </a>
-                <a class="card block hover:shadow-lg hover:border-[var(--primary-color)]/50 hover:-translate-y-1 group" href="./lesson_9.html">
-                    <h3 class="text-lg font-semibold text-[var(--text-primary)] group-hover:text-[var(--primary-color)] transition-colors">9. Advanced Parallel Tools</h3>
-                    <p class="text-[var(--text-secondary)] mt-1">Making multiple, concurrent tool calls for complex queries.</p>
-                </a>
-                <a class="card block hover:shadow-lg hover:border-[var(--primary-color)]/50 hover:-translate-y-1 group" href="./lesson_10.html">
-                    <h3 class="text-lg font-semibold text-[var(--text-primary)] group-hover:text-[var(--primary-color)] transition-colors">10. Structured Extraction</h3>
-                    <p class="text-[var(--text-secondary)] mt-1">Using a tool's schema to extract structured data from text.</p>
-                </a>
-                <a class="card block hover:shadow-lg hover:border-[var(--primary-color)]/50 hover:-translate-y-1 group" href="./lesson_11.html">
-                    <div class="flex justify-between items-start">
-                        <div>
-                            <h3 class="text-lg font-semibold text-[var(--text-primary)] group-hover:text-[var(--primary-color)] transition-colors">11. Multi-Turn Clarification</h3>
-                            <p class="text-[var(--text-secondary)] mt-1">Building an agent that can ask clarifying questions before using a tool.</p>
-                        </div>
-                        <span class="text-xs font-mono bg-orange-500/10 text-orange-500 px-2 py-1 rounded-full">Advanced</span>
+                <!-- Lesson 3 -->
+                <a class="card hover:shadow-lg hover:border-[var(--primary-color)]/50 hover:-translate-y-1 group" href="./lesson_3.html">
+                    <div class="flex-grow">
+                        <div class="rounded-lg bg-blue-500/10 p-3 w-min text-blue-500 mb-4"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22a10 10 0 1 1 0-20 10 10 0 0 1 0 20z"/><path d="M12 12 8 8"/><path d="m12 12 4 4"/><path d="m12 12 4-4"/><path d="m12 12-4 4"/></svg></div>
+                        <h3 class="text-lg font-semibold text-[var(--text-primary)] group-hover:text-[var(--primary-color)] transition-colors">3. Model Selection</h3>
+                        <p class="text-[var(--text-secondary)] mt-1 text-sm">Switch between different models (Google, OpenAI, etc.).</p>
                     </div>
+                    <div class="mt-4 pt-4 border-t border-[var(--border-color)]"><span class="text-xs font-mono bg-blue-500/10 text-blue-600 dark:text-blue-400 px-2 py-1 rounded-full">Basics</span></div>
                 </a>
-                <a class="card block hover:shadow-lg hover:border-[var(--primary-color)]/50 hover:-translate-y-1 group" href="./lesson_12.html">
-                    <h3 class="text-lg font-semibold text-[var(--text-primary)] group-hover:text-[var(--primary-color)] transition-colors">12. Parallel Extraction</h3>
-                    <p class="text-[var(--text-secondary)] mt-1">A powerful pattern for extracting multiple items in a single pass.</p>
+                <!-- Lesson 4 -->
+                <a class="card hover:shadow-lg hover:border-[var(--primary-color)]/50 hover:-translate-y-1 group" href="./lesson_4.html">
+                    <div class="flex-grow">
+                        <div class="rounded-lg bg-blue-500/10 p-3 w-min text-blue-500 mb-4"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="3" rx="2" ry="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"/></svg></div>
+                        <h3 class="text-lg font-semibold text-[var(--text-primary)] group-hover:text-[var(--primary-color)] transition-colors">4. Media Messages</h3>
+                        <p class="text-[var(--text-secondary)] mt-1 text-sm">Send images to multimodal (vision) models.</p>
+                    </div>
+                    <div class="mt-4 pt-4 border-t border-[var(--border-color)]"><span class="text-xs font-mono bg-blue-500/10 text-blue-600 dark:text-blue-400 px-2 py-1 rounded-full">Basics</span></div>
+                </a>
+                <!-- Lesson 5 -->
+                <a class="card hover:shadow-lg hover:border-[var(--primary-color)]/50 hover:-translate-y-1 group" href="./lesson_5.html">
+                    <div class="flex-grow">
+                        <div class="rounded-lg bg-blue-500/10 p-3 w-min text-blue-500 mb-4"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></div>
+                        <h3 class="text-lg font-semibold text-[var(--text-primary)] group-hover:text-[var(--primary-color)] transition-colors">5. Multi-turn Chat</h3>
+                        <p class="text-[var(--text-secondary)] mt-1 text-sm">Build an interactive chat by maintaining conversation history.</p>
+                    </div>
+                    <div class="mt-4 pt-4 border-t border-[var(--border-color)]"><span class="text-xs font-mono bg-blue-500/10 text-blue-600 dark:text-blue-400 px-2 py-1 rounded-full">Basics</span></div>
+                </a>
+                <!-- Lesson 6 -->
+                <a class="card hover:shadow-lg hover:border-[var(--primary-color)]/50 hover:-translate-y-1 group" href="./lesson_6.html">
+                    <div class="flex-grow">
+                        <div class="rounded-lg bg-blue-500/10 p-3 w-min text-blue-500 mb-4"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" x2="4" y1="21" y2="14"/><line x1="4" x2="4" y1="10" y2="3"/><line x1="12" x2="12" y1="21" y2="12"/><line x1="12" x2="12" y1="8" y2="3"/><line x1="20" x2="20" y1="21" y2="16"/><line x1="20" x2="20" y1="12" y2="3"/><line x1="2" x2="6" y1="14" y2="14"/><line x1="10" x2="14" y1="8" y2="8"/><line x1="18" x2="22" y1="16" y2="16"/></svg></div>
+                        <h3 class="text-lg font-semibold text-[var(--text-primary)] group-hover:text-[var(--primary-color)] transition-colors">6. Parameter Control</h3>
+                        <p class="text-[var(--text-secondary)] mt-1 text-sm">Control creativity and output with parameters like `temperature`.</p>
+                    </div>
+                    <div class="mt-4 pt-4 border-t border-[var(--border-color)]"><span class="text-xs font-mono bg-blue-500/10 text-blue-600 dark:text-blue-400 px-2 py-1 rounded-full">Basics</span></div>
+                </a>
+                <!-- Lesson 7 -->
+                <a class="card hover:shadow-lg hover:border-[var(--primary-color)]/50 hover:-translate-y-1 group" href="./lesson_7.html">
+                    <div class="flex-grow">
+                        <div class="rounded-lg bg-orange-500/10 p-3 w-min text-orange-500 mb-4"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg></div>
+                        <h3 class="text-lg font-semibold text-[var(--text-primary)] group-hover:text-[var(--primary-color)] transition-colors">7. Guaranteed JSON Output</h3>
+                        <p class="text-[var(--text-secondary)] mt-1 text-sm">Force guaranteed, parsable JSON output from the model.</p>
+                    </div>
+                    <div class="mt-4 pt-4 border-t border-[var(--border-color)]"><span class="text-xs font-mono bg-orange-500/10 text-orange-600 dark:text-orange-400 px-2 py-1 rounded-full">Advanced Pattern</span></div>
+                </a>
+                <!-- Lesson 8 -->
+                <a class="card hover:shadow-lg hover:border-[var(--primary-color)]/50 hover:-translate-y-1 group" href="./lesson_8.html">
+                    <div class="flex-grow">
+                        <div class="rounded-lg bg-green-500/10 p-3 w-min text-green-500 mb-4"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg></div>
+                        <h3 class="text-lg font-semibold text-[var(--text-primary)] group-hover:text-[var(--primary-color)] transition-colors">8. Basic Tool Usage</h3>
+                        <p class="text-[var(--text-secondary)] mt-1 text-sm">Enable models to use tools with the high-level `.run()` agent.</p>
+                    </div>
+                    <div class="mt-4 pt-4 border-t border-[var(--border-color)]"><span class="text-xs font-mono bg-green-500/10 text-green-600 dark:text-green-400 px-2 py-1 rounded-full">Agentic Flow</span></div>
+                </a>
+                <!-- Lesson 9 -->
+                <a class="card hover:shadow-lg hover:border-[var(--primary-color)]/50 hover:-translate-y-1 group" href="./lesson_9.html">
+                    <div class="flex-grow">
+                        <div class="rounded-lg bg-green-500/10 p-3 w-min text-green-500 mb-4"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v6"/><path d="M12 16v6"/><path d="M12 12h6"/><path d="M12 12H6"/><path d="m17 7 3-3"/><path d="m4 20 3-3"/><path d="m7 7-3-3"/><path d="m20 20-3-3"/></svg></div>
+                        <h3 class="text-lg font-semibold text-[var(--text-primary)] group-hover:text-[var(--primary-color)] transition-colors">9. Advanced Parallel Tools</h3>
+                        <p class="text-[var(--text-secondary)] mt-1 text-sm">Make multiple, concurrent tool calls for complex queries.</p>
+                    </div>
+                    <div class="mt-4 pt-4 border-t border-[var(--border-color)]"><span class="text-xs font-mono bg-green-500/10 text-green-600 dark:text-green-400 px-2 py-1 rounded-full">Agentic Flow</span></div>
+                </a>
+                <!-- Lesson 10 -->
+                <a class="card hover:shadow-lg hover:border-[var(--primary-color)]/50 hover:-translate-y-1 group" href="./lesson_10.html">
+                    <div class="flex-grow">
+                        <div class="rounded-lg bg-orange-500/10 p-3 w-min text-orange-500 mb-4"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/><polyline points="14 2 14 8 20 8"/><path d="M12 18h-1a2 2 0 1 1 0-4h1v4z"/><path d="M12 12h1a2 2 0 1 0 0-4h-1v4z"/></svg></div>
+                        <h3 class="text-lg font-semibold text-[var(--text-primary)] group-hover:text-[var(--primary-color)] transition-colors">10. Structured Extraction</h3>
+                        <p class="text-[var(--text-secondary)] mt-1 text-sm">Use a tool's schema to extract structured data from text.</p>
+                    </div>
+                    <div class="mt-4 pt-4 border-t border-[var(--border-color)]"><span class="text-xs font-mono bg-orange-500/10 text-orange-600 dark:text-orange-400 px-2 py-1 rounded-full">Advanced Pattern</span></div>
+                </a>
+                <!-- Lesson 11 -->
+                <a class="card hover:shadow-lg hover:border-[var(--primary-color)]/50 hover:-translate-y-1 group" href="./lesson_11.html">
+                    <div class="flex-grow">
+                        <div class="rounded-lg bg-green-500/10 p-3 w-min text-green-500 mb-4"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg></div>
+                        <h3 class="text-lg font-semibold text-[var(--text-primary)] group-hover:text-[var(--primary-color)] transition-colors">11. Multi-Turn Clarification</h3>
+                        <p class="text-[var(--text-secondary)] mt-1 text-sm">Build an agent that asks clarifying questions before using a tool.</p>
+                    </div>
+                    <div class="mt-4 pt-4 border-t border-[var(--border-color)]"><span class="text-xs font-mono bg-green-500/10 text-green-600 dark:text-green-400 px-2 py-1 rounded-full">Agentic Flow</span></div>
+                </a>
+                <!-- Lesson 12 -->
+                <a class="card hover:shadow-lg hover:border-[var(--primary-color)]/50 hover:-translate-y-1 group" href="./lesson_12.html">
+                    <div class="flex-grow">
+                        <div class="rounded-lg bg-orange-500/10 p-3 w-min text-orange-500 mb-4"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12h2"/><path d="M20 12h2"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="M6.34 17.66 4.93 19.07"/><path d="M19.07 4.93 17.66 6.34"/><path d="M17.66 17.66 19.07 19.07"/><path d="m4.93 4.93 1.41 1.41"/><path d="M12 4.5a7.5 7.5 0 0 0-7.5 7.5h15a7.5 7.5 0 0 0-7.5-7.5z"/></svg></div>
+                        <h3 class="text-lg font-semibold text-[var(--text-primary)] group-hover:text-[var(--primary-color)] transition-colors">12. Parallel Extraction</h3>
+                        <p class="text-[var(--text-secondary)] mt-1 text-sm">A powerful pattern for extracting multiple items in a single pass.</p>
+                    </div>
+                    <div class="mt-4 pt-4 border-t border-[var(--border-color)]"><span class="text-xs font-mono bg-orange-500/10 text-orange-600 dark:text-orange-400 px-2 py-1 rounded-full">Advanced Pattern</span></div>
                 </a>
             </div>
         </div>
     </main>
     <footer class="border-t border-[var(--border-color)] bg-[var(--card-background)]">
         <div class="container mx-auto px-4 py-6 sm:px-6 lg:px-8">
-            <p class="text-center text-sm text-[var(--text-secondary)]">© 2024 Merci SDK. All rights reserved.</p>
+            <p class="text-center text-sm text-[var(--text-secondary)]">© 2025 Lukáš Michna (Mobeetle). All rights reserved.</p>
         </div>
     </footer>
 </div>
