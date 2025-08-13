@@ -105,7 +105,7 @@ Topics include:
 
 This section provides a high-level overview of the Merci SDK's classes, methods, and types.
 
-**[View the Full API Reference Here]((https://mobeetle.github.io/merci-sdk/api_reference.html))**
+**[View the Full API Reference Here](https://mobeetle.github.io/merci-sdk/api_reference.html)**
 
 ### `MerciClient`
 
