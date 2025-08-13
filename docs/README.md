@@ -93,7 +93,8 @@ You should see output like this:
 
 A collection of step-by-step guides is available to take you from basic usage to advanced agentic patterns. Each lesson introduces one new concept.
 
-**[View the Full Tutorials Here on GitHub](../examples/)[or Here on the website](https://mobeetle.github.io/merci-sdk/tutorials.html)**
+**[View the Full Tutorials Here on GitHub](../examples/)  
+[or Here on the website](https://mobeetle.github.io/merci-sdk/tutorials.html)**
 
 Topics include:
 
