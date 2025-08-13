@@ -173,10 +173,23 @@ export declare class MerciClient extends EventEmitter {
      */
     chat(profile: string): ChatSession;
 
-    // Typed Event Emitter methods for better developer experience
+    // --- Typed Event Emitter Methods ---
+
     on(event: 'api_request', listener: (payload: { url: string; method?: string; body?: string }) => void): this;
     on(event: 'api_response', listener: (payload: { url: string; status: number; ok: boolean }) => void): this;
-    on(event: 'token_refresh_start' | 'token_refresh_success', listener: () => void): this;
+
+    /**
+     * Listens for the start of a token refresh attempt, triggered by a 401 API response.
+     */
+    on(event: 'token_refresh_start', listener: () => void): this;
+
+    /**
+     * Listens for the successful completion of a token refresh.
+     * @param event
+     * @param listener A callback function that receives the new token string.
+     */
+    on(event: 'token_refresh_success', listener: (newToken: string) => void): this;
+
     on(event: 'error', listener: (error: APIError) => void): this;
     on(event: 'tool_start', listener: (payload: { calls: ToolCall[] }) => void): this;
     on(event: 'tool_finish', listener: (payload: { results: ToolExecutionResult[] }) => void): this;
