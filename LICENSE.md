@@ -16,7 +16,8 @@ The license granted is determined by your Annual Turnover:
 
 *   **Annual Turnover of $5 Million USD or less:** You are granted a perpetual, worldwide, non-exclusive, no-charge, royalty-free, irrevocable license to use, reproduce, prepare derivative works of, publicly display, publicly perform, sublicense, and distribute the Software and such derivative works for any purpose.
 
-*   **Annual Turnover greater than $5 Million USD:** You are granted a license to use the Software for internal testing and evaluation purposes only. Any other use, including but not limited to production, commercial, or external use, is strictly prohibited. To inquire about a commercial license for other uses, please contact us.
+*   **Annual Turnover greater than $5 Million USD:** You are granted a license to use the Software for internal testing and evaluation purposes only. Any other use, including but not limited to production, commercial, or external use, is strictly prohibited.
+*To inquire about a commercial license for other uses, please contact us.*
 
 These conditions apply to any modified or derivative versions of the Software.
 
