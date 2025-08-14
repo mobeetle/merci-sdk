@@ -1,4 +1,3 @@
-
 **Software License Terms**
 
 By using the software ("Software"), you agree to be bound by these terms.
@@ -7,7 +6,7 @@ By using the software ("Software"), you agree to be bound by these terms.
 
 "**Licensee**" means you, the individual or entity using the Software.
 
-"**Licensee Group**" means the Licensee and any entity that directly or indirectly controls, is controlled by, or is under common control with the Licensee. For the purposes of this definition, "control" means direct or indirect ownership of more than 50% of the voting interests of an entity.
+"**Licensee Group**" means the Licensee and any entity that directly or indirectly controls, is controlled by, or is under common control with the Licensee. For the purposes of this definition, "control" means direct or indirect ownership of more than 40% of the voting interests of an entity, or the power to direct or cause the direction of its management and policies, whether through the ownership of voting securities, by contract, or otherwise.
 
 "**Annual Turnover**" means the total annual revenue of the Licensee Group. If the Software is distributed or resold, the Annual Turnover of all entities in the distribution, reseller, and end-user chain will be aggregated.
 
