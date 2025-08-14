@@ -165,7 +165,7 @@ If you'd like to contribute code, please follow these steps:
 
 ## 📜 License
 
-This project is licensed under the Apache 2.0 License. See the [LICENSE](https://github.com/mobeetle/merci-sdk/blob/main/LICENSE) file for more information. By contributing to this project, you agree that your contributions will be licensed under its Apache 2.0 License.
+See the [LICENSE](https://github.com/mobeetle/merci-sdk/blob/main/LICENSE.md) file for more information. By contributing to this project, you agree that your contributions will be licensed under the MIT license terms.
 
 ---
 *© 2025 Lukáš Michna (Mobeetle). All rights reserved.*
