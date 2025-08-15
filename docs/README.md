@@ -1,7 +1,6 @@
 # Merci SDK: A Modern SDK for the JetBrains AI Platform
 
 [![View on GitHub](https://img.shields.io/badge/View%20on-GitHub-blue?logo=github)](https://github.com/mobeetle/merci-sdk/)
-[![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://github.com/mobeetle/merci-sdk/blob/main/LICENSE)
 
 **Fluent, robust, and designed for modern JavaScript. Zero dependencies, first-class support for streaming, tool use, and advanced model control.**
 
