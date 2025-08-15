@@ -19,7 +19,7 @@ Merci SDK is a lightweight, dependency-free library for interacting with the Jet
 
 ### Prerequisites
 
-*   **Node.js**: v18.x or newer recommended.
+*   **Node.js**: v22.x or newer recommended.
 *   **JetBrains AI Platform Account**: An active account and a JSON Web Token (JWT) are required.
 
 ### Installation
