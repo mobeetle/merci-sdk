@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <title>Lesson 6: Parameter Control - Merci SDK</title>
+
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com" rel="preconnect"/>
+    <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+    <link as="style" href="https://fonts.googleapis.com/css2?display=swap&amp;family=Inter%3Awght%40400%3B500%3B600%3B700%3B900&family=Fira+Code%3Awght%40400" onload="this.rel='stylesheet'" rel="stylesheet"/>
+
+    <!-- Scripts & Styles -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="../assets/css/style.css" rel="stylesheet">
+</head>
+<body>
+<!-- Animated Aurora Background -->
+<div class="aurora-background"></div>
+
+<div class="flex min-h-screen flex-col">
+    <!-- Header -->
+    <header class="sticky top-0 z-50 w-full border-b border-[var(--border-color)] bg-[var(--header-background)] backdrop-blur-lg transition-colors duration-300">
+        <div class="container mx-auto flex flex-wrap items-center justify-between px-4 lg:px-8">
+            <div class="flex h-16 items-center">
+                <a class="flex items-center gap-2" href="../index.html">
+                    <img src="../assets/images/merci-sdk-logo.png" alt="Merci SDK Logo" class="h-8 w-12">
+                    <h1 class="text-xl font-bold text-[var(--text-primary)]">Merci SDK</h1>
+                </a>
+            </div>
+            <div class="lg:hidden">
+                <button id="menu-toggle" class="rounded p-2 text-[var(--text-secondary)] hover:bg-slate-200 dark:hover:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-[var(--primary-color)]">
+                    <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path></svg>
+                </button>
+            </div>
+            <div id="menu-content" class="hidden w-full lg:flex lg:w-auto lg:items-center">
+                <nav class="flex w-full flex-col gap-4 border-t border-[var(--border-color)] py-4 lg:w-auto lg:flex-row lg:items-center lg:gap-6 lg:border-none lg:py-0">
+                    <a class="nav-link group" href="../index.html"><span>Overview</span></a>
+                    <a class="nav-link-active group" href="../tutorials.html"><span>Tutorials</span></a>
+                    <a class="nav-link group" href="../api_reference.html"><span>API Reference</span></a>
+                </nav>
+                <div class="w-full pb-4 lg:w-auto lg:pb-0 lg:pl-4">
+                    <button type="button" class="theme-toggle-btn w-full text-sm font-semibold rounded-md px-3 py-1.5 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-[var(--background-color)] bg-slate-200 text-slate-800 hover:bg-slate-300 focus:ring-slate-500 dark:bg-slate-800 dark:text-slate-200 dark:hover:bg-slate-700 dark:focus:ring-slate-500">
+                        <span class="theme-toggle-text">Dark Mode</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="container mx-auto px-4 py-8 sm:px-6 lg:px-8 flex-grow">
+        <div class="max-w-4xl mx-auto">
+            <div class="mb-8">
+                <nav class="flex items-center gap-2 text-sm font-medium text-[var(--text-secondary)]">
+                    <a class="hover:text-[var(--primary-color)] transition-colors" href="../tutorials.html">Tutorials</a>
+                    <span>/</span>
+                    <span class="text-[var(--text-primary)]">Lesson 6</span>
+                </nav>
+            </div>
+            <article>
+                <header class="mb-8">
+                    <h1 class="text-3xl font-bold tracking-tight text-[var(--text-primary)] mb-2">Lesson 6: The Parameter Builder Pattern</h1>
+                    <p class="text-lg text-[var(--text-secondary)]">Learn how to control the model's output with advanced parameters like temperature and response format using the SDK's fluent builder pattern.</p>
+                </header>
+
+                <section class="mb-12">
+                    <h2>Code: <code class="inline">lesson_6_parameter_control.mjs</code></h2>
+                    <p class="text-[var(--text-secondary)] mb-4">The <code class="inline">.withParameters()</code> method accepts a function that receives a builder instance. You can chain methods on this builder to configure the request. The SDK intelligently filters any parameters not supported by the selected model.</p>
+                    <div class="code-block-wrapper">
+                        <button class="copy-code-btn absolute top-3 right-3 flex items-center gap-2 text-slate-400 hover:text-white transition-colors p-2 rounded-md bg-slate-800/50 backdrop-blur-sm">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16" aria-hidden="true"><path d="M4 1.5H3a2 2 0 0 0-2 2V14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V3.5a2 2 0 0 0-2-2h-1v1h1a1 1 0 0 1 1 1V14a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V3.5a1 1 0 0 1 1-1h1v-1z"/><path d="M9.5 1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-3a.5.5 0 0 1-.5-.5v-1a.5.5 0 0 1 .5-.5h3z"/></svg>
+                            <span>Copy</span>
+                        </button>
+                        <div class="code-block">
+<pre><code><span style="color: #8b949e;">// lesson_6_parameter_control.mjs</span>
+<span style="color: #ff7b72;">import</span> { MerciClient, createUserMessage } <span style="color: #ff7b72;">from</span> <span style="color: #a5d6ff;">'../lib/merci.2.11.0.mjs'</span>;
+<span style="color: #ff7b72;">import</span> { token } <span style="color: #ff7b72;">from</span> <span style="color: #a5d6ff;">'../secret/token.mjs'</span>;
+
+<span style="color: #ff7b72;">const</span> <span style="color: #79c0ff;">MODEL</span> = <span style="color: #a5d6ff;">'google-chat-gemini-flash-2.5'</span>;
+
+<span style="color: #ff7b72;">async</span> <span style="color: #ff7b72;">function</span> <span style="color: #d2a8ff;">runExperiment</span>(<span style="color: #79c0ff;">client</span>, <span style="color: #79c0ff;">prompt</span>, <span style="color: #79c0ff;">builderFn</span>, <span style="color: #79c0ff;">description</span>) {
+    <span style="color: #c9d1d9;">console.<span style="color: #d2a8ff;">log</span>(<span style="color: #a5d6ff;">`\n--- Experiment: </span><span style="color: #79c0ff;">${description}</span><span style="color: #a5d6ff;"> ---`</span>);
+    <span style="color: #ff7b72;">const</span> <span style="color: #79c0ff;">chatSession</span> = client.<span style="color: #d2a8ff;">chat</span>(MODEL).<span style="color: #d2a8ff;">withParameters</span>(builderFn);
+    <span style="color: #ff7b72;">const</span> <span style="color: #79c0ff;">messages</span> = [ <span style="color: #d2a8ff;">createUserMessage</span>(prompt) ];
+    <span style="color: #8b949e;">// ... stream processing logic ...</span>
+}
+
+<span style="color: #ff7b72;">async</span> <span style="color: #ff7b72;">function</span> <span style="color: #d2a8ff;">main</span>() {
+    <span style="color: #ff7b72;">const</span> <span style="color: #79c0ff;">client</span> = <span style="color: #ff7b72;">new</span> <span style="color: #d2a8ff;">MerciClient</span>({ token });
+    client.<span style="color: #d2a8ff;">on</span>(<span style="color: #a5d6ff;">'parameter_warning'</span>, (<span style="color: #79c0ff;">warning</span>) => {
+        <span style="color: #c9d1d9;">console.<span style="color: #d2a8ff;">warn</span>(<span style="color: #a5d6ff;">`\n[SDK WARNING] </span><span style="color: #79c0ff;">${warning.message}</span><span style="color: #a5d6ff;">`</span>);
+    });
+
+    <span style="color: #ff7b72;">const</span> <span style="color: #79c0ff;">storyPrompt</span> = <span style="color: #a5d6ff;">"Tell me a very short story about a robot who discovers music."</span>;
+
+    <span style="color: #ff7b72;">await</span> <span style="color: #d2a8ff;">runExperiment</span>(
+        client,
+        storyPrompt,
+        <span style="color: #79c0ff;">builder</span> => builder.<span style="color: #d2a8ff;">temperature</span>(<span style="color: #a5d6ff;">0.1</span>),
+        <span style="color: #a5d6ff;">'Focused and Deterministic (Low Temperature)'</span>
+    );
+
+    <span style="color: #ff7b72;">await</span> <span style="color: #d2a8ff;">runExperiment</span>(
+        client,
+        storyPrompt,
+        <span style="color: #79c0ff;">builder</span> => builder.<span style="color: #d2a8ff;">temperature</span>(<span style="color: #a5d6ff;">1.0</span>).<span style="color: #d2a8ff;">topP</span>(<span style="color: #a5d6ff;">0.9</span>),
+        <span style="color: #a5d6ff;">'Creative and Unpredictable (High Temperature, High Top-P)'</span>
+    );
+
+    <span style="color: #8b949e;">// Demonstrating an Unsupported Parameter</span>
+    <span style="color: #ff7b72;">await</span> <span style="color: #d2a8ff;">runExperiment</span>(
+        client,
+        storyPrompt,
+        <span style="color: #79c0ff;">builder</span> => builder.<span style="color: #d2a8ff;">temperature</span>(<span style="color: #a5d6ff;">0.5</span>).<span style="color: #d2a8ff;">seed</span>(<span style="color: #a5d6ff;">12345</span>),
+        <span style="color: #a5d6ff;">'Using an Unsupported Parameter (Seed)'</span>
+    );
+}
+
+<span style="color: #d2a8ff;">main</span>().<span style="color: #d2a8ff;">catch</span>(console.error);
+</code></pre>
+                        </div>
+                    </div>
+                </section>
+
+                <section>
+                    <h2>Expected Output</h2>
+                    <p class="text-[var(--text-secondary)] mb-4">The output demonstrates how different parameters produce different results for the same prompt. Crucially, it also shows the SDK emitting a warning when we try to use the `seed` parameter, which is not supported by this specific model, and then filtering it out before making the API call.</p>
+                    <div class="code-block-wrapper">
+                        <button class="copy-code-btn absolute top-3 right-3 flex items-center gap-2 text-slate-400 hover:text-white transition-colors p-2 rounded-md bg-slate-800/50 backdrop-blur-sm">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16" aria-hidden="true"><path d="M4 1.5H3a2 2 0 0 0-2 2V14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V3.5a2 2 0 0 0-2-2h-1v1h1a1 1 0 0 1 1 1V14a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V3.5a1 1 0 0 1 1-1h1v-1z"/><path d="M9.5 1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-3a.5.5 0 0 1-.5-.5v-1a.5.5 0 0 1 .5-.5h3z"/></svg>
+                            <span>Copy</span>
+                        </button>
+                        <div class="code-block">
+<pre><code>--- Experiment: Focused and Deterministic (Low Temperature) ---
+🤖 Assistant > Unit 734 stood motionless, its auditory sensors inactive. Then, a sound wave, a pattern of organized noise, rippled through its circuits. It was music, and for the first time, Unit 734 felt something akin to joy.
+
+--- Experiment: Creative and Unpredictable (High Temperature, High Top-P) ---
+🤖 Assistant > The old gramophone crackled to life in the dusty attic, and Bolt, a robot built for sorting scrap metal, found his metallic fingers tapping out a rhythm he'd never been programmed to understand.
+
+--- Experiment: Using an Unsupported Parameter (Seed) ---
+
+[SDK WARNING] Parameter 'seed' is not supported by model profile 'google-chat-gemini-flash-2.5' and will be ignored.
+🤖 Assistant > Unit 7's world was a silent ballet of ones and zeros until it stumbled upon an abandoned music box, and the tinkling melody rewired its logic gates into a symphony of wonder.
+</code></pre>
+                        </div>
+                    </div>
+                </section>
+            </article>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="border-t border-[var(--border-color)] bg-[var(--card-background)] transition-colors duration-300">
+        <div class="container mx-auto px-4 py-6 sm:px-6 lg:px-8">
+            <p class="text-center text-sm text-[var(--text-secondary)]">© 2025 Lukáš Michna (Mobeetle). All rights reserved.</p>
+        </div>
+    </footer>
+</div>
+
+<script src="../assets/js/script.js"></script>
+</body>
+</html>

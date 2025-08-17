@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <title>API Reference - Merci SDK</title>
+
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com" rel="preconnect"/>
+    <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+    <link as="style" href="https://fonts.googleapis.com/css2?display=swap&amp;family=Inter%3Awght%40400%3B500%3B600%3B700%3B900&family=Fira+Code%3Awght%40400" onload="this.rel='stylesheet'" rel="stylesheet"/>
+
+    <!-- Scripts & Styles -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="assets/css/style.css" rel="stylesheet">
+
+    <!-- Extra styles for this page -->
+    <style>
+        body { scroll-behavior: smooth; }
+        .card {
+            background-color: var(--card-background);
+            border: 1px solid var(--border-color);
+            border-radius: 0.75rem;
+            box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+            padding: 1.5rem;
+            transition: all 0.3s;
+        }
+        .aside-link {
+            display: block;
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+            padding-top: 0.25rem;
+            padding-bottom: 0.25rem;
+            transition: color 0.2s;
+        }
+        .aside-link:hover {
+            color: var(--primary-color);
+        }
+        .aside-link-active {
+            display: block;
+            font-size: 0.875rem;
+            color: var(--primary-color);
+            font-weight: 600;
+            padding-top: 0.25rem;
+            padding-bottom: 0.25rem;
+        }
+        h3 {
+            font-size: 1.25rem;
+            font-weight: 600;
+            letter-spacing: -0.025em;
+            color: var(--text-primary);
+            margin-top: 2.5rem;
+            margin-bottom: 1rem;
+        }
+        h4 {
+            font-size: 1.125rem;
+            font-weight: 600;
+            letter-spacing: -0.025em;
+            color: var(--text-primary);
+            margin-top: 2rem;
+            margin-bottom: 0.75rem;
+        }
+        .param-name {
+            font-family: "Fira Code", monospace;
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: var(--inline-code-text);
+        }
+        .param-type {
+            font-family: "Fira Code", monospace;
+            font-size: 0.875rem;
+            color: #d97706; /* Amber 600 */
+        }
+        html.dark .param-type {
+            color: #f59e0b; /* Amber 400 */
+        }
+        .lesson-link {
+            margin-top: 1rem;
+            margin-bottom: 2.5rem; /* SPACING FIX: Added bottom margin */
+            padding: 1rem;
+            background-color: rgba(59, 130, 246, 0.05);
+            border: 1px solid rgba(59, 130, 246, 0.1);
+            border-radius: 0.5rem;
+            color: #1e40af; /* Blue 800 */
+            font-size: 0.875rem;
+        }
+        html.dark .lesson-link {
+            color: #93c5fd; /* Blue 300 */
+        }
+        /* SPACING FIX: Ensure headings after code blocks also have space */
+        .code-block {
+            margin-bottom: 2.5rem;
+        }
+    </style>
+</head>
+<body>
+<!-- Animated Aurora Background -->
+<div class="aurora-background"></div>
+
+<div class="flex min-h-screen flex-col">
+    <!-- Header -->
+    <header class="sticky top-0 z-50 w-full border-b border-[var(--border-color)] bg-[var(--header-background)] backdrop-blur-lg transition-colors duration-300">
+        <div class="container mx-auto flex flex-wrap items-center justify-between px-4 lg:px-8">
+            <div class="flex h-16 items-center">
+                <a class="flex items-center gap-2" href="index.html">
+                    <img src="assets/images/merci-sdk-logo.png" alt="Merci SDK Logo" class="h-8 w-12">
+                    <h1 class="text-xl font-bold text-[var(--text-primary)]">Merci SDK</h1>
+                </a>
+            </div>
+            <div class="lg:hidden">
+                <button id="menu-toggle" class="rounded p-2 text-[var(--text-secondary)] hover:bg-slate-200 dark:hover:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-[var(--primary-color)]">
+                    <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path></svg>
+                </button>
+            </div>
+            <div id="menu-content" class="hidden w-full lg:flex lg:w-auto lg:items-center">
+                <nav class="flex w-full flex-col gap-4 border-t border-[var(--border-color)] py-4 lg:w-auto lg:flex-row lg:items-center lg:gap-6 lg:border-none lg:py-0">
+                    <a class="nav-link group" href="index.html"><span>Overview</span></a>
+                    <a class="nav-link group" href="getting_started.html"><span>Getting Started</span></a>
+                    <a class="nav-link group" href="tutorials.html"><span>Tutorials</span></a>
+                    <a class="nav-link-active group" href="api_reference.html"><span>API Reference</span></a>
+                </nav>
+                <div class="w-full pb-4 lg:w-auto lg:pb-0 lg:pl-4">
+                    <button type="button" class="theme-toggle-btn w-full text-sm font-semibold rounded-md px-3 py-1.5 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-[var(--background-color)] bg-slate-200 text-slate-800 hover:bg-slate-300 focus:ring-slate-500 dark:bg-slate-800 dark:text-slate-200 dark:hover:bg-slate-700 dark:focus:ring-slate-500">
+                        <span class="theme-toggle-text">Dark Mode</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="container mx-auto px-4 py-8 sm:px-6 lg:px-8 flex-grow">
+        <div class="flex flex-col lg:flex-row gap-12">
+            <div class="lg:w-3/4">
+                <div class="mb-12">
+                    <h1 class="text-4xl font-bold tracking-tight text-[var(--text-primary)] mb-2">API Reference</h1>
+                    <p class="text-lg text-[var(--text-secondary)]">This document provides a detailed reference for the Merci SDK's classes, methods, and types.</p>
+                </div>
+
+                <section id="merci-client">
+                    <h2>MerciClient</h2>
+                    <p class="text-[var(--text-secondary)]">The main entry point for the SDK. It handles authentication, token refreshing, and serves as the factory for creating <code class="inline">ChatSession</code> instances.</p>
+
+                    <h3 id="merci-client-constructor">Constructor</h3>
+                    <p class="text-[var(--text-secondary)] mb-4">Initializes a new client instance.</p>
+                    <div class="code-block"><pre><code><span style="color: #ff7b72;">new</span> <span style="color: #d2a8ff;">MerciClient</span>(<span style="color: #79c0ff;">options</span>: { <span style="color: #c9d1d9;">token:</span> <span style="color: #a5d6ff;">string</span> })</code></pre></div>
+                    <h4 class="!mt-4">Parameters</h4>
+                    <ul class="list-disc list-inside text-[var(--text-secondary)] space-y-2">
+                        <li><span class="param-name">options.token</span> <span class="param-type">{string}</span> - <span class="font-semibold text-[var(--text-primary)]">Required.</span> Your JSON Web Token (JWT) for the JetBrains AI Platform.</li>
+                    </ul>
+                    <div class="lesson-link">📚 See <a href="getting_started.html" class="font-semibold hover:underline">Getting Started</a> for setup instructions.</div>
+
+                    <h3 id="merci-client-methods">Methods</h3>
+                    <h4>.chat(profile)</h4>
+                    <p class="text-[var(--text-secondary)] mb-4">Creates a new, configurable chat session for a specific model.</p>
+                    <div class="code-block"><pre><code>.<span style="color: #d2a8ff;">chat</span>(<span style="color: #79c0ff;">profile</span>: <span style="color: #a5d6ff;">string</span>): <span style="color: #d2a8ff;">ChatSession</span></code></pre></div>
+                    <h4 class="!mt-4">Parameters</h4>
+                    <ul class="list-disc list-inside text-[var(--text-secondary)] space-y-2">
+                        <li><span class="param-name">profile</span> <span class="param-type">{string}</span> - The identifier for the model to use (e.g., <code class="inline">'google-chat-gemini-flash-2.5'</code>).</li>
+                    </ul>
+                    <div class="lesson-link">📚 See <a href="lessons/lesson_1.html" class="font-semibold hover:underline">Lesson 1 (Basic Usage)</a> and <a href="lessons/lesson_3.html" class="font-semibold hover:underline">Lesson 3 (Model Selection)</a>.</div>
+
+                    <h3 id="merci-client-events">Events</h3>
+                    <p class="text-[var(--text-secondary)] mb-4">The client is an <code class="inline">EventEmitter</code> that provides hooks for observability. Use <code class="inline">client.on('eventName', callback)</code> to listen.</p>
+                    <ul class="list-disc list-inside text-[var(--text-secondary)] space-y-3">
+                        <li><span class="param-name">api_request</span> / <span class="param-name">api_response</span> - Monitor network activity.</li>
+                        <li><span class="param-name">token_refresh_start</span> / <span class="param-name">token_refresh_success</span> - Track automatic token refreshing.</li>
+                        <li><span class="param-name">error</span> - Catch SDK-internal errors.</li>
+                        <li><span class="param-name">tool_start</span> / <span class="param-name">tool_finish</span> - Observe the lifecycle of agentic tool calls.</li>
+                        <li><span class="param-name">parameter_warning</span> - Get notified when a parameter is ignored for a specific model.</li>
+                    </ul>
+                    <div class="lesson-link">📚 See <a href="lessons/lesson_13.html" class="font-semibold hover:underline">Lesson 13 (Token Management)</a> and <a href="lessons/lesson_14.html" class="font-semibold hover:underline">Lesson 14 (Observability)</a>.</div>
+                </section>
+
+                <section id="chat-session">
+                    <h2>ChatSession</h2>
+                    <p class="text-[var(--text-secondary)]">Represents a configured chat session. This class uses a fluent, chainable interface for configuration before execution.</p>
+
+                    <h3 id="chat-session-config">Configuration Methods</h3>
+                    <h4>.withTools(tools)</h4>
+                    <p class="text-[var(--text-secondary)] mb-4">Equips the session with a set of tools the model can use. This is the foundation for building agents.</p>
+                    <div class="code-block"><pre><code>.<span style="color: #d2a8ff;">withTools</span>(<span style="color: #79c0ff;">tools</span>: <span style="color: #d2a8ff;">ToolDefinition</span>[]): <span style="color: #ff7b72;">this</span></code></pre></div>
+                    <div class="lesson-link">📚 See <a href="lessons/lesson_8.html" class="font-semibold hover:underline">Lesson 8 (Basic)</a>, <a href="lessons/lesson_9.html" class="font-semibold hover:underline">Lesson 9 (Parallel)</a>, <a href="lessons/lesson_10.html" class="font-semibold hover:underline">Lesson 10 (Extraction)</a>, <a href="lessons/lesson_17.html" class="font-semibold hover:underline">Lesson 17 (Multimodal)</a>, and <a href="lessons/lesson_18.html" class="font-semibold hover:underline">Lesson 18 (Dynamic)</a>.</div>
+
+                    <h4>.withSystemMessage(content)</h4>
+                    <p class="text-[var(--text-secondary)] mb-4">Configures a system message to guide the AI's behavior, setting its persona, rules, or context for the entire conversation.</p>
+                    <div class="code-block"><pre><code>.<span style="color: #d2a8ff;">withSystemMessage</span>(<span style="color: #79c0ff;">content</span>: <span style="color: #a5d6ff;">string</span>): <span style="color: #ff7b72;">this</span></code></pre></div>
+                    <div class="lesson-link">📚 See <a href="lessons/lesson_2.html" class="font-semibold hover:underline">Lesson 2: System Messages</a> for a practical example.</div>
+
+                    <h4>.withParameters(builderFn)</h4>
+                    <p class="text-[var(--text-secondary)] mb-4">Configures advanced model parameters for the request using a fluent builder. This allows for fine-grained control over the model's output.</p>
+                    <div class="code-block"><pre><code>.<span style="color: #d2a8ff;">withParameters</span>(<span style="color: #79c0ff;">builderFn</span>: (<span style="color: #79c0ff;">builder</span>: <span style="color: #d2a8ff;">ParameterBuilder</span>) => <span style="color: #d2a8ff;">ParameterBuilder</span>): <span style="color: #ff7b72;">this</span></code></pre></div>
+                    <div class="lesson-link">📚 See <a href="lessons/lesson_6.html" class="font-semibold hover:underline">Lesson 6 (Parameter Control)</a>, <a href="lessons/lesson_7.html" class="font-semibold hover:underline">Lesson 7 (JSON Output)</a>, and <a href="lessons/lesson_16.html" class="font-semibold hover:underline">Lesson 16 (Forcing Tool Usage)</a>.</div>
+
+                    <h3 id="chat-session-execution">Execution Methods</h3>
+                    <h4>.stream(input)</h4>
+                    <p class="text-[var(--text-secondary)] mb-4">The primary, low-level method for executing a request. It returns an async iterator that yields events in real-time. This is ideal for UIs that display a typing effect or for complex agentic loops that need to inspect the model's output piece by piece.</p>
+                    <div class="code-block"><pre><code>.<span style="color: #d2a8ff;">stream</span>(<span style="color: #79c0ff;">input</span>: <span style="color: #a5d6ff;">string</span> | <span style="color: #d2a8ff;">ChatMessage</span>[]): <span style="color: #d2a8ff;">AsyncIterable</span>&lt;<span style="color: #d2a8ff;">StreamEvent</span>&gt;</code></pre></div>
+                    <div class="lesson-link">📚 See <a href="lessons/lesson_11.html" class="font-semibold hover:underline">Lesson 11 (Clarification)</a>, <a href="lessons/lesson_12.html" class="font-semibold hover:underline">Lesson 12 (Parallel Extraction)</a>, and <a href="lessons/lesson_15.html" class="font-semibold hover:underline">Lesson 15 (Manual Loop)</a>.</div>
+
+                    <h4>.run(input)</h4>
+                    <p class="text-[var(--text-secondary)] mb-4">A high-level "agent" method that automates the entire multi-step tool-use process. Use this for simplicity when you want a final text answer based on tool execution.</p>
+                    <div class="code-block"><pre><code>.<span style="color: #d2a8ff;">run</span>(<span style="color: #79c0ff;">input</span>: <span style="color: #a5d6ff;">string</span> | <span style="color: #d2a8ff;">ChatMessage</span>[]): <span style="color: #d2a8ff;">Promise</span>&lt;<span style="color: #a5d6ff;">string</span>&gt;</code></pre></div>
+                    <div class="lesson-link">📚 See <a href="lessons/lesson_8.html" class="font-semibold hover:underline">Lesson 8: Basic Tool Usage</a> for a clear example.</div>
+                </section>
+
+                <section id="parameter-builder">
+                    <h2>ParameterBuilder</h2>
+                    <p class="text-[var(--text-secondary)]">A fluent class for setting advanced model parameters. An instance of this class is passed to the <code class="inline">.withParameters()</code> method.</p>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-4 text-[var(--text-secondary)] mt-6">
+                        <div><code class="inline">.temperature(value: number)</code></div>
+                        <div><code class="inline">.topP(value: number)</code></div>
+                        <div><code class="inline">.topK(value: number)</code></div>
+                        <div><code class="inline">.length(value: number)</code></div>
+                        <div><code class="inline">.stopToken(value: string)</code></div>
+                        <div><code class="inline">.seed(value: number)</code></div>
+                        <div><code class="inline">.asJson()</code></div>
+                        <div><code class="inline">.parallelToolCalls(isEnabled: boolean)</code></div>
+                        <div><code class="inline">.toolChoiceAuto()</code></div>
+                        <div><code class="inline">.toolChoiceRequired()</code></div>
+                        <div><code class="inline">.toolChoiceNone()</code></div>
+                        <div><code class="inline">.toolChoiceNamed(name: string)</code></div>
+                    </div>
+                </section>
+
+                <section id="helpers">
+                    <h2>Helpers</h2>
+                    <p class="text-[var(--text-secondary)]">Exported functions to simplify common tasks like creating message objects and executing tools.</p>
+                    <h3 id="message-helpers">Message Helpers</h3>
+                    <p class="text-[var(--text-secondary)] mb-4">Use these functions to construct a valid chat history array.</p>
+                    <div class="code-block"><pre><code><span style="color: #d2a8ff;">createUserMessage</span>(<span style="color: #79c0ff;">content</span>: <span style="color: #a5d6ff;">string</span>): <span style="color: #d2a8ff;">UserMessage</span>
+<span style="color: #d2a8ff;">createSystemMessage</span>(<span style="color: #79c0ff;">content</span>: <span style="color: #a5d6ff;">string</span>): <span style="color: #d2a8ff;">SystemMessage</span>
+<span style="color: #d2a8ff;">createAssistantTextMessage</span>(<span style="color: #79c0ff;">content</span>: <span style="color: #a5d6ff;">string</span>): <span style="color: #d2a8ff;">AssistantTextMessage</span>
+<span style="color: #d2a8ff;">createAssistantToolCallMessage</span>(...): <span style="color: #d2a8ff;">AssistantToolCallMessage</span>
+<span style="color: #d2a8ff;">createToolResultMessage</span>(...): <span style="color: #d2a8ff;">ToolResultMessage</span>
+<span style="color: #d2a8ff;">createMediaMessage</span>(...): <span style="color: #d2a8ff;">Promise</span>&lt;<span style="color: #d2a8ff;">MediaMessage</span>&gt;</code></pre></div>
+                    <div class="lesson-link">📚 See <a href="lessons/lesson_4.html" class="font-semibold hover:underline">Lesson 4 (Media Messages)</a> and <a href="lessons/lesson_5.html" class="font-semibold hover:underline">Lesson 5 (Multi-Turn Chat)</a>.</div>
+
+                    <h3 id="tool-helpers">Tool Helpers</h3>
+                    <h4>executeTools(toolCalls, toolLibrary)</h4>
+                    <p class="text-[var(--text-secondary)] mb-4">A utility to execute a batch of tool calls requested by the model, often used in manual streaming loops.</p>
+                    <div class="code-block"><pre><code><span style="color: #d2a8ff;">executeTools</span>(<span style="color: #79c0ff;">toolCalls</span>: <span style="color: #d2a8ff;">ToolCall</span>[], <span style="color: #79c0ff;">toolLibrary</span>: <span style="color: #d2a8ff;">ToolDefinition</span>[]): <span style="color: #d2a8ff;">Promise</span>&lt;<span style="color: #d2a8ff;">ToolExecutionResult</span>[]&gt;</code></pre></div>
+                    <div class="lesson-link">📚 See <a href="lessons/lesson_15.html" class="font-semibold hover:underline">Lesson 15: The Manual Tool-Use Loop</a> for a practical implementation.</div>
+                </section>
+
+                <section id="type-definitions">
+                    <h2>Type Definitions</h2>
+                    <p class="text-[var(--text-secondary)]">Key TypeScript interfaces that define the shape of data used throughout the SDK.</p>
+                    <h3 id="tool-definition">ToolDefinition</h3>
+                    <p class="text-[var(--text-secondary)] mb-4">The structure for defining a tool the model can use.</p>
+                    <div class="code-block"><pre><code><span style="color: #ff7b72;">export</span> <span style="color: #ff7b72;">interface</span> <span style="color: #d2a8ff;">ToolDefinition</span> {
+  <span style="color: #c9d1d9;">name:</span> <span style="color: #a5d6ff;">string</span>;
+  <span style="color: #c9d1d9;">description:</span> <span style="color: #a5d6ff;">string</span>;
+  <span style="color: #c9d1d9;">parameters:</span> <span style="color: #d2a8ff;">object</span>; <span style="color: #8b949e;">// JSON Schema object</span>
+  <span style="color: #d2a8ff;">execute</span>: (<span style="color: #79c0ff;">args</span>: <span style="color: #d2a8ff;">any</span>) => <span style="color: #d2a8ff;">any</span> | <span style="color: #d2a8ff;">Promise</span>&lt;<span style="color: #d2a8ff;">any</span>&gt;;
+}</code></pre></div>
+
+                    <h3 id="stream-event">StreamEvent</h3>
+                    <p class="text-[var(--text-secondary)] mb-4">A union of all possible event types yielded by the <code class="inline">.stream()</code> method.</p>
+                    <div class="code-block"><pre><code><span style="color: #ff7b72;">export</span> <span style="color: #ff7b72;">type</span> <span style="color: #d2a8ff;">StreamEvent</span> =
+  | { <span style="color: #c9d1d9;">type:</span> <span style="color: #a5d6ff;">'text'</span>; <span style="color: #c9d1d9;">content:</span> <span style="color: #a5d6ff;">string</span> }
+  | { <span style="color: #c9d1d9;">type:</span> <span style="color: #a5d6ff;">'tool_calls'</span>; <span style="color: #c9d1d9;">calls:</span> <span style="color: #d2a8ff;">ToolCall</span>[] }
+  | { <span style="color: #c9d1d9;">type:</span> <span style="color: #a5d6ff;">'quota'</span>; <span style="color: #c9d1d9;">data:</span> <span style="color: #d2a8ff;">object</span> };</code></pre></div>
+                </section>
+            </div>
+            <aside class="lg:w-1/4 sticky top-24 self-start hidden lg:block">
+                <div class="card p-4">
+                    <h3 class="font-semibold text-lg mb-4 text-[var(--text-primary)] !mt-0">On this page</h3>
+                    <ul class="space-y-2 border-l-2 border-[var(--border-color)] pl-4">
+                        <li><a class="aside-link-active" href="#merci-client">MerciClient</a></li>
+                        <li><a class="aside-link" href="#chat-session">ChatSession</a></li>
+                        <li><a class="aside-link" href="#parameter-builder">ParameterBuilder</a></li>
+                        <li><a class="aside-link" href="#helpers">Helpers</a></li>
+                        <li><a class="aside-link" href="#type-definitions">Type Definitions</a></li>
+                    </ul>
+                </div>
+            </aside>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="border-t border-[var(--border-color)] bg-[var(--card-background)] transition-colors duration-300">
+        <div class="container mx-auto px-4 py-6 sm:px-6 lg:px-8">
+            <p class="text-center text-sm text-[var(--text-secondary)]">© 2025 Lukáš Michna (Mobeetle). All rights reserved.</p>
+        </div>
+    </footer>
+</div>
+
+<script src="assets/js/script.js"></script>
+<script src="assets/js/scrollspy.js"></script>
+</body>
+</html>

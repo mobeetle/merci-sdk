@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <title>Getting Started - Merci SDK</title>
+
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com" rel="preconnect"/>
+    <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+    <link as="style" href="https://fonts.googleapis.com/css2?display=swap&amp;family=Inter%3Awght%40400%3B500%3B600%3B700%3B900&family=Fira+Code%3Awght%40400" onload="this.rel='stylesheet'" rel="stylesheet"/>
+
+    <!-- Scripts & Styles -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="assets/css/style.css" rel="stylesheet">
+</head>
+<body>
+<!-- Animated Aurora Background -->
+<div class="aurora-background"></div>
+
+<div class="flex min-h-screen flex-col">
+    <!-- Header -->
+    <header class="sticky top-0 z-50 w-full border-b border-[var(--border-color)] bg-[var(--header-background)] backdrop-blur-lg transition-colors duration-300">
+        <div class="container mx-auto flex flex-wrap items-center justify-between px-4 lg:px-8">
+            <div class="flex h-16 items-center">
+                <a class="flex items-center gap-2" href="index.html">
+                    <img src="assets/images/merci-sdk-logo.png" alt="Merci SDK Logo" class="h-8 w-12">
+                    <h1 class="text-xl font-bold text-[var(--text-primary)]">Merci SDK</h1>
+                </a>
+            </div>
+            <div class="lg:hidden">
+                <button id="menu-toggle" class="rounded p-2 text-[var(--text-secondary)] hover:bg-slate-200 dark:hover:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-[var(--primary-color)]">
+                    <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path></svg>
+                </button>
+            </div>
+            <div id="menu-content" class="hidden w-full lg:flex lg:w-auto lg:items-center">
+                <nav class="flex w-full flex-col gap-4 border-t border-[var(--border-color)] py-4 lg:w-auto lg:flex-row lg:items-center lg:gap-6 lg:border-none lg:py-0">
+                    <a class="nav-link group" href="index.html"><span>Overview</span></a>
+                    <a class="nav-link-active group" href="getting_started.html"><span>Getting Started</span></a>
+                    <a class="nav-link group" href="tutorials.html"><span>Tutorials</span></a>
+                    <a class="nav-link group" href="api_reference.html"><span>API Reference</span></a>
+                </nav>
+                <div class="w-full pb-4 lg:w-auto lg:pb-0 lg:pl-4">
+                    <button type="button" class="theme-toggle-btn w-full text-sm font-semibold rounded-md px-3 py-1.5 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-[var(--background-color)] bg-slate-200 text-slate-800 hover:bg-slate-300 focus:ring-slate-500 dark:bg-slate-800 dark:text-slate-200 dark:hover:bg-slate-700 dark:focus:ring-slate-500">
+                        <span class="theme-toggle-text">Dark Mode</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="container mx-auto px-4 py-8 sm:px-6 lg:px-8 flex-grow">
+        <div class="mx-auto max-w-4xl">
+            <header class="mb-12">
+                <h1 class="text-4xl font-bold tracking-tight text-[var(--text-primary)] mb-2">Getting Started</h1>
+                <p class="text-lg text-[var(--text-secondary)]">Follow these steps to set up the project and run your first example.</p>
+            </header>
+
+            <section id="prerequisites" class="mb-12">
+                <h2 class="!mt-0">Prerequisites</h2>
+                <ul class="space-y-4 text-[var(--text-secondary)]">
+                    <li class="flex items-start gap-3">
+                        <div class="mt-1 flex h-5 w-5 flex-shrink-0 items-center justify-center rounded-full bg-blue-500"><svg class="h-3 w-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M5 13l4 4L19 7" stroke-linecap="round" stroke-linejoin="round" stroke-width="3"></path></svg></div>
+                        <p class="text-base text-[var(--text-primary)]">Node.js (v18.x or newer recommended)</p>
+                    </li>
+                    <li class="flex items-start gap-3">
+                        <div class="mt-1 flex h-5 w-5 flex-shrink-0 items-center justify-center rounded-full bg-blue-500"><svg class="h-3 w-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M5 13l4 4L19 7" stroke-linecap="round" stroke-linejoin="round" stroke-width="3"></path></svg></div>
+                        <p class="text-base text-[var(--text-primary)]">An active JetBrains AI Platform account and a JSON Web Token (JWT)</p>
+                    </li>
+                </ul>
+            </section>
+
+            <section id="installation" class="space-y-8 mb-12">
+                <h2>Installation</h2>
+                <div class="space-y-6">
+                    <div class="border border-[var(--border-color)] rounded-xl p-6 bg-[var(--card-background)] shadow-sm">
+                        <h3 class="text-lg font-semibold text-[var(--text-primary)] mb-2">For Your Own Project (Recommended)</h3>
+                        <p class="text-[var(--text-secondary)] mb-4">Merci SDK is a zero-dependency library. To use it in your own project, simply download the desired file from the <a href="https://github.com/mobeetle/merci-sdk/tree/main/lib" target="_blank" rel="noopener noreferrer" class="text-[var(--primary-color)] hover:underline font-semibold">/lib</a> directory on GitHub and import it.</p>
+                        <ul class="list-disc list-inside text-[var(--text-secondary)] space-y-2">
+                            <li><code class="inline">merci.2.11.0.mjs</code>: The full library file, great for development.</li>
+                            <li><code class="inline">merci.2.11.0-min.mjs</code>: Minified version for production.</li>
+                            <li><code class="inline">merci.2.11.0.d.ts</code>: TypeScript definitions for autocompletion.</li>
+                        </ul>
+                    </div>
+                    <div class="border border-[var(--border-color)] rounded-xl p-6 bg-[var(--card-background)] shadow-sm">
+                        <h3 class="text-lg font-semibold text-[var(--text-primary)] mb-2">To Run the Examples</h3>
+                        <p class="text-[var(--text-secondary)] mb-4">If you want to run the tutorial lessons locally, clone the entire repository.</p>
+                        <div class="code-block-wrapper">
+                            <button class="copy-code-btn absolute top-3 right-3 flex items-center gap-2 text-slate-400 hover:text-white transition-colors p-2 rounded-md bg-slate-800/50 backdrop-blur-sm"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16" aria-hidden="true"><path d="M4 1.5H3a2 2 0 0 0-2 2V14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V3.5a2 2 0 0 0-2-2h-1v1h1a1 1 0 0 1 1 1V14a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V3.5a1 1 0 0 1 1-1h1v-1z"/><path d="M9.5 1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-3a.5.5 0 0 1-.5-.5v-1a.5.5 0 0 1 .5-.5h3z"/></svg><span>Copy</span></button>
+                            <div class="code-block"><pre><code>git clone https://github.com/mobeetle/merci-sdk.git
+cd merci-sdk</code></pre></div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section id="setup" class="space-y-8 mb-12">
+                <h2>Setup</h2>
+                <div class="space-y-6">
+                    <div class="border border-[var(--border-color)] rounded-xl p-6 bg-[var(--card-background)] shadow-sm">
+                        <h3 class="text-lg font-semibold text-[var(--text-primary)] mb-2">1. Configure Your Authentication Token</h3>
+                        <p class="text-[var(--text-secondary)] mb-4">Create a new folder named <code class="inline">secret</code>, and inside it, a new file named <code class="inline">token.mjs</code>. Add the following content, replacing `"YOUR_JWT_HERE"` with your actual token.</p>
+                        <div class="code-block-wrapper">
+                            <button class="copy-code-btn absolute top-3 right-3 flex items-center gap-2 text-slate-400 hover:text-white transition-colors p-2 rounded-md bg-slate-800/50 backdrop-blur-sm"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16" aria-hidden="true"><path d="M4 1.5H3a2 2 0 0 0-2 2V14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V3.5a2 2 0 0 0-2-2h-1v1h1a1 1 0 0 1 1 1V14a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V3.5a1 1 0 0 1 1-1h1v-1z"/><path d="M9.5 1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-3a.5.5 0 0 1-.5-.5v-1a.5.5 0 0 1 .5-.5h3z"/></svg><span>Copy</span></button>
+                            <div class="code-block"><pre><code><span style="color: #8b949e;">// File: secret/token.mjs</span>
+<span style="color: #8b949e;">// This file securely exports your authentication token.</span>
+
+<span style="color: #ff7b72;">export</span> <span style="color: #ff7b72;">const</span> <span style="color: #79c0ff;">token</span> = <span style="color: #a5d6ff;">"YOUR_JWT_HERE"</span>;
+</code></pre></div>
+                        </div>
+                        <div class="callout-warning">
+                            <span class="font-bold">⚠️ Security Warning:</span> The `secret` directory is already included in the project's `.gitignore` file to prevent you from accidentally committing your token. Never share this file or commit it to a public repository.
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section id="quick-start">
+                <h2>⚡ Quick Start: Your First API Call</h2>
+                <p class="text-[var(--text-secondary)] mb-6">The <code class="inline">lessons/lesson_1.html</code> tutorial is the best place to start. It demonstrates the simplest possible interaction: sending a prompt to the model and streaming the response.</p>
+                <div class="border border-[var(--border-color)] rounded-xl p-6 bg-[var(--card-background)] shadow-sm">
+                    <h3 class="text-lg font-semibold text-[var(--text-primary)] mb-2">Run the example from your terminal:</h3>
+                    <div class="code-block-wrapper">
+                        <button class="copy-code-btn absolute top-3 right-3 flex items-center gap-2 text-slate-400 hover:text-white transition-colors p-2 rounded-md bg-slate-800/50 backdrop-blur-sm"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16" aria-hidden="true"><path d="M4 1.5H3a2 2 0 0 0-2 2V14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V3.5a2 2 0 0 0-2-2h-1v1h1a1 1 0 0 1 1 1V14a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V3.5a1 1 0 0 1 1-1h1v-1z"/><path d="M9.5 1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-3a.5.5 0 0 1-.5-.5v-1a.5.5 0 0 1 .5-.5h3z"/></svg><span>Copy</span></button>
+                        <div class="code-block"><pre><code>node examples/lesson_1_basic_usage.mjs</code></pre></div>
+                    </div>
+                    <h3 class="text-lg font-semibold text-[var(--text-primary)] mt-6 mb-2">You should see output like this:</h3>
+                    <div class="code-block-wrapper">
+                        <button class="copy-code-btn absolute top-3 right-3 flex items-center gap-2 text-slate-400 hover:text-white transition-colors p-2 rounded-md bg-slate-800/50 backdrop-blur-sm"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16" aria-hidden="true"><path d="M4 1.5H3a2 2 0 0 0-2 2V14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V3.5a2 2 0 0 0-2-2h-1v1h1a1 1 0 0 1 1 1V14a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V3.5a1 1 0 0 1 1-1h1v-1z"/><path d="M9.5 1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-3a.5.5 0 0 1-.5-.5v-1a.5.5 0 0 1 .5-.5h3z"/></svg><span>Copy</span></button>
+                        <div class="code-block"><pre><code>--- Merci SDK Tutorial: Lesson 1 - Basic Usage (Model: google-chat-gemini-flash-2.5) ---
+[STEP 1] Initializing MerciClient...
+[STEP 2] Preparing prompt and input data...
+[STEP 3] Configuring the chat session...
+[STEP 4] Creating the message payload...
+[STEP 5] Sending request and processing stream...
+🤖 Assistant > Stardust Brew: Your cosmic cup of inspiration.
+
+[INFO] Stream finished. Response fully received.
+</code></pre></div>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="border-t border-[var(--border-color)] bg-[var(--card-background)] transition-colors duration-300">
+        <div class="container mx-auto px-4 py-6 sm:px-6 lg:px-8">
+            <p class="text-center text-sm text-[var(--text-secondary)]">© 2025 Lukáš Michna (Mobeetle). All rights reserved.</p>
+        </div>
+    </footer>
+</div>
+
+<script src="assets/js/script.js"></script>
+</body>
+</html>

@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <title>Merci SDK - A Modern SDK for the JetBrains AI Platform</title>
+
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com" rel="preconnect"/>
+    <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+    <link as="style" href="https://fonts.googleapis.com/css2?display=swap&amp;family=Inter%3Awght%40400%3B500%3B600%3B700%3B900&family=Fira+Code%3Awght%40400" onload="this.rel='stylesheet'" rel="stylesheet"/>
+
+    <!-- Scripts & Styles -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="assets/css/style.css" rel="stylesheet">
+
+    <!-- Extra styles for this page -->
+    <style>
+        .button_primary {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            background-color: var(--primary-color);
+            color: white;
+            border-radius: 0.375rem;
+            padding: 0.75rem 1.5rem;
+            font-size: 1rem;
+            line-height: 1.5rem;
+            font-weight: 600;
+            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+            transition: background-color 0.2s;
+        }
+        .button_primary:hover {
+            background-color: #2563eb; /* A slightly darker blue */
+        }
+
+        .button_secondary {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            border-radius: 0.375rem;
+            padding: 0.75rem 1.5rem;
+            font-size: 1rem;
+            line-height: 1.5rem;
+            font-weight: 600;
+            transition: background-color 0.2s, border-color 0.2s;
+        }
+
+        html:not(.dark) .button_secondary {
+            background-color: #f1f5f9; /* slate-100 */
+            color: #334155; /* slate-700 */
+            border: 1px solid #e2e8f0; /* slate-200 */
+        }
+        html:not(.dark) .button_secondary:hover {
+            background-color: #e2e8f0; /* slate-200 */
+        }
+
+        html.dark .button_secondary {
+            background-color: rgba(51, 65, 85, 0.5); /* slate-700/50 */
+            color: #e2e8f0; /* slate-200 */
+            border: 1px solid rgba(71, 85, 105, 0.8); /* slate-600/80 */
+        }
+        html.dark .button_secondary:hover {
+            background-color: #334155; /* slate-700 */
+        }
+    </style>
+</head>
+<body class="overflow-x-hidden">
+<!-- Animated Aurora Background -->
+<div class="aurora-background"></div>
+
+<div class="flex min-h-screen flex-col">
+    <!-- Header -->
+    <header class="sticky top-0 z-50 w-full border-b border-[var(--border-color)] bg-[var(--header-background)] backdrop-blur-lg transition-colors duration-300">
+        <div class="container mx-auto flex flex-wrap items-center justify-between px-4 lg:px-8">
+            <div class="flex h-16 items-center">
+                <a class="flex items-center gap-2" href="index.html">
+                    <img src="assets/images/merci-sdk-logo.png" alt="Merci SDK Logo" class="h-8 w-12">
+                    <h1 class="text-xl font-bold text-[var(--text-primary)]">Merci SDK</h1>
+                </a>
+            </div>
+            <div class="lg:hidden">
+                <button id="menu-toggle" class="rounded p-2 text-[var(--text-secondary)] hover:bg-slate-200 dark:hover:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-[var(--primary-color)]">
+                    <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path></svg>
+                </button>
+            </div>
+            <div id="menu-content" class="hidden w-full lg:flex lg:w-auto lg:items-center">
+                <nav class="flex w-full flex-col gap-4 border-t border-[var(--border-color)] py-4 lg:w-auto lg:flex-row lg:items-center lg:gap-6 lg:border-none lg:py-0">
+                    <a class="nav-link-active group" href="index.html"><span>Overview</span></a>
+                    <a class="nav-link group" href="getting_started.html"><span>Getting Started</span></a>
+                    <a class="nav-link group" href="tutorials.html"><span>Tutorials</span></a>
+                    <a class="nav-link group" href="api_reference.html"><span>API Reference</span></a>
+                </nav>
+                <div class="w-full pb-4 lg:w-auto lg:pb-0 lg:pl-4">
+                    <button type="button" class="theme-toggle-btn w-full text-sm font-semibold rounded-md px-3 py-1.5 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-[var(--background-color)] bg-slate-200 text-slate-800 hover:bg-slate-300 focus:ring-slate-500 dark:bg-slate-800 dark:text-slate-200 dark:hover:bg-slate-700 dark:focus:ring-slate-500">
+                        <span class="theme-toggle-text">Dark Mode</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main class="flex-grow">
+        <!-- Hero Section -->
+        <section class="relative py-24 sm:py-32 lg:py-40">
+            <div class="relative z-10 container mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="max-w-3xl">
+                    <h1 class="text-4xl font-extrabold tracking-tight sm:text-5xl md:text-6xl text-[var(--text-primary)]">
+                        A Modern SDK for the JetBrains AI Platform
+                    </h1>
+                    <p class="mt-6 max-w-2xl text-lg text-[var(--text-secondary)]">
+                        Fluent, robust, and designed for modern JavaScript. Zero dependencies, first-class support for streaming, tool use, and advanced model control.
+                    </p>
+                    <div class="mt-10 flex items-center gap-4">
+                        <a href="https://github.com/mobeetle/merci-sdk/" target="_blank" rel="noopener noreferrer" class="button_primary">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 16 16"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.012 8.012 0 0 0 16 8c0-4.42-3.58-8-8-8z"/></svg>
+                            View on GitHub
+                        </a>
+                        <a href="tutorials.html" class="button_secondary">View Tutorials</a>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Features Section -->
+        <section class="py-24 sm:py-32">
+            <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="text-center">
+                    <h2 class="text-3xl font-bold tracking-tight text-[var(--text-primary)] !border-none !pb-0">Everything You Need for Modern AI Development</h2>
+                    <p class="mt-3 max-w-2xl mx-auto text-lg text-[var(--text-secondary)]">Discover the powerful features that make the Merci SDK the best choice for your projects.</p>
+                </div>
+                <div class="mt-16 grid gap-8 md:grid-cols-2 lg:grid-cols-3">
+                    <div class="border border-[var(--border-color)] rounded-xl p-6 bg-[var(--card-background)] shadow-sm">
+                        <div class="rounded-lg bg-blue-500/10 p-3 w-min text-blue-500"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z"/><path d="M5 3v4"/><path d="M19 17v4"/><path d="M3 5h4"/><path d="M17 19h4"/></svg></div>
+                        <h3 class="mt-4 text-lg font-semibold text-[var(--text-primary)]">Fluent & Intuitive API</h3>
+                        <p class="mt-1 text-[var(--text-secondary)]">Chainable methods like `client.chat().withTools()` make building requests simple and readable.</p>
+                    </div>
+                    <div class="border border-[var(--border-color)] rounded-xl p-6 bg-[var(--card-background)] shadow-sm">
+                        <div class="rounded-lg bg-blue-500/10 p-3 w-min text-blue-500"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.72"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.72-1.72"/></svg></div>
+                        <h3 class="mt-4 text-lg font-semibold text-[var(--text-primary)]">Zero Dependencies</h3>
+                        <p class="mt-1 text-[var(--text-secondary)]">Lightweight and self-contained. No `node_modules`, no package manager required. Just pure JavaScript.</p>
+                    </div>
+                    <div class="border border-[var(--border-color)] rounded-xl p-6 bg-[var(--card-background)] shadow-sm">
+                        <div class="rounded-lg bg-blue-500/10 p-3 w-min text-blue-500"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10z"/><path d="M16 12l-4-4-4 4"/><path d="M12 16V8"/></svg></div>
+                        <h3 class="mt-4 text-lg font-semibold text-[var(--text-primary)]">Powerful Tool Use</h3>
+                        <p class="mt-1 text-[var(--text-secondary)]">High-level agent (`.run()`) and low-level manual controls for simple or complex agentic behavior.</p>
+                    </div>
+                    <div class="border border-[var(--border-color)] rounded-xl p-6 bg-[var(--card-background)] shadow-sm">
+                        <div class="rounded-lg bg-blue-500/10 p-3 w-min text-blue-500"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><path d="m3.27 6.96 8.73 5.05 8.73-5.05"/><path d="M12 22.08V12"/></svg></div>
+                        <h3 class="mt-4 text-lg font-semibold text-[var(--text-primary)]">Intelligent Parameter Handling</h3>
+                        <p class="mt-1 text-[var(--text-secondary)]">Automatically filters unsupported parameters per model, preventing API errors and providing helpful warnings.</p>
+                    </div>
+                    <div class="border border-[var(--border-color)] rounded-xl p-6 bg-[var(--card-background)] shadow-sm">
+                        <div class="rounded-lg bg-blue-500/10 p-3 w-min text-blue-500"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 6v12a3 3 0 1 0 3-3H6a3 3 0 1 0 3 3V6a3 3 0 1 0-3 3h12a3 3 0 1 0-3-3"/></svg></div>
+                        <h3 class="mt-4 text-lg font-semibold text-[var(--text-primary)]">Automatic Authentication</h3>
+                        <p class="mt-1 text-[var(--text-secondary)]">Seamlessly handles JWT refreshing in the background, so you don't have to worry about expired tokens.</p>
+                    </div>
+                    <div class="border border-[var(--border-color)] rounded-xl p-6 bg-[var(--card-background)] shadow-sm">
+                        <div class="rounded-lg bg-blue-500/10 p-3 w-min text-blue-500"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><line x1="10" y1="9" x2="8" y2="9"/></svg></div>
+                        <h3 class="mt-4 text-lg font-semibold text-[var(--text-primary)]">Modern & Typed</h3>
+                        <p class="mt-1 text-[var(--text-secondary)]">Written in modern ES Modules and includes a full TypeScript declaration file for an excellent developer experience.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Call to Action Section -->
+        <section class="py-24 sm:py-32">
+            <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="max-w-3xl mx-auto text-center">
+                    <h2 class="text-3xl font-bold tracking-tight text-[var(--text-primary)] !border-none !pb-0">Ready to Dive In?</h2>
+                    <p class="mt-4 text-lg text-[var(--text-secondary)]">
+                        Explore the step-by-step tutorials to see the SDK in action. Go from a simple "Hello, World" to building complex, multi-tool agents in minutes.
+                    </p>
+                    <div class="mt-10">
+                        <a href="lessons/lesson_1.html" class="button_primary">
+                            Start with Lesson 1
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="border-t border-[var(--border-color)] bg-[var(--card-background)] transition-colors duration-300">
+        <div class="container mx-auto px-4 py-6 sm:px-6 lg:px-8">
+            <p class="text-center text-sm text-[var(--text-secondary)]">© 2025 Lukáš Michna (Mobeetle). All rights reserved.</p>
+        </div>
+    </footer>
+</div>
+
+<script src="assets/js/script.js"></script>
+</body>
+</html>

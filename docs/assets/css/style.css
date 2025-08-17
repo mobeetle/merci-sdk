@@ -1,0 +1,213 @@
+/*
+ * Tailwind CSS v3.4.1 | MIT License | https://tailwindcss.com
+ * This file is pre-compiled to work directly in the browser without a build step.
+ * It includes Tailwind's base styles and the project's custom styles.
+ */
+
+/* --- 1. Tailwind CSS Base & Preflight --- */
+*,::before,::after { box-sizing: border-box; border-width: 0; border-style: solid; border-color: #e5e7eb }
+::before,::after { --tw-content: '' }
+html { line-height: 1.5; -webkit-text-size-adjust: 100%; -moz-tab-size: 4; tab-size: 4; font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji"; font-feature-settings: normal; font-variation-settings: normal; -webkit-tap-highlight-color: transparent }
+body { margin: 0; line-height: inherit }
+hr { height: 0; color: inherit; border-top-width: 1px }
+h1,h2,h3,h4,h5,h6 { font-size: inherit; font-weight: inherit }
+a { color: inherit; text-decoration: inherit }
+b,strong { font-weight: bolder }
+code,kbd,samp,pre { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace; font-feature-settings: normal; font-variation-settings: normal; font-size: 1em }
+small { font-size: 80% }
+sub,sup { font-size: 75%; line-height: 0; position: relative; vertical-align: baseline }
+sub { bottom: -0.25em }
+sup { top: -0.5em }
+table { text-indent: 0; border-color: inherit; border-collapse: collapse }
+button,input,optgroup,select,textarea { font-family: inherit; font-feature-settings: inherit; font-variation-settings: inherit; font-size: 100%; font-weight: inherit; line-height: inherit; color: inherit; margin: 0; padding: 0 }
+button,select { text-transform: none }
+button,[type='button'],[type='reset'],[type='submit'] { -webkit-appearance: button; background-color: transparent; background-image: none }
+:-moz-focusring { outline: auto }
+:-moz-ui-invalid { box-shadow: none }
+progress { vertical-align: baseline }
+::-webkit-inner-spin-button,::-webkit-outer-spin-button { height: auto }
+[type='search'] { -webkit-appearance: textfield; outline-offset: -2px }
+::-webkit-search-decoration { -webkit-appearance: none }
+::-webkit-file-upload-button { -webkit-appearance: button; font: inherit }
+summary { display: list-item }
+blockquote,dl,dd,h1,h2,h3,h4,h5,h6,hr,figure,p,pre { margin: 0 }
+fieldset { margin: 0; padding: 0 }
+legend { padding: 0 }
+ol,ul,menu { list-style: none; margin: 0; padding: 0 }
+dialog { padding: 0 }
+textarea { resize: vertical }
+input::placeholder,textarea::placeholder { opacity: 1; color: #9ca3af }
+button,[role="button"] { cursor: pointer }
+:disabled { cursor: default }
+img,svg,video,canvas,audio,iframe,embed,object { display: block; vertical-align: middle }
+img,video { max-width: 100%; height: auto }
+[hidden] { display: none }
+
+/* --- 2. Custom Properties (Theming) --- */
+:root {
+    --primary-color: #3b82f6; /* Blue */
+    --glow-color: rgba(59, 130, 246, 0.5);
+
+    /* Light Theme */
+    --background-color-light: #f8fafc;
+    --text-primary-light: #0f172a;
+    --text-secondary-light: #475569;
+    --border-color-light: #e2e8f0;
+    --card-background-light: #ffffff;
+    --header-background-light: rgba(248, 250, 252, 0.6);
+    --code-background-light: #f1f5f9;
+    --code-text-light: #334155;
+    --inline-code-text-light: #0369a1;
+
+    /* Dark Theme */
+    --background-color-dark: #020617;
+    --text-primary-dark: #f8fafc;
+    --text-secondary-dark: #94a3b8;
+    --border-color-dark: #1e293b;
+    --card-background-dark: #0f172a;
+    --header-background-dark: rgba(2, 6, 23, 0.6);
+    --code-background-dark: #0d1117;
+    --code-text-dark: #c9d1d9;
+    --inline-code-text-dark: #38bdf8;
+}
+
+html:not(.dark) {
+    --background-color: var(--background-color-light);
+    --text-primary: var(--text-primary-light);
+    --text-secondary: var(--text-secondary-light);
+    --border-color: var(--border-color-light);
+    --card-background: var(--card-background-light);
+    --header-background: var(--header-background-light);
+    --code-background: var(--code-background-light);
+    --code-text: var(--code-text-light);
+    --inline-code-text: var(--inline-code-text-light);
+}
+
+html.dark {
+    --background-color: var(--background-color-dark);
+    --text-primary: var(--text-primary-dark);
+    --text-secondary: var(--text-secondary-dark);
+    --border-color: var(--border-color-dark);
+    --card-background: var(--card-background-dark);
+    --header-background: var(--header-background-dark);
+    --code-background: var(--code-background-dark);
+    --code-text: var(--code-text-dark);
+    --inline-code-text: var(--inline-code-text-dark);
+}
+
+/* --- 3. Custom Styles (Expanded from @apply) --- */
+body {
+    font-family: "Inter", sans-serif;
+    background-color: var(--background-color);
+    color: var(--text-primary);
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.aurora-background {
+    position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -10; overflow: hidden;
+}
+.aurora-background::before, .aurora-background::after {
+    content: ''; position: absolute; border-radius: 9999px; opacity: 0.3; --tw-blur: blur(64px);
+    -webkit-filter: var(--tw-blur) var(--tw-brightness) var(--tw-contrast) var(--tw-grayscale) var(--tw-hue-rotate) var(--tw-invert) var(--tw-saturate) var(--tw-sepia) var(--tw-drop-shadow);
+    filter: var(--tw-blur) var(--tw-brightness) var(--tw-contrast) var(--tw-grayscale) var(--tw-hue-rotate) var(--tw-invert) var(--tw-saturate) var(--tw-sepia) var(--tw-drop-shadow);
+    animation: animate-aurora 12s linear infinite alternate;
+}
+.aurora-background::before { width: 24rem; height: 24rem; background-color: #3b82f6; top: -6rem; left: -6rem; }
+.aurora-background::after { width: 20rem; height: 20rem; background-color: #4f46e5; bottom: -6rem; right: -6rem; animation-delay: -6s; }
+@keyframes animate-aurora {
+    from { transform: rotate(0deg) scale(1.0) translateX(-10%); }
+    to { transform: rotate(360deg) scale(1.2) translateX(10%); }
+}
+
+.code-block-wrapper { position: relative; }
+.code-block {
+    background-color: var(--code-background);
+    color: var(--code-text);
+    border: 1px solid var(--border-color);
+    padding: 1rem; padding-top: 3rem; border-radius: 0.5rem;
+    font-family: "Fira Code", monospace; font-size: 0.875rem; line-height: 1.25rem;
+    margin-top: 1rem; margin-bottom: 1rem; overflow-x: auto;
+    box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+    transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+}
+.code-block pre { white-space: pre-wrap; word-break: break-word; }
+
+.nav-link { font-size: 0.875rem; line-height: 1.25rem; font-weight: 500; color: var(--text-secondary); transition: color 150ms; position: relative; }
+.nav-link:hover { color: var(--primary-color); }
+.nav-link-active { font-size: 0.875rem; line-height: 1.25rem; font-weight: 500; color: var(--primary-color); position: relative; }
+.nav-link::after, .nav-link-active::after {
+    content: ''; position: absolute; bottom: -0.25rem; left: 0; width: 100%; height: 0.125rem;
+    background-color: var(--primary-color); transform: scaleX(0);
+    transition-property: transform; transition-duration: 300ms; transform-origin: center;
+}
+.nav-link.group:hover::after, .nav-link-active::after { transform: scaleX(1); }
+
+h2 {
+    font-size: 1.5rem; line-height: 2rem; font-weight: 700; letter-spacing: -0.025em;
+    color: var(--text-primary); margin-top: 2.5rem; margin-bottom: 1rem;
+    border-bottom-width: 1px; border-color: var(--border-color); padding-bottom: 0.5rem;
+}
+
+code.inline {
+    font-family: "Fira Code", monospace; color: var(--inline-code-text);
+    background-color: color-mix(in srgb, var(--primary-color) 10%, transparent);
+    font-weight: 500; padding: 0.125rem 0.375rem; border-radius: 0.375rem; font-size: 0.875rem;
+}
+
+/* --- 4. Component Theme Overrides --- */
+
+/* Light Mode Syntax Highlighting Overrides */
+html:not(.dark) .code-block span[style*="#c9d1d9"] { color: #334155 !important; } /* Default Text */
+html:not(.dark) .code-block span[style*="#ff7b72"] { color: #c2410c !important; } /* Keywords */
+html:not(.dark) .code-block span[style*="#a5d6ff"] { color: #0369a1 !important; } /* Strings & Paths */
+html:not(.dark) .code-block span[style*="#d2a8ff"] { color: #9333ea !important; } /* Function/Method Names */
+html:not(.dark) .code-block span[style*="#79c0ff"] { color: #1d4ed8 !important; } /* Variables & Parameters */
+html:not(.dark) .code-block span[style*="#8b949e"] { color: #475569 !important; } /* Comments */
+
+/* Copy Button Theme Overrides */
+html.dark .copy-code-btn {
+    background-color: rgba(30, 41, 59, 0.5) !important;
+    color: #94a3b8 !important;
+}
+html.dark .copy-code-btn:hover {
+    color: #f8fafc !important;
+    background-color: rgba(51, 65, 85, 0.7) !important;
+}
+html:not(.dark) .copy-code-btn {
+    background-color: rgba(226, 232, 240, 0.7) !important;
+    color: #334155 !important;
+    border: 1px solid #e2e8f0;
+}
+html:not(.dark) .copy-code-btn:hover {
+    background-color: rgba(203, 213, 225, 0.9) !important;
+    color: #0f172a !important;
+}
+html:not(.dark) .copy-code-btn .text-green-400 {
+    color: #16a34a !important; /* Tailwind green-600 */
+}
+
+/* --- 5. Callout Box Styles --- */
+.callout-warning {
+    margin-top: 1rem;
+    padding: 1rem;
+    border-radius: 0.5rem;
+    font-size: 0.875rem;
+    line-height: 1.25rem;
+    border-width: 1px;
+}
+html:not(.dark) .callout-warning {
+    background-color: #fffbeb; /* amber-50 */
+    border-color: #fde68a; /* amber-200 */
+    color: #b45309; /* amber-700 */
+}
+html.dark .callout-warning {
+    background-color: rgba(245, 158, 11, 0.1); /* amber-500/10 */
+    border-color: rgba(245, 158, 11, 0.2); /* amber-500/20 */
+    color: #fcd34d; /* amber-300 */
+}
+.callout-warning .font-bold {
+    color: #92400e; /* amber-800 */
+}
+html.dark .callout-warning .font-bold {
+    color: #fbbf24; /* amber-400 */
+}
