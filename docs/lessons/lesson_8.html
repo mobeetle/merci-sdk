@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <title>Lesson 8: Basic Tool Usage - Merci SDK</title>
+
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com" rel="preconnect"/>
+    <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+    <link as="style" href="https://fonts.googleapis.com/css2?display=swap&amp;family=Inter%3Awght%40400%3B500%3B600%3B700%3B900&family=Fira+Code%3Awght%40400" onload="this.rel='stylesheet'" rel="stylesheet"/>
+
+    <!-- Scripts & Styles -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="../assets/css/style.css" rel="stylesheet">
+</head>
+<body>
+<!-- Animated Aurora Background -->
+<div class="aurora-background"></div>
+
+<div class="flex min-h-screen flex-col">
+    <!-- Header -->
+    <header class="sticky top-0 z-50 w-full border-b border-[var(--border-color)] bg-[var(--header-background)] backdrop-blur-lg transition-colors duration-300">
+        <div class="container mx-auto flex flex-wrap items-center justify-between px-4 lg:px-8">
+            <div class="flex h-16 items-center">
+                <a class="flex items-center gap-2" href="../index.html">
+                    <img src="../assets/images/merci-sdk-logo.png" alt="Merci SDK Logo" class="h-8 w-12">
+                    <h1 class="text-xl font-bold text-[var(--text-primary)]">Merci SDK</h1>
+                </a>
+            </div>
+            <div class="lg:hidden">
+                <button id="menu-toggle" class="rounded p-2 text-[var(--text-secondary)] hover:bg-slate-200 dark:hover:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-[var(--primary-color)]">
+                    <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path></svg>
+                </button>
+            </div>
+            <div id="menu-content" class="hidden w-full lg:flex lg:w-auto lg:items-center">
+                <nav class="flex w-full flex-col gap-4 border-t border-[var(--border-color)] py-4 lg:w-auto lg:flex-row lg:items-center lg:gap-6 lg:border-none lg:py-0">
+                    <a class="nav-link group" href="../index.html"><span>Overview</span></a>
+                    <a class="nav-link-active group" href="../tutorials.html"><span>Tutorials</span></a>
+                    <a class="nav-link group" href="../api_reference.html"><span>API Reference</span></a>
+                </nav>
+                <div class="w-full pb-4 lg:w-auto lg:pb-0 lg:pl-4">
+                    <button type="button" class="theme-toggle-btn w-full text-sm font-semibold rounded-md px-3 py-1.5 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-[var(--background-color)] bg-slate-200 text-slate-800 hover:bg-slate-300 focus:ring-slate-500 dark:bg-slate-800 dark:text-slate-200 dark:hover:bg-slate-700 dark:focus:ring-slate-500">
+                        <span class="theme-toggle-text">Dark Mode</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="container mx-auto px-4 py-8 sm:px-6 lg:px-8 flex-grow">
+        <div class="max-w-4xl mx-auto">
+            <div class="mb-8">
+                <nav class="flex items-center gap-2 text-sm font-medium text-[var(--text-secondary)]">
+                    <a class="hover:text-[var(--primary-color)] transition-colors" href="../tutorials.html">Tutorials</a>
+                    <span>/</span>
+                    <span class="text-[var(--text-primary)]">Lesson 8</span>
+                </nav>
+            </div>
+            <article>
+                <header class="mb-8">
+                    <h1 class="text-3xl font-bold tracking-tight text-[var(--text-primary)] mb-2">Lesson 8: Basic Tool Usage</h1>
+                    <p class="text-lg text-[var(--text-secondary)]">Learn how to create a simple agent by providing the model with a tool it can use to answer questions. This lesson uses the high-level <code class="inline">.run()</code> method for simplicity.</p>
+                </header>
+
+                <section class="mb-12">
+                    <h2>Code: <code class="inline"><a href="https://github.com/mobeetle/merci-sdk/tree/main/examples">lesson_8_tool_usage.mjs</a></code></h2>
+                    <p class="text-[var(--text-secondary)] mb-4">The <code class="inline">.run()</code> method is the simplest way to create an agent. It automatically handles the entire multi-step process: sending the prompt, receiving the model's decision to call a tool, executing the tool, sending the result back, and returning the final, synthesized answer.</p>
+                    <div class="code-block-wrapper">
+                        <button class="copy-code-btn absolute top-3 right-3 flex items-center gap-2 text-slate-400 hover:text-white transition-colors p-2 rounded-md bg-slate-800/50 backdrop-blur-sm">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16" aria-hidden="true"><path d="M4 1.5H3a2 2 0 0 0-2 2V14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V3.5a2 2 0 0 0-2-2h-1v1h1a1 1 0 0 1 1 1V14a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V3.5a1 1 0 0 1 1-1h1v-1z"/><path d="M9.5 1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-3a.5.5 0 0 1-.5-.5v-1a.5.5 0 0 1 .5-.5h3z"/></svg>
+                            <span>Copy</span>
+                        </button>
+                        <div class="code-block">
+<pre><code><span style="color: #8b949e;">// lesson_8_tool_usage.mjs</span>
+<span style="color: #ff7b72;">import</span> { MerciClient } <span style="color: #ff7b72;">from</span> <span style="color: #a5d6ff;">'../lib/merci.2.11.0.mjs'</span>;
+<span style="color: #ff7b72;">import</span> { token } <span style="color: #ff7b72;">from</span> <span style="color: #a5d6ff;">'../secret/token.mjs'</span>;
+
+<span style="color: #8b949e;">// 1. Define a tool the model can use</span>
+<span style="color: #ff7b72;">const</span> <span style="color: #79c0ff;">weatherTool</span> = {
+    <span style="color: #c9d1d9;">name:</span> <span style="color: #a5d6ff;">'get_current_weather'</span>,
+    <span style="color: #c9d1d9;">description:</span> <span style="color: #a5d6ff;">'Get the current weather for a specified city.'</span>,
+    <span style="color: #c9d1d9;">parameters: { <span style="color: #8b949e;">/* ... JSON Schema ... */</span> },
+    <span style="color: #d2a8ff;">execute</span>: <span style="color: #ff7b72;">async</span> ({ <span style="color: #79c0ff;">city</span> }) => {
+        <span style="color: #8b949e;">// ... logic to fetch weather ...</span>
+        <span style="color: #ff7b72;">return</span> { <span style="color: #c9d1d9;">temperature:</span> <span style="color: #a5d6ff;">'14'</span>, <span style="color: #c9d1d9;">unit:</span> <span style="color: #a5d6ff;">'celsius'</span>, <span style="color: #c9d1d9;">forecast:</span> <span style="color: #a5d6ff;">'sunny'</span> };
+    },
+};
+
+<span style="color: #ff7b72;">async</span> <span style="color: #ff7b72;">function</span> <span style="color: #d2a8ff;">main</span>() {
+    <span style="color: #ff7b72;">const</span> <span style="color: #79c0ff;">client</span> = <span style="color: #ff7b72;">new</span> <span style="color: #d2a8ff;">MerciClient</span>({ token });
+    <span style="color: #ff7b72;">const</span> <span style="color: #79c0ff;">userPrompt</span> = <span style="color: #a5d6ff;">"What's the weather like in Paris?"</span>;
+
+    <span style="color: #8b949e;">// 2. Configure the agent with the tool</span>
+    <span style="color: #ff7b72;">const</span> <span style="color: #79c0ff;">agent</span> = client
+        .<span style="color: #d2a8ff;">chat</span>(<span style="color: #a5d6ff;">'google-chat-gemini-flash-2.5'</span>)
+        .<span style="color: #d2a8ff;">withTools</span>([weatherTool]);
+
+    <span style="color: #8b949e;">// 3. Run the agent to get the final answer</span>
+    <span style="color: #ff7b72;">const</span> <span style="color: #79c0ff;">finalAnswer</span> = <span style="color: #ff7b72;">await</span> agent.<span style="color: #d2a8ff;">run</span>(userPrompt);
+    <span style="color: #c9d1d9;">console.<span style="color: #d2a8ff;">log</span>(<span style="color: #a5d6ff;">`🤖 Assistant > </span><span style="color: #79c0ff;">${finalAnswer}</span><span style="color: #a5d6ff;">`</span>);
+}
+
+<span style="color: #d2a8ff;">main</span>();
+</code></pre>
+                        </div>
+                    </div>
+                </section>
+
+                <section>
+                    <h2>Expected Output</h2>
+                    <p class="text-[var(--text-secondary)] mb-4">The console will show logs from the agent's internal steps, including the tool execution, followed by the final, synthesized answer from the assistant.</p>
+                    <div class="code-block-wrapper">
+                        <button class="copy-code-btn absolute top-3 right-3 flex items-center gap-2 text-slate-400 hover:text-white transition-colors p-2 rounded-md bg-slate-800/50 backdrop-blur-sm">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16" aria-hidden="true"><path d="M4 1.5H3a2 2 0 0 0-2 2V14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V3.5a2 2 0 0 0-2-2h-1v1h1a1 1 0 0 1 1 1V14a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V3.5a1 1 0 0 1 1-1h1v-1z"/><path d="M9.5 1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-3a.5.5 0 0 1-.5-.5v-1a.5.5 0 0 1 .5-.5h3z"/></svg>
+                            <span>Copy</span>
+                        </button>
+                        <div class="code-block">
+<pre><code>👤 User > What's the weather like in Paris?
+
+[EVENT: tool_start] Model requested to call 'get_current_weather'.
+[TOOL EXECUTING] Getting weather for Paris...
+[TOOL RESULT] For Paris: { temperature: '14', unit: 'celsius', forecast: 'sunny' }
+[EVENT: tool_finish] Finished executing tool.
+
+--- FINAL RESULT ---
+👤 User > What's the weather like in Paris?
+🤖 Assistant > The current weather in Paris is 14 degrees Celsius with sunny skies.
+--------------------
+</code></pre>
+                        </div>
+                    </div>
+                </section>
+            </article>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="border-t border-[var(--border-color)] bg-[var(--card-background)] transition-colors duration-300">
+        <div class="container mx-auto px-4 py-6 sm:px-6 lg:px-8">
+            <p class="text-center text-sm text-[var(--text-secondary)]">© 2025 Lukáš Michna (Mobeetle). All rights reserved.</p>
+        </div>
+    </footer>
+</div>
+
+<script src="../assets/js/script.js"></script>
+</body>
+</html>
