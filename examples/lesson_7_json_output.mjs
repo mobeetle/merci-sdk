@@ -2,7 +2,7 @@
 // Merci SDK Tutorial: Lesson 7 - Guaranteed JSON Output
 
 // --- IMPORTS ---
-import { MerciClient, createUserMessage } from '../lib/merci.2.11.0.mjs';
+import { MerciClient, createUserMessage } from '../lib/merci.2.14.0.mjs';
 import { token } from '../secret/token.mjs';
 
 const MODEL = 'google-chat-gemini-flash-2.5';
@@ -33,7 +33,7 @@ ${unstructuredText}
         // The `.asJson()` method instructs the model to enter a constrained
         // generation mode, guaranteeing its output is a parsable JSON string.
         console.log('[STEP 3] Configuring chat session with .asJson()...');
-        const chatSession = client.chat(MODEL)
+        const chatSession = client.chat.session(MODEL)
             .withParameters(builder => builder.asJson());
 
         // --- STEP 4: PREPARE THE MESSAGE PAYLOAD ---

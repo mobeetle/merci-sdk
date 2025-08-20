@@ -1,21 +1,16 @@
-// merci.2.11.0.d.ts
-// TypeScript Declaration File for the Merci SDK v2.11.0
+// merci.2.14.0.d.ts
+// TypeScript Declaration File for the Merci SDK v2.14.0
 
-// Imports from Node.js built-in modules, which the SDK uses.
 import { EventEmitter } from 'node:events';
 import { Buffer } from 'node:buffer';
 
-// --- TYPE DEFINITIONS ---
+// --- GENERIC & CHAT-RELATED TYPES ---
 
 /** Represents a single tool that the AI model can decide to call. */
 export interface ToolDefinition {
-    /** The unique name of the tool. */
     name: string;
-    /** A clear description of what the tool does, used by the model to decide when to call it. */
     description: string;
-    /** A JSON Schema object describing the parameters the tool accepts. */
-    parameters: object;
-    /** The function to execute when the tool is called. It receives the arguments parsed from the model's request. */
+    parameters: object; // JSON Schema object
     execute: (args: any) => any | Promise<any>;
 }
 
@@ -57,7 +52,7 @@ export interface ToolResultMessage {
 export interface MediaMessage {
     type: 'media_message';
     mediaType: string;
-    data: string; // Base64 encoded string of the media data
+    data: string; // Base64 encoded string
 }
 
 /** A union of all possible message types that can be part of a chat history. */
@@ -78,7 +73,23 @@ export interface ToolExecutionResult {
     error?: string;
 }
 
-// --- STREAM EVENT TYPES ---
+// --- AGENTIC WORKFLOW TYPES (v2.14.0) ---
+
+/** Represents the object yielded by the step() generator when the model requests to call tools. */
+export interface AgentToolRequest {
+    type: 'tool_request';
+    calls: ToolCall[];
+}
+
+/** Represents the final object returned by the step() generator. */
+export interface AgentTextResponse {
+    type: 'text_response';
+    content: string;
+    messages: ChatMessage[];
+}
+
+
+// --- CHAT STREAM EVENT TYPES ---
 
 export interface TextStreamEvent {
     type: 'text';
@@ -95,11 +106,44 @@ export interface QuotaStreamEvent {
     data: object;
 }
 
-/** A union of all possible events yielded by the response stream. */
+/** A union of all possible events yielded by the chat response stream. */
 export type StreamEvent = TextStreamEvent | ToolCallsStreamEvent | QuotaStreamEvent;
 
 
-// --- CLASSES ---
+// --- TASK API TYPES ---
+
+/** Represents the successful result of a roster call. */
+export interface TaskRosterResult {
+    ids: string[];
+}
+
+/** A content event from a task stream. */
+export interface TaskContentEvent {
+    type: 'Content';
+    content: string;
+}
+
+/** A metadata event from a task stream. */
+export interface TaskMetadataEvent {
+    type: 'QuotaMetadata' | 'ExecutionMetadata' | 'FinishMetadata' | 'UnknownMetadata' | 'FunctionCallMetadata';
+    data: object;
+}
+
+/** A union of all possible events yielded by the task response stream. */
+export type TaskStreamEvent = TaskContentEvent | TaskMetadataEvent;
+
+/** The aggregated result of a task execution. */
+export interface TaskResult {
+    content: string;
+    quotaMetadata: object | null;
+    executionMetadata: object[];
+    finishMetadata: object | null;
+    unknownMetadata: object | null;
+    functionCallMetadata: object | null;
+}
+
+
+// --- API CLASSES ---
 
 /**
  * A fluent interface for building model-specific parameters for a request.
@@ -129,101 +173,117 @@ export declare class ParameterBuilder {
  * Represents a configured chat session for a specific model profile.
  */
 export declare class ChatSession {
-    /**
-     * Equips the chat session with a set of tools the model can use.
-     * @param tools An array of tool definitions.
-     */
     withTools(tools: ToolDefinition[]): this;
-
-    /**
-     * Configures the session with a system message to guide the AI's behavior.
-     * @param content The system prompt content.
-     */
     withSystemMessage(content: string): this;
-
-    /**
-     * Configures advanced model parameters for the request using a fluent builder.
-     * @param builderFn A function that receives a ParameterBuilder instance.
-     */
     withParameters(builderFn: (builder: ParameterBuilder) => ParameterBuilder): this;
-
-    /**
-     * Executes the chat request and returns the response as a stream of events.
-     * @param initialInput The user's prompt as a string or a full array of messages for multi-turn context.
-     */
     stream(initialInput: string | ChatMessage[]): AsyncIterable<StreamEvent>;
 
     /**
-     * Runs a full agentic loop, automatically handling tool calls and responses.
-     * @param initialInput The user's initial prompt.
-     * @returns A promise that resolves with the model's final text answer.
+     * Executes a single turn of the agentic loop, yielding control when tools are requested.
+     * @param messages The current conversation history.
+     * @param options Options for this step, like forcing a text response.
+     * @returns An async generator that yields tool requests and returns a final text response.
      */
-    run(initialInput: string | ChatMessage[]): Promise<string>;
+    step(
+        messages: ChatMessage[],
+        options?: { forceTextResponse?: boolean }
+    ): AsyncGenerator<AgentToolRequest, AgentTextResponse, ToolExecutionResult[]>;
+
+    /**
+     * Runs the agentic loop automatically until a final text response is generated.
+     * @param initialInput The initial user prompt or message history.
+     * @param options Configuration for the run, such as `maxIterations`.
+     */
+    run(
+        initialInput: string | ChatMessage[],
+        options?: { maxIterations?: number }
+    ): Promise<string>;
+}
+
+/**
+ * Provides access to server-side task execution.
+ */
+export declare class TaskAPI {
+    /** Retrieves the list of available task IDs. */
+    roster(): Promise<TaskRosterResult>;
+
+    /**
+     * Executes a task and returns the response as a stream of events.
+     * @param id The ID of the task to execute (e.g., 'code-generate:default').
+     * @param parameters An object containing the parameters for the task.
+     */
+    stream(id: string, parameters: object): AsyncIterable<TaskStreamEvent>;
+
+    /**
+     * Executes a task and returns the aggregated result once complete.
+     * @param id The ID of the task to execute.
+     * @param parameters An object containing the parameters for the task.
+     */
+    execute(id: string, parameters: object): Promise<TaskResult>;
 }
 
 /**
  * The main client for interacting with the JetBrains AI Platform.
  */
 export declare class MerciClient extends EventEmitter {
-    constructor(options: { token: string });
+    constructor(options: {
+        token: string;
+        authType?: 'user' | 'service' | 'application';
+        endpoint?: string;
+    });
 
-    /**
-     * Creates a new chat session for a specific model profile.
-     * @param profile The identifier for the model to use (e.g., 'google-chat-gemini-flash-2.5').
-     */
-    chat(profile: string): ChatSession;
+    /** Access the Chat API. */
+    chat: ChatAPI;
 
-    // --- Typed Event Emitter Methods ---
+    /** Access the Task API. */
+    tasks: TaskAPI;
 
+    // --- Event Emitter Overloads ---
     on(event: 'api_request', listener: (payload: { url: string; method?: string; body?: string }) => void): this;
     on(event: 'api_response', listener: (payload: { url: string; status: number; ok: boolean }) => void): this;
-
-    /**
-     * Listens for the start of a token refresh attempt, triggered by a 401 API response.
-     */
     on(event: 'token_refresh_start', listener: () => void): this;
-
-    /**
-     * Listens for the successful completion of a token refresh.
-     * @param event
-     * @param listener A callback function that receives the new token string.
-     */
     on(event: 'token_refresh_success', listener: (newToken: string) => void): this;
-
     on(event: 'error', listener: (error: APIError) => void): this;
     on(event: 'tool_start', listener: (payload: { calls: ToolCall[] }) => void): this;
     on(event: 'tool_finish', listener: (payload: { results: ToolExecutionResult[] }) => void): this;
+    on(event: 'tool_warning', listener: (payload: { message: string }) => void): this;
     on(event: 'parameter_warning', listener: (warning: { parameter: string; profile: string; message: string }) => void): this;
 }
 
 /**
- * Custom error class for API-related issues.
+ * Provides access to the chat functionalities.
  */
+export declare class ChatAPI {
+    /**
+     * Creates a new chat session for a specific model profile.
+     * @param profile The identifier for the model to use (e.g., 'google-chat-gemini-flash-2.5').
+     */
+    session(profile: string): ChatSession;
+}
+
+
+// --- ERRORS ---
+
+/** Custom error class for API-related issues. */
 export declare class APIError extends Error {
     constructor(message: string, status?: number, details?: any);
     public readonly status?: number;
     public readonly details?: any;
 }
 
+/** Custom error for non-2xx API responses. */
+export declare class APIStatusError extends APIError {}
 
-// --- EXPORTED HELPER FUNCTIONS ---
+/** Custom error for Server-Sent Events (SSE) stream parsing issues. */
+export declare class SSEError extends APIError {}
+
+
+// --- HELPER FUNCTIONS ---
 
 export declare function createUserMessage(content: string): UserMessage;
 export declare function createSystemMessage(content: string): SystemMessage;
 export declare function createAssistantTextMessage(content: string): AssistantTextMessage;
 export declare function createAssistantToolCallMessage(id: string, toolName: string, content: string): AssistantToolCallMessage;
 export declare function createToolResultMessage(id: string, toolName: string, result: string): ToolResultMessage;
-
-/**
- * Creates a media message from a file path or a Buffer.
- * @param source A file path (string) or a Buffer containing the media data.
- * @param explicitMimeType The MIME type of the media (e.g., 'image/png'). Required if source is a Buffer.
- */
 export declare function createMediaMessage(source: string | Buffer, explicitMimeType?: string): Promise<MediaMessage>;
-
-/**
- * A helper function to execute a batch of tool calls requested by the model.
- * @param toolCalls The array of tool calls from a 'tool_calls' stream event.
- * @param toolLibrary The library of available tool definitions to execute from.
- */
 export declare function executeTools(toolCalls: ToolCall[], toolLibrary: ToolDefinition[]): Promise<ToolExecutionResult[]>;

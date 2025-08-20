@@ -2,7 +2,7 @@
 // Merci SDK Tutorial: Lesson 14 - Production-Ready Observability & Error Handling
 
 // --- IMPORTS ---
-import { MerciClient, createUserMessage } from '../lib/merci.2.11.0.mjs';
+import { MerciClient, createUserMessage } from '../lib/merci.2.14.0.mjs';
 import { token } from '../secret/token.mjs';
 
 // To reliably trigger a 400-level error, we use a model name that does not exist.
@@ -38,7 +38,7 @@ async function main() {
 
         // We don't need any special parameters. Simply creating a chat session
         // with an invalid model name is enough to guarantee an API error.
-        const chatSession = client.chat(MODEL);
+        const chatSession = client.chat.session(MODEL);
 
         console.log('[INFO] Sending request with an invalid model name to cause a 400 Bad Request error...');
         // We don't need to process the stream, just trigger the call.

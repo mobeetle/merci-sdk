@@ -66,7 +66,7 @@
                 </header>
 
                 <section class="mb-12">
-                    <h2>Code: <code class="inline"><a href="https://github.com/mobeetle/merci-sdk/tree/main/examples">lesson_16_forcing_tool_choice.mjs</a></code></h2>
+                    <h2>Code: <code class="inline"><a href="https://github.com/mobeetle/merci-sdk/tree/main/examples/lesson_16_forcing_tool_choice.mjs">lesson_16_forcing_tool_choice.mjs</a></code></h2>
                     <p class="text-[var(--text-secondary)] mb-4">This script runs two experiments. The first is a standard agent where tool use is optional. The second uses the parameter builder to set <code class="inline">.toolChoiceRequired(true)</code>, which constrains the model to call one of the available tools.</p>
                     <div class="code-block-wrapper">
                         <button class="copy-code-btn absolute top-3 right-3 flex items-center gap-2 text-slate-400 hover:text-white transition-colors p-2 rounded-md bg-slate-800/50 backdrop-blur-sm">
@@ -75,33 +75,164 @@
                         </button>
                         <div class="code-block">
 <pre><code><span style="color: #8b949e;">// lesson_16_forcing_tool_choice.mjs</span>
-<span style="color: #ff7b72;">import</span> { MerciClient } <span style="color: #ff7b72;">from</span> <span style="color: #a5d6ff;">'../lib/merci.2.11.0.mjs'</span>;
+<span style="color: #8b949e;">// Merci SDK Tutorial: Lesson 16 - Forcing Tool Usage with `toolChoiceRequired`</span>
+
+<span style="color: #8b949e;">// --- IMPORTS ---</span>
+<span style="color: #ff7b72;">import</span> {
+    MerciClient,
+    createUserMessage,
+    executeTools,
+    createAssistantToolCallMessage,
+    createToolResultMessage,
+    createAssistantTextMessage
+} <span style="color: #ff7b72;">from</span> <span style="color: #a5d6ff;">'../lib/merci.2.14.0.mjs'</span>;
 <span style="color: #ff7b72;">import</span> { token } <span style="color: #ff7b72;">from</span> <span style="color: #a5d6ff;">'../secret/token.mjs'</span>;
 
-<span style="color: #ff7b72;">const</span> <span style="color: #79c0ff;">databaseTool</span> = { <span style="color: #8b949e;">/* ... */</span> };
+<span style="color: #ff7b72;">const</span> <span style="color: #79c0ff;">MODEL</span> = <span style="color: #a5d6ff;">'google-chat-gemini-flash-2.5'</span>;
+
+<span style="color: #8b949e;">// --- TOOL DEFINITION ---</span>
+<span style="color: #8b949e;">// We'll use a single, clear tool for this demonstration.</span>
+<span style="color: #ff7b72;">const</span> <span style="color: #79c0ff;">databaseTool</span> = {
+    <span style="color: #c9d1d9;">name:</span> <span style="color: #a5d6ff;">'query_user_database'</span>,
+    <span style="color: #c9d1d9;">parameters:</span> {
+        <span style="color: #c9d1d9;">schema:</span> {
+            <span style="color: #c9d1d9;">type:</span> <span style="color: #a5d6ff;">'object'</span>,
+            <span style="color: #c9d1d9;">properties:</span> {
+                <span style="color: #c9d1d9;">query:</span> { <span style="color: #c9d1d9;">type:</span> <span style="color: #a5d6ff;">'string'</span>, <span style="color: #c9d1d9;">description:</span> <span style="color: #a5d6ff;">'The database query to execute.'</span> }
+            },
+            <span style="color: #c9d1d9;">required:</span> [<span style="color: #a5d6ff;">'query'</span>]
+        }
+    },
+    <span style="color: #d2a8ff;">execute</span>: <span style="color: #ff7b72;">async</span> ({ <span style="color: #79c0ff;">query</span> }) => {
+        <span style="color: #c9d1d9;">console</span>.<span style="color: #d2a8ff;">log</span>(<span style="color: #a5d6ff;">`\n[TOOL EXECUTING] Running query: "</span><span style="color: #79c0ff;">${query}</span><span style="color: #a5d6ff;">"`</span>);
+        <span style="color: #8b949e;">// Simulate a simple, definitive response for active users</span>
+        <span style="color: #ff7b72;">if</span> (<span style="color: #79c0ff;">query</span>.<span style="color: #d2a8ff;">includes</span>(<span style="color: #a5d6ff;">'active'</span>)) {
+            <span style="color: #ff7b72;">return</span> { <span style="color: #c9d1d9;">status:</span> <span style="color: #a5d6ff;">'success'</span>, <span style="color: #c9d1d9;">message:</span> <span style="color: #a5d6ff;">'Found 157 active users.'</span>, <span style="color: #c9d1d9;">active_users_count:</span> <span style="color: #a5d6ff;">157</span> };
+        }
+        <span style="color: #ff7b72;">return</span> { <span style="color: #c9d1d9;">status:</span> <span style="color: #a5d6ff;">'success'</span>, <span style="color: #c9d1d9;">message:</span> <span style="color: #a5d6ff;">'No active users found.'</span>, <span style="color: #c9d1d9;">active_users_count:</span> <span style="color: #a5d6ff;">0</span> };
+    },
+};
 
 <span style="color: #ff7b72;">async</span> <span style="color: #ff7b72;">function</span> <span style="color: #d2a8ff;">main</span>() {
-    <span style="color: #ff7b72;">const</span> <span style="color: #79c0ff;">client</span> = <span style="color: #ff7b72;">new</span> <span style="color: #d2a8ff;">MerciClient</span>({ token });
-    <span style="color: #ff7b72;">const</span> <span style="color: #79c0ff;">tools</span> = [databaseTool];
+    <span style="color: #c9d1d9;">console</span>.<span style="color: #d2a8ff;">log</span>(<span style="color: #a5d6ff;">`--- Merci SDK Tutorial: Lesson 16 - Forcing Tool Usage (Model: </span><span style="color: #79c0ff;">${MODEL}</span><span style="color: #a5d6ff;">) ---`</span>);
 
-    <span style="color: #8b949e;">// --- EXPERIMENT 1: Optional Tool Usage ---</span>
-    <span style="color: #c9d1d9;">console.<span style="color: #d2a8ff;">log</span>(<span style="color: #a5d6ff;">'\n--- EXPERIMENT 1: Optional Tool Usage ---'</span>);
-    <span style="color: #ff7b72;">const</span> <span style="color: #79c0ff;">optionalAgent</span> = client.<span style="color: #d2a8ff;">chat</span>(MODEL).<span style="color: #d2a8ff;">withTools</span>(tools);
-    <span style="color: #ff7b72;">const</span> <span style="color: #79c0ff;">optionalResponse</span> = <span style="color: #ff7b72;">await</span> optionalAgent.<span style="color: #d2a8ff;">run</span>(<span style="color: #a5d6ff;">"Can you check the database for me?"</span>);
-    <span style="color: #c9d1d9;">console.<span style="color: #d2a8ff;">log</span>(<span style="color: #a5d6ff;">`🤖 Assistant > </span><span style="color: #79c0ff;">${optionalResponse}</span><span style="color: #a5d6ff;">`</span>);
+    <span style="color: #ff7b72;">try</span> {
+        <span style="color: #8b949e;">// --- STEP 1: INITIALIZE THE CLIENT ---</span>
+        <span style="color: #c9d1d9;">console</span>.<span style="color: #d2a8ff;">log</span>(<span style="color: #a5d6ff;">'[STEP 1] Initializing MerciClient...'</span>);
+        <span style="color: #ff7b72;">const</span> <span style="color: #79c0ff;">client</span> = <span style="color: #ff7b72;">new</span> <span style="color: #d2a8ff;">MerciClient</span>({ token });
+        <span style="color: #79c0ff;">client</span>.<span style="color: #d2a8ff;">on</span>(<span style="color: #a5d6ff;">'tool_start'</span>, ({ <span style="color: #79c0ff;">calls</span> }) => {
+            <span style="color: #c9d1d9;">console</span>.<span style="color: #d2a8ff;">log</span>(<span style="color: #a5d6ff;">`\n[EVENT: tool_start] Model decided to call tool: '</span><span style="color: #79c0ff;">${calls</span>[<span style="color: #a5d6ff;">0</span>].<span style="color: #c9d1d9;">name}</span><span style="color: #a5d6ff;">'`</span>);
+        });
 
-    <span style="color: #8b949e;">// --- EXPERIMENT 2: Required Tool Usage ---</span>
-    <span style="color: #c9d1d9;">console.<span style="color: #d2a8ff;">log</span>(<span style="color: #a5d6ff;">'\n--- EXPERIMENT 2: Required Tool Usage ---'</span>);
-    <span style="color: #ff7b72;">const</span> <span style="color: #79c0ff;">requiredAgent</span> = client
-        .<span style="color: #d2a8ff;">chat</span>(MODEL)
-        .<span style="color: #d2a8ff;">withTools</span>(tools)
-        .<span style="color: #d2a8ff;">withParameters</span>(<span style="color: #79c0ff;">builder</span> => builder.<span style="color: #d2a8ff;">toolChoiceRequired</span>(<span style="color: #ff7b72;">true</span>)); <span style="color: #8b949e;">// The key parameter</span>
+        <span style="color: #8b949e;">// --- STEP 2: DEFINE THE TOOL ---</span>
+        <span style="color: #c9d1d9;">console</span>.<span style="color: #d2a8ff;">log</span>(<span style="color: #a5d6ff;">'[STEP 2] Preparing the database tool...'</span>);
+        <span style="color: #ff7b72;">const</span> <span style="color: #79c0ff;">tools</span> = [databaseTool];
 
-    <span style="color: #ff7b72;">const</span> <span style="color: #79c0ff;">requiredResponse</span> = <span style="color: #ff7b72;">await</span> requiredAgent.<span style="color: #d2a8ff;">run</span>(<span style="color: #a5d6ff;">"Find all active users in the database."</span>);
-    <span style="color: #c9d1d9;">console.<span style="color: #d2a8ff;">log</span>(<span style="color: #a5d6ff;">`🤖 Assistant > </span><span style="color: #79c0ff;">${requiredResponse}</span><span style="color: #a5d6ff;">`</span>);
+        <span style="color: #8b949e;">// --- EXPERIMENT 1: OPTIONAL TOOL USAGE ---</span>
+        <span style="color: #c9d1d9;">console</span>.<span style="color: #d2a8ff;">log</span>(<span style="color: #a5d6ff;">'\n\n--- EXPERIMENT 1: Optional Tool Usage ---'</span>);
+        <span style="color: #c9d1d9;">console</span>.<span style="color: #d2a8ff;">log</span>(<span style="color: #a5d6ff;">'[STEP 3] Configuring agent where tool use is optional...'</span>);
+        <span style="color: #ff7b72;">const</span> <span style="color: #79c0ff;">optionalAgent</span> = <span style="color: #79c0ff;">client</span>.<span style="color: #c9d1d9;">chat</span>.<span style="color: #d2a8ff;">session</span>(MODEL).<span style="color: #d2a8ff;">withTools</span>(tools);
+
+        <span style="color: #c9d1d9;">console</span>.<span style="color: #d2a8ff;">log</span>(<span style="color: #a5d6ff;">'[STEP 4] Running agent with a conversational prompt...'</span>);
+        <span style="color: #ff7b72;">const</span> <span style="color: #79c0ff;">softPrompt</span> = <span style="color: #a5d6ff;">"Can you check the database for me?"</span>;
+        <span style="color: #c9d1d9;">console</span>.<span style="color: #d2a8ff;">log</span>(<span style="color: #a5d6ff;">`👤 User > </span><span style="color: #79c0ff;">${softPrompt}</span><span style="color: #a5d6ff;">`</span>);
+        <span style="color: #ff7b72;">const</span> <span style="color: #79c0ff;">optionalResponse</span> = <span style="color: #ff7b72;">await</span> <span style="color: #79c0ff;">optionalAgent</span>.<span style="color: #d2a8ff;">run</span>(softPrompt);
+        <span style="color: #c9d1d9;">console</span>.<span style="color: #d2a8ff;">log</span>(<span style="color: #a5d6ff;">`🤖 Assistant > </span><span style="color: #79c0ff;">${optionalResponse}</span><span style="color: #a5d6ff;">`</span>);
+        <span style="color: #c9d1d9;">console</span>.<span style="color: #d2a8ff;">log</span>(<span style="color: #a5d6ff;">'[INFO] The model may or may not use the tool. Often, it will just respond conversationally.'</span>);
+
+        <span style="color: #8b949e;">// --- EXPERIMENT 2: REQUIRED TOOL USAGE (Manual Loop) ---</span>
+        <span style="color: #c9d1d9;">console</span>.<span style="color: #d2a8ff;">log</span>(<span style="color: #a5d6ff;">'\n\n--- EXPERIMENT 2: Required Tool Usage (Manual Loop) ---'</span>);
+        <span style="color: #c9d1d9;">console</span>.<span style="color: #d2a8ff;">log</span>(<span style="color: #a5d6ff;">'[STEP 5] Manually controlling tool usage to force a single call...'</span>);
+
+        <span style="color: #ff7b72;">const</span> <span style="color: #79c0ff;">directPrompt</span> = <span style="color: #a5d6ff;">"Find the number of active users in the database."</span>;
+        <span style="color: #c9d1d9;">console</span>.<span style="color: #d2a8ff;">log</span>(<span style="color: #a5d6ff;">`👤 User > </span><span style="color: #79c0ff;">${directPrompt}</span><span style="color: #a5d6ff;">`</span>);
+
+        <span style="color: #ff7b72;">let</span> <span style="color: #79c0ff;">messagesForRequiredTool</span> = [<span style="color: #d2a8ff;">createUserMessage</span>(directPrompt)];
+        <span style="color: #ff7b72;">let</span> <span style="color: #79c0ff;">finalRequiredResponse</span> = <span style="color: #a5d6ff;">''</span>;
+
+        <span style="color: #8b949e;">// First turn: Force tool choice</span>
+        <span style="color: #ff7b72;">const</span> <span style="color: #79c0ff;">chatSessionForToolCall</span> = <span style="color: #79c0ff;">client</span>.<span style="color: #c9d1d9;">chat</span>.<span style="color: #d2a8ff;">session</span>(MODEL)
+            .<span style="color: #d2a8ff;">withTools</span>(tools)
+            .<span style="color: #d2a8ff;">withParameters</span>(<span style="color: #79c0ff;">builder</span> => <span style="color: #79c0ff;">builder</span>.<span style="color: #d2a8ff;">toolChoiceRequired</span>(<span style="color: #ff7b72;">true</span>));
+
+        <span style="color: #c9d1d9;">console</span>.<span style="color: #d2a8ff;">log</span>(<span style="color: #a5d6ff;">'[INFO] Sending initial request to force tool call...'</span>);
+        <span style="color: #ff7b72;">let</span> <span style="color: #79c0ff;">toolCalls</span> = [];
+        <span style="color: #ff7b72;">for</span> <span style="color: #ff7b72;">await</span> (<span style="color: #ff7b72;">const</span> <span style="color: #79c0ff;">event</span> <span style="color: #ff7b72;">of</span> <span style="color: #79c0ff;">chatSessionForToolCall</span>.<span style="color: #d2a8ff;">stream</span>(messagesForRequiredTool)) {
+            <span style="color: #ff7b72;">if</span> (<span style="color: #79c0ff;">event</span>.<span style="color: #c9d1d9;">type</span> === <span style="color: #a5d6ff;">'tool_calls'</span>) {
+                <span style="color: #c9d1d9;">console</span>.<span style="color: #d2a8ff;">log</span>(<span style="color: #a5d6ff;">`\n[EVENT: tool_start] Model decided to call tool: '</span><span style="color: #79c0ff;">${event</span>.<span style="color: #c9d1d9;">calls</span>[<span style="color: #a5d6ff;">0</span>].<span style="color: #c9d1d9;">name}</span><span style="color: #a5d6ff;">'`</span>);
+                toolCalls = <span style="color: #79c0ff;">event</span>.<span style="color: #c9d1d9;">calls</span>;
+            }
+        }
+
+        <span style="color: #ff7b72;">if</span> (<span style="color: #79c0ff;">toolCalls</span>.<span style="color: #c9d1d9;">length</span> > <span style="color: #a5d6ff;">0</span>) {
+            <span style="color: #c9d1d9;">console</span>.<span style="color: #d2a8ff;">log</span>(<span style="color: #a5d6ff;">'[INFO] Executing tool locally...'</span>);
+            <span style="color: #ff7b72;">const</span> <span style="color: #79c0ff;">toolResults</span> = <span style="color: #ff7b72;">await</span> <span style="color: #d2a8ff;">executeTools</span>(toolCalls, tools);
+
+            <span style="color: #8b949e;">// Add tool call and result to messages history</span>
+            <span style="color: #79c0ff;">toolResults</span>.<span style="color: #d2a8ff;">forEach</span>((<span style="color: #79c0ff;">result</span>, <span style="color: #79c0ff;">index</span>) => {
+                <span style="color: #ff7b72;">const</span> <span style="color: #79c0ff;">call</span> = <span style="color: #79c0ff;">toolCalls</span>[<span style="color: #79c0ff;">index</span>];
+                <span style="color: #ff7b72;">const</span> <span style="color: #79c0ff;">resultValue</span> = <span style="color: #79c0ff;">result</span>.<span style="color: #c9d1d9;">success</span> ? <span style="color: #79c0ff;">result</span>.<span style="color: #c9d1d9;">result</span> : { <span style="color: #c9d1d9;">error:</span> <span style="color: #79c0ff;">result</span>.<span style="color: #c9d1d9;">error</span> || <span style="color: #a5d6ff;">'Unknown execution error'</span> };
+                <span style="color: #79c0ff;">messagesForRequiredTool</span>.<span style="color: #d2a8ff;">push</span>(<span style="color: #d2a8ff;">createAssistantToolCallMessage</span>(<span style="color: #79c0ff;">call</span>.<span style="color: #c9d1d9;">id</span>, <span style="color: #79c0ff;">call</span>.<span style="color: #c9d1d9;">name</span>, <span style="color: #79c0ff;">call</span>.<span style="color: #c9d1d9;">arguments</span>));
+                <span style="color: #79c0ff;">messagesForRequiredTool</span>.<span style="color: #d2a8ff;">push</span>(<span style="color: #d2a8ff;">createToolResultMessage</span>(<span style="color: #79c0ff;">call</span>.<span style="color: #c9d1d9;">id</span>, <span style="color: #79c0ff;">call</span>.<span style="color: #c9d1d9;">name</span>, JSON.<span style="color: #d2a8ff;">stringify</span>(resultValue)));
+            });
+
+            <span style="color: #8b949e;">// Second turn: Allow model to generate text response (no forced tool choice)</span>
+            <span style="color: #c9d1d9;">console</span>.<span style="color: #d2a8ff;">log</span>(<span style="color: #a5d6ff;">'[INFO] Sending tool results back to model for final text response...'</span>);
+            <span style="color: #ff7b72;">const</span> <span style="color: #79c0ff;">chatSessionForText</span> = <span style="color: #79c0ff;">client</span>.<span style="color: #c9d1d9;">chat</span>.<span style="color: #d2a8ff;">session</span>(MODEL)
+                .<span style="color: #d2a8ff;">withTools</span>(tools); <span style="color: #8b949e;">// Keep tools available, but don't force choice</span>
+
+            <span style="color: #ff7b72;">for</span> <span style="color: #ff7b72;">await</span> (<span style="color: #ff7b72;">const</span> <span style="color: #79c0ff;">event</span> <span style="color: #ff7b72;">of</span> <span style="color: #79c0ff;">chatSessionForText</span>.<span style="color: #d2a8ff;">stream</span>(messagesForRequiredTool)) {
+                <span style="color: #ff7b72;">if</span> (<span style="color: #79c0ff;">event</span>.<span style="color: #c9d1d9;">type</span> === <span style="color: #a5d6ff;">'text'</span>) {
+                    finalRequiredResponse += <span style="color: #79c0ff;">event</span>.<span style="color: #c9d1d9;">content</span>;
+                }
+            }
+            <span style="color: #c9d1d9;">console</span>.<span style="color: #d2a8ff;">log</span>(<span style="color: #a5d6ff;">`🤖 Assistant > </span><span style="color: #79c0ff;">${finalRequiredResponse}</span><span style="color: #a5d6ff;">`</span>);
+        } <span style="color: #ff7b72;">else</span> {
+            finalRequiredResponse = <span style="color: #a5d6ff;">"Error: Model did not call the tool as expected."</span>;
+            <span style="color: #c9d1d9;">console</span>.<span style="color: #d2a8ff;">log</span>(finalRequiredResponse);
+        }
+
+        <span style="color: #8b949e;">// --- EXPERIMENT 3: AGENTIC LOOP WITH FORCED TOOL USAGE (Testing v2.12.2 fix) ---</span>
+        <span style="color: #c9d1d9;">console</span>.<span style="color: #d2a8ff;">log</span>(<span style="color: #a5d6ff;">'\n\n--- EXPERIMENT 3: Agentic Loop with Forced Tool Usage (Testing v2.12.2 fix) ---'</span>);
+        <span style="color: #c9d1d9;">console</span>.<span style="color: #d2a8ff;">log</span>(<span style="color: #a5d6ff;">'[STEP 7] Configuring agent with `toolChoiceRequired` to test graceful handling of iteration limit...'</span>);
+
+        <span style="color: #ff7b72;">const</span> <span style="color: #79c0ff;">agenticLoopAgent</span> = <span style="color: #79c0ff;">client</span>
+            .<span style="color: #c9d1d9;">chat</span>.<span style="color: #d2a8ff;">session</span>(MODEL)
+            .<span style="color: #d2a8ff;">withTools</span>(tools);
+
+        <span style="color: #ff7b72;">const</span> <span style="color: #79c0ff;">agenticLoopPrompt</span> = <span style="color: #a5d6ff;">"Use the 'query_user_database' tool to find all active users. Keep calling the tool until you have a comprehensive list, then summarize."</span>;
+        <span style="color: #c9d1d9;">console</span>.<span style="color: #d2a8ff;">log</span>(<span style="color: #a5d6ff;">`👤 User > </span><span style="color: #79c0ff;">${agenticLoopPrompt}</span><span style="color: #a5d6ff;">`</span>);
+
+        <span style="color: #ff7b72;">let</span> <span style="color: #79c0ff;">finalAgenticLoopResponse</span> = <span style="color: #a5d6ff;">''</span>;
+        <span style="color: #ff7b72;">try</span> {
+            finalAgenticLoopResponse = <span style="color: #ff7b72;">await</span> <span style="color: #79c0ff;">agenticLoopAgent</span>.<span style="color: #d2a8ff;">run</span>(agenticLoopPrompt);
+            <span style="color: #c9d1d9;">console</span>.<span style="color: #d2a8ff;">log</span>(<span style="color: #a5d6ff;">`🤖 Assistant > </span><span style="color: #79c0ff;">${finalAgenticLoopResponse}</span><span style="color: #a5d6ff;">`</span>);
+            <span style="color: #c9d1d9;">console</span>.<span style="color: #d2a8ff;">log</span>(<span style="color: #a5d6ff;">'[INFO] The agent.run() method should now gracefully handle the iteration limit and provide a text response.'</span>);
+        } <span style="color: #ff7b72;">catch</span> (error) {
+            <span style="color: #c9d1d9;">console</span>.<span style="color: #d2a8ff;">error</span>(<span style="color: #a5d6ff;">'\n[ERROR] Agentic loop failed unexpectedly:'</span>, error.message);
+            finalAgenticLoopResponse = <span style="color: #a5d6ff;">`Error: </span><span style="color: #79c0ff;">${error</span>.<span style="color: #c9d1d9;">message}</span><span style="color: #a5d6ff;">`</span>; <span style="color: #8b949e;">// Capture error message</span>
+        }
+
+        <span style="color: #8b949e;">// --- FINAL RESULT ---</span>
+        <span style="color: #c9d1d9;">console</span>.<span style="color: #d2a8ff;">log</span>(<span style="color: #a5d6ff;">'\n\n--- FINAL RESULT ---'</span>);
+        <span style="color: #c9d1d9;">console</span>.<span style="color: #d2a8ff;">log</span>(<span style="color: #a5d6ff;">`\n🤖 Response (Optional Mode) > </span><span style="color: #79c0ff;">${optionalResponse}</span><span style="color: #a5d6ff;">`</span>);
+        <span style="color: #c9d1d9;">console</span>.<span style="color: #d2a8ff;">log</span>(<span style="color: #a5d6ff;">`🤖 Response (Required Mode) > </span><span style="color: #79c0ff;">${finalRequiredResponse}</span><span style="color: #a5d6ff;">`</span>);
+        <span style="color: #c9d1d9;">console</span>.<span style="color: #d2a8ff;">log</span>(<span style="color: #a5d6ff;">`🤖 Response (Agentic Loop Mode) > </span><span style="color: #79c0ff;">${finalAgenticLoopResponse}</span><span style="color: #a5d6ff;">`</span>);
+        <span style="color: #c9d1d9;">console</span>.<span style="color: #d2a8ff;">log</span>(<span style="color: #a5d6ff;">'--------------------'</span>);
+        <span style="color: #c9d1d9;">console</span>.<span style="color: #d2a8ff;">log</span>(<span style="color: #a5d6ff;">'Success! By using `toolChoiceRequired`, we forced the model to call our tool, making the application\'s behavior predictable and reliable.'</span>);
+
+    } <span style="color: #ff7b72;">catch</span> (error) {
+        <span style="color: #c9d1d9;">console</span>.<span style="color: #d2a8ff;">error</span>(<span style="color: #a5d6ff;">'\n\n[FATAL ERROR] An error occurred during the operation.'</span>);
+        <span style="color: #c9d1d9;">console</span>.<span style="color: #d2a8ff;">error</span>(<span style="color: #a5d6ff;">'  Message:'</span>, error.message);
+        <span style="color: #ff7b72;">if</span> (error.status) { <span style="color: #c9d1d9;">console</span>.<span style="color: #d2a8ff;">error</span>(<span style="color: #a5d6ff;">'  API Status:'</span>, error.status); }
+        <span style="color: #ff7b72;">if</span> (error.details) { <span style="color: #c9d1d9;">console</span>.<span style="color: #d2a8ff;">error</span>(<span style="color: #a5d6ff;">'  Details:'</span>, JSON.<span style="color: #d2a8ff;">stringify</span>(error.details, <span style="color: #ff7b72;">null</span>, <span style="color: #a5d6ff;">2</span>)); }
+        <span style="color: #ff7b72;">if</span> (error.stack) { <span style="color: #c9d1d9;">console</span>.<span style="color: #d2a8ff;">error</span>(<span style="color: #a5d6ff;">'  Stack:'</span>, error.stack); }
+        <span style="color: #c9d1d9;">console</span>.<span style="color: #d2a8ff;">error</span>(<span style="color: #a5d6ff;">'\n  Possible causes: Invalid token, network issues, or an API service problem.'</span>);
+        <span style="color: #c9d1d9;">process</span>.<span style="color: #d2a8ff;">exit</span>(<span style="color: #a5d6ff;">1</span>);
+    }
 }
 
-<span style="color: #d2a8ff;">main</span>();
+<span style="color: #d2a8ff;">main</span>().<span style="color: #d2a8ff;">catch</span>(<span style="color: #c9d1d9;">console</span>.error);
 </code></pre>
                         </div>
                     </div>

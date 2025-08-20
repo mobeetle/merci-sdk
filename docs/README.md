@@ -26,9 +26,8 @@ Merci SDK is a lightweight, dependency-free library for interacting with the Jet
 
 No package manager is needed. To use the SDK, simply download the desired file from the `/lib` directory on GitHub and import it into your project.
 
-*   `merci.2.11.0.mjs`: The full library file, great for development.
-*   `merci.2.11.0-min.mjs`: Minified version for production.
-*   `merci.2.11.0.d.ts`: TypeScript definitions for autocompletion.
+*   `merci.2.14.0.mjs`: The full library file, great for development.
+*   `merci.2.14.0.d.ts`: TypeScript definitions for autocompletion.
 
 If you want to run the tutorial lessons locally, clone the entire repository:
 
@@ -92,15 +91,16 @@ You should see output like this:
 
 A collection of step-by-step guides is available to take you from basic usage to advanced agentic patterns. Each lesson introduces one new concept.
 
-**[Tutorials on GitHub](../examples/)  
-[Tutorials Website](https://mobeetle.github.io/merci-sdk/tutorials.html)**
+**[View the Full Tutorials Here on GitHub](../examples/)  
+[or Here on the website](https://mobeetle.github.io/merci-sdk/tutorials.html)**
 
 Topics include:
 
 *   **Basics**: System Messages, Model Selection, Media Messages, and Multi-turn Chat.
 *   **Advanced Patterns**: Guaranteed JSON Output, Structured Extraction, and Parallel Extraction.
-*   **Agentic Flows**: Basic Tool Usage, Advanced Parallel Tools, and Multi-Turn Clarification.
-*   **SDK Features**: Automated Token Management.
+*   **Agentic Flows**: Basic Tool Usage, Advanced Parallel Tools, Multi-Turn Clarification, Forcing Tool Usage, and Dynamic Tool Selection.
+*   **SDK Features**: Automated Token Management, Observability & Error Handling.
+*   **Task API**: Basic Usage, Advanced Code Generation, Observability, and Chaining with the Chat API.
 
 ## 📖 API Reference
 
@@ -164,7 +164,7 @@ If you'd like to contribute code, please follow these steps:
 
 ## 📜 License
 
-See the [LICENSE](https://github.com/mobeetle/merci-sdk/blob/main/LICENSE.md) file for more information. By contributing to this project, you agree that your contributions will be licensed under the MIT License.
+See the [LICENSE](https://github.com/mobeetle/merci-sdk/blob/main/LICENSE.md) file for more information. By contributing to this project, you agree that your contributions will be licensed under the Apache 2.0 License.
 
 ---
 *© 2025 Lukáš Michna (Mobeetle). All rights reserved.*

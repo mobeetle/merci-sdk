@@ -2,7 +2,7 @@
 // Merci SDK Tutorial: Lesson 13 - AAutomated Token Management
 
 // --- IMPORTS ---
-import { MerciClient, createUserMessage } from '../lib/merci.2.11.0.mjs';
+import { MerciClient, createUserMessage } from '../lib/merci.2.14.0.mjs';
 import { token as initialToken } from '../secret/token.mjs';
 import { promises as fs } from 'node:fs';
 import path from 'node:path';
@@ -63,7 +63,7 @@ async function main() {
         console.log('\n[STEP 3] Making an API call to trigger the process...');
         const userPrompt = "Confirm you are operational.";
         const messages = [createUserMessage(userPrompt)];
-        const chatSession = client.chat(MODEL);
+        const chatSession = client.chat.session(MODEL);
 
         let finalResponse = '';
         process.stdout.write('🤖 Assistant > ');

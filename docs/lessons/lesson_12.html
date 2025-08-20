@@ -66,7 +66,7 @@
                 </header>
 
                 <section class="mb-12">
-                    <h2>Code: <code class="inline"><a href="https://github.com/mobeetle/merci-sdk/tree/main/examples">lesson_12_parallel_extraction.mjs</a></code></h2>
+                    <h2>Code: <code class="inline"><a href="https://github.com/mobeetle/merci-sdk/tree/main/examples/lesson_12_parallel_extraction.mjs">lesson_12_parallel_extraction.mjs</a></code></h2>
                     <p class="text-[var(--text-secondary)] mb-4">The key to this pattern is defining a tool schema that represents a *single* item. We then instruct the model to call this tool for *each* item it finds. By enabling parallel calls, the model can make all these calls in one go, which we intercept to get a clean array of structured data.</p>
                     <div class="code-block-wrapper">
                         <button class="copy-code-btn absolute top-3 right-3 flex items-center gap-2 text-slate-400 hover:text-white transition-colors p-2 rounded-md bg-slate-800/50 backdrop-blur-sm">
@@ -75,37 +75,126 @@
                         </button>
                         <div class="code-block">
 <pre><code><span style="color: #8b949e;">// lesson_12_parallel_extraction.mjs</span>
-<span style="color: #ff7b72;">import</span> { MerciClient, createUserMessage } <span style="color: #ff7b72;">from</span> <span style="color: #a5d6ff;">'../lib/merci.2.11.0.mjs'</span>;
+<span style="color: #8b949e;">// Merci SDK Tutorial: Lesson 12 - Advanced Parallel Extraction</span>
+
+<span style="color: #8b949e;">// --- IMPORTS ---</span>
+<span style="color: #ff7b72;">import</span> { MerciClient, createUserMessage } <span style="color: #ff7b72;">from</span> <span style="color: #a5d6ff;">'../lib/merci.2.14.0.mjs'</span>;
 <span style="color: #ff7b72;">import</span> { token } <span style="color: #ff7b72;">from</span> <span style="color: #a5d6ff;">'../secret/token.mjs'</span>;
 
-<span style="color: #8b949e;">// This tool's schema represents just ONE item.</span>
+<span style="color: #ff7b72;">const</span> <span style="color: #79c0ff;">MODEL</span> = <span style="color: #a5d6ff;">'google-chat-gemini-flash-2.5'</span>;
+
+<span style="color: #8b949e;">// --- TOOL DEFINITION (FOR A SINGLE ITEM) ---</span>
+<span style="color: #8b949e;">// The tool's schema represents just ONE item.</span>
+<span style="color: #8b949e;">// We instruct the model to call this tool for EACH item it finds.</span>
 <span style="color: #ff7b72;">const</span> <span style="color: #79c0ff;">singleActionItemExtractorTool</span> = {
     <span style="color: #c9d1d9;">name:</span> <span style="color: #a5d6ff;">'extract_single_action_item'</span>,
-    <span style="color: #c9d1d9;">description:</span> <span style="color: #a5d6ff;">'Extracts a *single* action item from the text...'</span>,
-    <span style="color: #c9d1d9;">parameters: { <span style="color: #8b949e;">/* ... JSON Schema for one action item ... */</span> },
+    <span style="color: #c9d1d9;">parameters:</span> {
+        <span style="color: #c9d1d9;">schema:</span> {
+            <span style="color: #c9d1d9;">type:</span> <span style="color: #a5d6ff;">'object'</span>,
+            <span style="color: #c9d1d9;">properties:</span> {
+                <span style="color: #c9d1d9;">task:</span> { <span style="color: #c9d1d9;">type:</span> <span style="color: #a5d6ff;">'string'</span>, <span style="color: #c9d1d9;">description:</span> <span style="color: #a5d6ff;">'A clear description of the action to be taken.'</span> },
+                <span style="color: #c9d1d9;">assigned_to:</span> { <span style="color: #c9d1d9;">type:</span> <span style="color: #a5d6ff;">'string'</span>, <span style="color: #c9d1d9;">description:</span> <span style="color: #a5d6ff;">'The name of the person responsible for the task.'</span> },
+                <span style="color: #c9d1d9;">due_date:</span> { <span style="color: #c9d1d9;">type:</span> <span style="color: #a5d6ff;">'string'</span>, <span style="color: #c9d1d9;">description:</span> <span style="color: #a5d6ff;">'The deadline for the task, in YYYY-MM-DD format.'</span> },
+                <span style="color: #c9d1d9;">priority:</span> {
+                    <span style="color: #c9d1d9;">type:</span> <span style="color: #a5d6ff;">'string'</span>,
+                    <span style="color: #c9d1d9;">description:</span> <span style="color: #a5d6ff;">'The priority level of the task.'</span>,
+                    <span style="color: #c9d1d9;">enum:</span> [<span style="color: #a5d6ff;">'High'</span>, <span style="color: #a5d6ff;">'Medium'</span>, <span style="color: #a5d6ff;">'Low'</span>]
+                }
+            },
+            <span style="color: #c9d1d9;">required:</span> [<span style="color: #a5d6ff;">'task'</span>, <span style="color: #a5d6ff;">'assigned_to'</span>, <span style="color: #a5d6ff;">'due_date'</span>, <span style="color: #a5d6ff;">'priority'</span>]
+        }
+    },
+    <span style="color: #8b949e;">// NOTE: No `execute` function is needed. We are only intercepting the calls.</span>
 };
 
 <span style="color: #ff7b72;">async</span> <span style="color: #ff7b72;">function</span> <span style="color: #d2a8ff;">main</span>() {
-    <span style="color: #ff7b72;">const</span> <span style="color: #79c0ff;">userPrompt</span> = <span style="color: #a5d6ff;">`For each distinct action item you identify, make a parallel call to the 'extract_single_action_item' tool.`</span>;
-    <span style="color: #ff7b72;">const</span> <span style="color: #79c0ff;">chatSession</span> = client
-        .<span style="color: #d2a8ff;">chat</span>(MODEL)
-        .<span style="color: #d2a8ff;">withTools</span>([singleActionItemExtractorTool])
-        .<span style="color: #d2a8ff;">withParameters</span>(<span style="color: #79c0ff;">builder</span> => builder.<span style="color: #d2a8ff;">parallelToolCalls</span>(<span style="color: #ff7b72;">true</span>));
+    <span style="color: #c9d1d9;">console</span>.<span style="color: #d2a8ff;">log</span>(<span style="color: #a5d6ff;">`--- Merci SDK Lesson 12: Parallel Extraction (Model: </span><span style="color: #79c0ff;">${MODEL}</span><span style="color: #a5d6ff;">) ---`</span>);
 
-    <span style="color: #ff7b72;">let</span> <span style="color: #79c0ff;">extractedItems</span> = [];
-    <span style="color: #ff7b72;">for</span> <span style="color: #ff7b72;">await</span> (<span style="color: #ff7b72;">const</span> <span style="color: #79c0ff;">event</span> <span style="color: #ff7b72;">of</span> chatSession.<span style="color: #d2a8ff;">stream</span>(messages)) {
-        <span style="color: #ff7b72;">if</span> (event.type === <span style="color: #a5d6ff;">'tool_calls'</span>) {
-            <span style="color: #8b949e;">// event.calls is an array of all parallel calls</span>
-            <span style="color: #ff7b72;">for</span> (<span style="color: #ff7b72;">const</span> <span style="color: #79c0ff;">call</span> <span style="color: #ff7b72;">of</span> event.calls) {
-                extractedItems.<span style="color: #d2a8ff;">push</span>(JSON.<span style="color: #d2a8ff;">parse</span>(call.arguments));
+    <span style="color: #ff7b72;">try</span> {
+        <span style="color: #8b949e;">// --- STEP 1: INITIALIZE THE CLIENT ---</span>
+        <span style="color: #c9d1d9;">console</span>.<span style="color: #d2a8ff;">log</span>(<span style="color: #a5d6ff;">'[STEP 1] Initializing MerciClient...'</span>);
+        <span style="color: #ff7b72;">const</span> <span style="color: #79c0ff;">client</span> = <span style="color: #ff7b72;">new</span> <span style="color: #d2a8ff;">MerciClient</span>({ token });
+
+        <span style="color: #8b949e;">// --- STEP 2: DEFINE PROMPT AND INPUT DATA ---</span>
+        <span style="color: #c9d1d9;">console</span>.<span style="color: #d2a8ff;">log</span>(<span style="color: #a5d6ff;">'[STEP 2] Preparing prompt and input data...'</span>);
+        <span style="color: #ff7b72;">const</span> <span style="color: #79c0ff;">meetingMinutesContent</span> = <span style="color: #a5d6ff;">`
+    Meeting Notes: Q4 Strategy Kick-off - 2024-10-28
+    Attendees: David, Eve, Frank
+    Action Items:
+    - Frank is responsible for drafting the initial project specification. This is a High priority task and must be completed by 2024-11-04.
+    - Eve will coordinate with the design team to get the new branding assets. This is a Medium priority item with a deadline of 2024-11-08.
+    - David needs to book a venue for the end-of-year party. This is a Low priority task, due by 2024-11-15.
+    - Also, Frank needs to follow up on the Q3 budget report by the end of the week, say 2024-11-01. This is high priority.
+    `</span>;
+        <span style="color: #ff7b72;">const</span> <span style="color: #79c0ff;">userPrompt</span> = <span style="color: #a5d6ff;">`
+    Analyze the following meeting notes.
+    For each distinct action item you identify, make a parallel call to the 'extract_single_action_item' tool.
+
+    MEETING NOTES:
+    ---
+    </span><span style="color: #79c0ff;">${meetingMinutesContent}</span><span style="color: #a5d6ff;">
+    ---
+    `</span>;
+
+        <span style="color: #8b949e;">// --- STEP 3: CONFIGURE THE CHAT SESSION ---</span>
+        <span style="color: #c9d1d9;">console</span>.<span style="color: #d2a8ff;">log</span>(<span style="color: #a5d6ff;">'[STEP 3] Configuring chat session for parallel tool use...'</span>);
+        <span style="color: #ff7b72;">const</span> <span style="color: #79c0ff;">chatSession</span> = <span style="color: #79c0ff;">client</span>
+            .<span style="color: #c9d1d9;">chat</span>.<span style="color: #d2a8ff;">session</span>(MODEL)
+            .<span style="color: #d2a8ff;">withTools</span>([singleActionItemExtractorTool])
+            .<span style="color: #d2a8ff;">withParameters</span>(<span style="color: #79c0ff;">builder</span> => <span style="color: #79c0ff;">builder</span>.<span style="color: #d2a8ff;">parallelToolCalls</span>(<span style="color: #ff7b72;">true</span>));
+
+        <span style="color: #8b949e;">// --- STEP 4: PREPARE THE MESSAGE PAYLOAD ---</span>
+        <span style="color: #c9d1d9;">console</span>.<span style="color: #d2a8ff;">log</span>(<span style="color: #a5d6ff;">'[STEP 4] Creating the message payload...'</span>);
+        <span style="color: #ff7b72;">const</span> <span style="color: #79c0ff;">messages</span> = [<span style="color: #d2a8ff;">createUserMessage</span>(userPrompt)];
+
+        <span style="color: #8b949e;">// --- STEP 5: EXECUTE AND INTERCEPT THE PARALLEL TOOL CALLS ---</span>
+        <span style="color: #c9d1d9;">console</span>.<span style="color: #d2a8ff;">log</span>(<span style="color: #a5d6ff;">'[STEP 5] Sending request and waiting for parallel tool calls...'</span>);
+        <span style="color: #ff7b72;">let</span> <span style="color: #79c0ff;">extractedItems</span> = [];
+        <span style="color: #ff7b72;">for</span> <span style="color: #ff7b72;">await</span> (<span style="color: #ff7b72;">const</span> <span style="color: #79c0ff;">event</span> <span style="color: #ff7b72;">of</span> <span style="color: #79c0ff;">chatSession</span>.<span style="color: #d2a8ff;">stream</span>(messages)) {
+            <span style="color: #ff7b72;">if</span> (<span style="color: #79c0ff;">event</span>.<span style="color: #c9d1d9;">type</span> === <span style="color: #a5d6ff;">'tool_calls'</span>) {
+                <span style="color: #c9d1d9;">console</span>.<span style="color: #d2a8ff;">log</span>(<span style="color: #a5d6ff;">`\n[AGENT ACTION] Model wants to make </span><span style="color: #79c0ff;">${event</span>.<span style="color: #c9d1d9;">calls</span>.<span style="color: #c9d1d9;">length}</span><span style="color: #a5d6ff;"> parallel tool calls. Intercepting...`</span>);
+                <span style="color: #ff7b72;">for</span> (<span style="color: #ff7b72;">const</span> <span style="color: #79c0ff;">call</span> <span style="color: #ff7b72;">of</span> <span style="color: #79c0ff;">event</span>.<span style="color: #c9d1d9;">calls</span>) {
+                    <span style="color: #ff7b72;">const</span> <span style="color: #79c0ff;">argumentsObject</span> = JSON.<span style="color: #d2a8ff;">parse</span>(<span style="color: #79c0ff;">call</span>.<span style="color: #c9d1d9;">arguments</span>);
+                    extractedItems.<span style="color: #d2a8ff;">push</span>(argumentsObject);
+                }
+                <span style="color: #ff7b72;">break</span>; <span style="color: #8b949e;">// We have our data, no need to continue.</span>
             }
-            <span style="color: #ff7b72;">break</span>;
         }
+        <span style="color: #c9d1d9;">console</span>.<span style="color: #d2a8ff;">log</span>(<span style="color: #a5d6ff;">'\n[INFO] Stream finished. Response fully received.'</span>);
+
+        <span style="color: #8b949e;">// --- STEP 6: DISPLAY THE FINAL EXTRACTED DATA ---</span>
+        <span style="color: #c9d1d9;">console</span>.<span style="color: #d2a8ff;">log</span>(<span style="color: #a5d6ff;">'\n[STEP 6] Displaying extracted data...'</span>);
+        <span style="color: #c9d1d9;">console</span>.<span style="color: #d2a8ff;">log</span>(<span style="color: #a5d6ff;">'\n\n--- FINAL RESULT ---'</span>);
+        <span style="color: #ff7b72;">if</span> (<span style="color: #79c0ff;">extractedItems</span>.<span style="color: #c9d1d9;">length</span> > <span style="color: #a5d6ff;">0</span>) {
+            <span style="color: #c9d1d9;">console</span>.<span style="color: #d2a8ff;">log</span>(<span style="color: #a5d6ff;">`✅ Successfully extracted </span><span style="color: #79c0ff;">${extractedItems</span>.<span style="color: #c9d1d9;">length}</span><span style="color: #a5d6ff;"> items in a single pass:`</span>);
+            <span style="color: #c9d1d9;">console</span>.<span style="color: #d2a8ff;">log</span>(JSON.<span style="color: #d2a8ff;">stringify</span>(extractedItems, <span style="color: #ff7b72;">null</span>, <span style="color: #a5d6ff;">2</span>));
+
+            <span style="color: #c9d1d9;">console</span>.<span style="color: #d2a8ff;">log</span>(<span style="color: #a5d6ff;">'\nWe can now work with this as a native JavaScript array.'</span>);
+            <span style="color: #ff7b72;">const</span> <span style="color: #79c0ff;">highPriorityCount</span> = <span style="color: #79c0ff;">extractedItems</span>.<span style="color: #d2a8ff;">filter</span>(<span style="color: #79c0ff;">item</span> => <span style="color: #79c0ff;">item</span>.<span style="color: #c9d1d9;">priority</span> === <span style="color: #a5d6ff;">'High'</span>).<span style="color: #c9d1d9;">length</span>;
+            <span style="color: #c9d1d9;">console</span>.<span style="color: #d2a8ff;">log</span>(<span style="color: #a5d6ff;">`Found </span><span style="color: #79c0ff;">${highPriorityCount}</span><span style="color: #a5d6ff;"> high-priority tasks.`</span>);
+        } <span style="color: #ff7b72;">else</span> {
+            <span style="color: #c9d1d9;">console</span>.<span style="color: #d2a8ff;">error</span>(<span style="color: #a5d6ff;">'❌ Extraction failed. The model did not attempt to call the tool.'</span>);
+        }
+        <span style="color: #c9d1d9;">console</span>.<span style="color: #d2a8ff;">log</span>(<span style="color: #a5d6ff;">'--------------------'</span>);
+
+    } <span style="color: #ff7b72;">catch</span> (error) {
+        <span style="color: #c9d1d9;">console</span>.<span style="color: #d2a8ff;">error</span>(<span style="color: #a5d6ff;">'\n\n[FATAL ERROR] An error occurred during the operation.'</span>);
+        <span style="color: #c9d1d9;">console</span>.<span style="color: #d2a8ff;">error</span>(<span style="color: #a5d6ff;">'  Message:'</span>, error.message);
+        <span style="color: #ff7b72;">if</span> (error.status) {
+            <span style="color: #c9d1d9;">console</span>.<span style="color: #d2a8ff;">error</span>(<span style="color: #a5d6ff;">'  API Status:'</span>, error.status);
+        }
+        <span style="color: #ff7b72;">if</span> (error.details) {
+            <span style="color: #c9d1d9;">console</span>.<span style="color: #d2a8ff;">error</span>(<span style="color: #a5d6ff;">'  Details:'</span>, JSON.<span style="color: #d2a8ff;">stringify</span>(error.details, <span style="color: #ff7b72;">null</span>, <span style="color: #a5d6ff;">2</span>));
+        }
+        <span style="color: #ff7b72;">if</span> (error.stack) {
+            <span style="color: #c9d1d9;">console</span>.<span style="color: #d2a8ff;">error</span>(<span style="color: #a5d6ff;">'  Stack:'</span>, error.stack);
+        }
+        <span style="color: #c9d1d9;">console</span>.<span style="color: #d2a8ff;">error</span>(<span style="color: #a5d6ff;">'\n  Possible causes: Invalid token, network issues, or an API service problem.'</span>);
+        <span style="color: #c9d1d9;">process</span>.<span style="color: #d2a8ff;">exit</span>(<span style="color: #a5d6ff;">1</span>); <span style="color: #8b949e;">// Exit with a non-zero code to indicate failure.</span>
     }
-    <span style="color: #c9d1d9;">console.<span style="color: #d2a8ff;">log</span>(extractedItems);
 }
 
-<span style="color: #d2a8ff;">main</span>();
+<span style="color: #d2a8ff;">main</span>().<span style="color: #d2a8ff;">catch</span>(<span style="color: #c9d1d9;">console</span>.error);
 </code></pre>
                         </div>
                     </div>
@@ -167,4 +256,3 @@ Found 2 high-priority tasks.
 
 <script src="../assets/js/script.js"></script>
 </body>
-</html>

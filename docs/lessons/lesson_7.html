@@ -66,7 +66,7 @@
                 </header>
 
                 <section class="mb-12">
-                    <h2>Code: <code class="inline"><a href="https://github.com/mobeetle/merci-sdk/tree/main/examples">lesson_7_json_output.mjs</a></code></h2>
+                    <h2>Code: <code class="inline"><a href="https://github.com/mobeetle/merci-sdk/tree/main/examples/lesson_7_json_output.mjs">lesson_7_json_output.mjs</a></code></h2>
                     <p class="text-[var(--text-secondary)] mb-4">The key to this lesson is using the <code class="inline">.asJson()</code> method within the parameter builder. This signals to the model that it must adhere strictly to JSON format, making the output safe to parse directly.</p>
                     <div class="code-block-wrapper">
                         <button class="copy-code-btn absolute top-3 right-3 flex items-center gap-2 text-slate-400 hover:text-white transition-colors p-2 rounded-md bg-slate-800/50 backdrop-blur-sm">
@@ -75,41 +75,90 @@
                         </button>
                         <div class="code-block">
 <pre><code><span style="color: #8b949e;">// lesson_7_json_output.mjs</span>
-<span style="color: #ff7b72;">import</span> { MerciClient, createUserMessage } <span style="color: #ff7b72;">from</span> <span style="color: #a5d6ff;">'../lib/merci.2.11.0.mjs'</span>;
+<span style="color: #8b949e;">// Merci SDK Tutorial: Lesson 7 - Guaranteed JSON Output</span>
+
+<span style="color: #8b949e;">// --- IMPORTS ---</span>
+<span style="color: #ff7b72;">import</span> { MerciClient, createUserMessage } <span style="color: #ff7b72;">from</span> <span style="color: #a5d6ff;">'../lib/merci.2.14.0.mjs'</span>;
 <span style="color: #ff7b72;">import</span> { token } <span style="color: #ff7b72;">from</span> <span style="color: #a5d6ff;">'../secret/token.mjs'</span>;
 
 <span style="color: #ff7b72;">const</span> <span style="color: #79c0ff;">MODEL</span> = <span style="color: #a5d6ff;">'google-chat-gemini-flash-2.5'</span>;
 
 <span style="color: #ff7b72;">async</span> <span style="color: #ff7b72;">function</span> <span style="color: #d2a8ff;">main</span>() {
-    <span style="color: #ff7b72;">const</span> <span style="color: #79c0ff;">client</span> = <span style="color: #ff7b72;">new</span> <span style="color: #d2a8ff;">MerciClient</span>({ token });
-    <span style="color: #ff7b72;">const</span> <span style="color: #79c0ff;">userPrompt</span> = <span style="color: #a5d6ff;">`
+    <span style="color: #c9d1d9;">console</span>.<span style="color: #d2a8ff;">log</span>(<span style="color: #a5d6ff;">`--- Merci SDK Tutorial: Lesson 7 - Guaranteed JSON (Model: </span><span style="color: #79c0ff;">${MODEL}</span><span style="color: #a5d6ff;">) ---`</span>);
+
+    <span style="color: #ff7b72;">try</span> {
+        <span style="color: #8b949e;">// --- STEP 1: INITIALIZE THE CLIENT ---</span>
+        <span style="color: #c9d1d9;">console</span>.<span style="color: #d2a8ff;">log</span>(<span style="color: #a5d6ff;">'[STEP 1] Initializing MerciClient...'</span>);
+        <span style="color: #ff7b72;">const</span> <span style="color: #79c0ff;">client</span> = <span style="color: #ff7b72;">new</span> <span style="color: #d2a8ff;">MerciClient</span>({ token });
+
+        <span style="color: #8b949e;">// --- STEP 2: DEFINE PROMPT AND INPUT DATA ---</span>
+        <span style="color: #c9d1d9;">console</span>.<span style="color: #d2a8ff;">log</span>(<span style="color: #a5d6ff;">'[STEP 2] Preparing prompt and input data...'</span>);
+        <span style="color: #ff7b72;">const</span> <span style="color: #79c0ff;">unstructuredText</span> = <span style="color: #a5d6ff;">`User ID 54321, named Alice, is a 29-year-old Data Scientist from Berlin. Her email is alice.s@web.de and she is an active user. Her known skills are R, Pandas, and Scikit-learn.`</span>;
+        <span style="color: #ff7b72;">const</span> <span style="color: #79c0ff;">userPrompt</span> = <span style="color: #a5d6ff;">`
 Based on the following data, create a JSON object.
 The JSON object must have these keys: "name", "email", "age", "city", "skills", "id", "isActive".
+The age and id must be numbers. The isActive must be a boolean.
+
 DATA:
-\`\`\`
-User ID 54321, named Alice, is a 29-year-old Data Scientist from Berlin. Her email is alice.s@web.de and she is an active user. Her known skills are R, Pandas, and Scikit-learn.
-\`\`\`
+```
+</span><span style="color: #79c0ff;">${unstructuredText}</span><span style="color: #a5d6ff;">
+```
 `</span>;
 
-    <span style="color: #8b949e;">// Configure the chat session with .asJson()</span>
-    <span style="color: #ff7b72;">const</span> <span style="color: #79c0ff;">chatSession</span> = client.<span style="color: #d2a8ff;">chat</span>(MODEL)
-        .<span style="color: #d2a8ff;">withParameters</span>(<span style="color: #79c0ff;">builder</span> => builder.<span style="color: #d2a8ff;">asJson</span>());
+        <span style="color: #8b949e;">// --- STEP 3: CONFIGURE THE CHAT SESSION ---</span>
+        <span style="color: #8b949e;">// The `.asJson()` method instructs the model to enter a constrained</span>
+        <span style="color: #8b949e;">// generation mode, guaranteeing its output is a parsable JSON string.</span>
+        <span style="color: #c9d1d9;">console</span>.<span style="color: #d2a8ff;">log</span>(<span style="color: #a5d6ff;">'[STEP 3] Configuring chat session with .asJson()...'</span>);
+        <span style="color: #ff7b72;">const</span> <span style="color: #79c0ff;">chatSession</span> = <span style="color: #79c0ff;">client</span>.<span style="color: #c9d1d9;">chat</span>.<span style="color: #d2a8ff;">session</span>(MODEL)
+            .<span style="color: #d2a8ff;">withParameters</span>(<span style="color: #79c0ff;">builder</span> => <span style="color: #79c0ff;">builder</span>.<span style="color: #d2a8ff;">asJson</span>());
 
-    <span style="color: #ff7b72;">const</span> <span style="color: #79c0ff;">messages</span> = [<span style="color: #d2a8ff;">createUserMessage</span>(userPrompt)];
+        <span style="color: #8b949e;">// --- STEP 4: PREPARE THE MESSAGE PAYLOAD ---</span>
+        <span style="color: #c9d1d9;">console</span>.<span style="color: #d2a8ff;">log</span>(<span style="color: #a5d6ff;">'[STEP 4] Creating the message payload...'</span>);
+        <span style="color: #ff7b72;">const</span> <span style="color: #79c0ff;">messages</span> = [<span style="color: #d2a8ff;">createUserMessage</span>(userPrompt)];
 
-    <span style="color: #ff7b72;">let</span> <span style="color: #79c0ff;">rawResponse</span> = <span style="color: #a5d6ff;">''</span>;
-    <span style="color: #ff7b72;">for</span> <span style="color: #ff7b72;">await</span> (<span style="color: #ff7b72;">const</span> <span style="color: #79c0ff;">event</span> <span style="color: #ff7b72;">of</span> chatSession.<span style="color: #d2a8ff;">stream</span>(messages)) {
-        <span style="color: #ff7b72;">if</span> (event.type === <span style="color: #a5d6ff;">'text'</span>) {
-            rawResponse += event.content;
+        <span style="color: #8b949e;">// --- STEP 5: EXECUTE THE REQUEST &amp; PROCESS THE RESPONSE ---</span>
+        <span style="color: #c9d1d9;">console</span>.<span style="color: #d2a8ff;">log</span>(<span style="color: #a5d6ff;">'[STEP 5] Sending request and collecting raw JSON response...'</span>);
+        <span style="color: #ff7b72;">let</span> <span style="color: #79c0ff;">rawResponse</span> = <span style="color: #a5d6ff;">''</span>;
+        <span style="color: #ff7b72;">for</span> <span style="color: #ff7b72;">await</span> (<span style="color: #ff7b72;">const</span> <span style="color: #79c0ff;">event</span> <span style="color: #ff7b72;">of</span> <span style="color: #79c0ff;">chatSession</span>.<span style="color: #d2a8ff;">stream</span>(messages)) {
+            <span style="color: #ff7b72;">if</span> (<span style="color: #79c0ff;">event</span>.<span style="color: #c9d1d9;">type</span> === <span style="color: #a5d6ff;">'text'</span>) {
+                rawResponse += <span style="color: #79c0ff;">event</span>.<span style="color: #c9d1d9;">content</span>;
+            }
         }
-    }
+        <span style="color: #c9d1d9;">console</span>.<span style="color: #d2a8ff;">log</span>(<span style="color: #a5d6ff;">'[INFO] Stream finished. Response fully received.'</span>);
+        <span style="color: #c9d1d9;">console</span>.<span style="color: #d2a8ff;">log</span>(<span style="color: #a5d6ff;">'-------------------------------------------\nRaw response from model:\n'</span> + rawResponse + <span style="color: #a5d6ff;">'\n-------------------------------------------'</span>);
 
-    <span style="color: #8b949e;">// The rawResponse is a guaranteed JSON string</span>
-    <span style="color: #ff7b72;">const</span> <span style="color: #79c0ff;">parsedObject</span> = JSON.<span style="color: #d2a8ff;">parse</span>(rawResponse);
-    <span style="color: #c9d1d9;">console.<span style="color: #d2a8ff;">log</span>(parsedObject);
+        <span style="color: #8b949e;">// --- STEP 6: DISPLAY THE FINAL OUTPUT (PARSED) ---</span>
+        <span style="color: #c9d1d9;">console</span>.<span style="color: #d2a8ff;">log</span>(<span style="color: #a5d6ff;">'\n[STEP 6] Parsing the guaranteed JSON response...'</span>);
+        <span style="color: #ff7b72;">try</span> {
+            <span style="color: #ff7b72;">const</span> <span style="color: #79c0ff;">parsedObject</span> = JSON.<span style="color: #d2a8ff;">parse</span>(rawResponse);
+            <span style="color: #c9d1d9;">console</span>.<span style="color: #d2a8ff;">log</span>(<span style="color: #a5d6ff;">'\n\n--- FINAL RESULT ---'</span>);
+            <span style="color: #c9d1d9;">console</span>.<span style="color: #d2a8ff;">log</span>(<span style="color: #a5d6ff;">'✅✅✅ VICTORY! The response was successfully and directly parsed.'</span>);
+            <span style="color: #c9d1d9;">console</span>.<span style="color: #d2a8ff;">log</span>(<span style="color: #a5d6ff;">'\nHere is the final JavaScript object:'</span>);
+            <span style="color: #c9d1d9;">console</span>.<span style="color: #d2a8ff;">log</span>(parsedObject);
+            <span style="color: #c9d1d9;">console</span>.<span style="color: #d2a8ff;">log</span>(<span style="color: #a5d6ff;">`\nWe can now reliably access data, e.g., user's city: </span><span style="color: #79c0ff;">${parsedObject.city}</span><span style="color: #a5d6ff;">`</span>);
+            <span style="color: #c9d1d9;">console</span>.<span style="color: #d2a8ff;">log</span>(<span style="color: #a5d6ff;">'--------------------'</span>);
+        } <span style="color: #ff7b72;">catch</span> (<span style="color: #79c0ff;">e</span>) {
+            <span style="color: #c9d1d9;">console</span>.<span style="color: #d2a8ff;">error</span>(<span style="color: #a5d6ff;">'❌ FAILURE: The model failed to produce valid JSON even in JSON mode.'</span>, e);
+        }
+
+    } <span style="color: #ff7b72;">catch</span> (error) {
+        <span style="color: #c9d1d9;">console</span>.<span style="color: #d2a8ff;">error</span>(<span style="color: #a5d6ff;">'\n\n[FATAL ERROR] An error occurred during the operation.'</span>);
+        <span style="color: #c9d1d9;">console</span>.<span style="color: #d2a8ff;">error</span>(<span style="color: #a5d6ff;">'  Message:'</span>, error.message);
+        <span style="color: #ff7b72;">if</span> (error.status) {
+            <span style="color: #c9d1d9;">console</span>.<span style="color: #d2a8ff;">error</span>(<span style="color: #a5d6ff;">'  API Status:'</span>, error.status);
+        }
+        <span style="color: #ff7b72;">if</span> (error.details) {
+            <span style="color: #c9d1d9;">console</span>.<span style="color: #d2a8ff;">error</span>(<span style="color: #a5d6ff;">'  Details:'</span>, JSON.<span style="color: #d2a8ff;">stringify</span>(error.details, <span style="color: #ff7b72;">null</span>, <span style="color: #a5d6ff;">2</span>));
+        }
+        <span style="color: #ff7b72;">if</span> (error.stack) {
+            <span style="color: #c9d1d9;">console</span>.<span style="color: #d2a8ff;">error</span>(<span style="color: #a5d6ff;">'  Stack:'</span>, error.stack);
+        }
+        <span style="color: #c9d1d9;">console</span>.<span style="color: #d2a8ff;">error</span>(<span style="color: #a5d6ff;">'\n  Possible causes: Invalid token, network issues, or an API service problem.'</span>);
+        <span style="color: #c9d1d9;">process</span>.<span style="color: #d2a8ff;">exit</span>(<span style="color: #a5d6ff;">1</span>); <span style="color: #8b949e;">// Exit with a non-zero code to indicate failure.</span>
+    }
 }
 
-<span style="color: #d2a8ff;">main</span>().<span style="color: #d2a8ff;">catch</span>(console.error);
+<span style="color: #d2a8ff;">main</span>().<span style="color: #d2a8ff;">catch</span>(<span style="color: #c9d1d9;">console</span>.error);
 </code></pre>
                         </div>
                     </div>

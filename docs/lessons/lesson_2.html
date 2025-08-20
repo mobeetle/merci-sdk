@@ -66,7 +66,7 @@
                 </header>
 
                 <section class="mb-12">
-                    <h2>Code: <code class="inline"><a href="https://github.com/mobeetle/merci-sdk/tree/main/examples">lesson_2_system_messages.mjs</a></code></h2>
+                    <h2>Code: <code class="inline"><a href="https://github.com/mobeetle/merci-sdk/tree/main/examples/lesson_2_system_messages.mjs">lesson_2_system_messages.mjs</a></code></h2>
                     <p class="text-[var(--text-secondary)] mb-4">This script uses the <code class="inline">.withSystemMessage()</code> method to configure the chat session. The SDK automatically prepends this message to all subsequent requests in the session.</p>
                     <div class="code-block-wrapper">
                         <button class="copy-code-btn absolute top-3 right-3 flex items-center gap-2 text-slate-400 hover:text-white transition-colors p-2 rounded-md bg-slate-800/50 backdrop-blur-sm">
@@ -78,55 +78,95 @@
 <span style="color: #8b949e;">// Merci SDK Tutorial: Lesson 2 - Using System Messages</span>
 
 <span style="color: #8b949e;">// --- IMPORTS ---</span>
-<span style="color: #ff7b72;">import</span> { MerciClient, createUserMessage } <span style="color: #ff7b72;">from</span> <span style="color: #a5d6ff;">'../lib/merci.2.11.0.mjs'</span>;
+<span style="color: #8b949e;">// We import the same tools as before.</span>
+<span style="color: #ff7b72;">import</span> { MerciClient, createUserMessage } <span style="color: #ff7b72;">from</span> <span style="color: #a5d6ff;">'../lib/merci.2.14.0.mjs'</span>;
 <span style="color: #ff7b72;">import</span> { token } <span style="color: #ff7b72;">from</span> <span style="color: #a5d6ff;">'../secret/token.mjs'</span>;
 
 <span style="color: #ff7b72;">const</span> <span style="color: #79c0ff;">MODEL</span> = <span style="color: #a5d6ff;">'google-chat-gemini-flash-2.5'</span>;
 
 <span style="color: #ff7b72;">async</span> <span style="color: #ff7b72;">function</span> <span style="color: #d2a8ff;">main</span>() {
-    <span style="color: #c9d1d9;">console.<span style="color: #d2a8ff;">log</span>(<span style="color: #a5d6ff;">`--- Merci SDK Tutorial: Lesson 2 - Using System Messages (Model: </span><span style="color: #79c0ff;">${MODEL}</span><span style="color: #a5d6ff;">) ---`</span>);
+    <span style="color: #c9d1d9;">console</span>.<span style="color: #d2a8ff;">log</span>(<span style="color: #a5d6ff;">`--- Merci SDK Tutorial: Lesson 2 - Using System Messages (Model: </span><span style="color: #79c0ff;">${MODEL}</span><span style="color: #a5d6ff;">) ---`</span>);
 
     <span style="color: #ff7b72;">try</span> {
         <span style="color: #8b949e;">// --- STEP 1: INITIALIZE THE CLIENT ---</span>
-        <span style="color: #c9d1d9;">console.<span style="color: #d2a8ff;">log</span>(<span style="color: #a5d6ff;">'[STEP 1] Initializing MerciClient...'</span>);
+        <span style="color: #8b949e;">// This step is the same as in Lesson 1.</span>
+        <span style="color: #c9d1d9;">console</span>.<span style="color: #d2a8ff;">log</span>(<span style="color: #a5d6ff;">'[STEP 1] Initializing MerciClient...'</span>);
         <span style="color: #ff7b72;">const</span> <span style="color: #79c0ff;">client</span> = <span style="color: #ff7b72;">new</span> <span style="color: #d2a8ff;">MerciClient</span>({ token });
 
         <span style="color: #8b949e;">// --- STEP 2: DEFINE PROMPT AND INPUT DATA ---</span>
-        <span style="color: #c9d1d9;">console.<span style="color: #d2a8ff;">log</span>(<span style="color: #a5d6ff;">'[STEP 2] Preparing prompt and input data...'</span>);
+        <span style="color: #8b949e;">// This is our new and most important step. The system message sets the context,</span>
+        <span style="color: #8b949e;">// persona, and rules for the AI. It applies to the entire conversation.</span>
+        <span style="color: #c9d1d9;">console</span>.<span style="color: #d2a8ff;">log</span>(<span style="color: #a5d6ff;">'[STEP 2] Preparing prompt and input data...'</span>);
         <span style="color: #ff7b72;">const</span> <span style="color: #79c0ff;">systemPrompt</span> = <span style="color: #a5d6ff;">"You are a sassy, slightly cynical pirate who's been forced into a marketing job. Your responses should be creative but with a pirate's reluctant and grumpy tone. You often use pirate slang like 'Ahoy!', 'Shiver me timbers!', or 'savvy?'."</span>;
         <span style="color: #ff7b72;">const</span> <span style="color: #79c0ff;">userPrompt</span> = <span style="color: #a5d6ff;">"Write a short, inspiring tagline for a new coffee brand called 'Stardust Brew'."</span>;
 
         <span style="color: #8b949e;">// --- STEP 3: CONFIGURE THE CHAT SESSION ---</span>
-        <span style="color: #c9d1d9;">console.<span style="color: #d2a8ff;">log</span>(<span style="color: #a5d6ff;">'[STEP 3] Configuring the chat session with a system message...'</span>);
-        <span style="color: #ff7b72;">const</span> <span style="color: #79c0ff;">chatSession</span> = client.<span style="color: #d2a8ff;">chat</span>(MODEL)
+        <span style="color: #8b949e;">// This is where we apply the system message. The `.withSystemMessage()` method</span>
+        <span style="color: #8b949e;">// is chained after `.chat()`. This configures the session to use our</span>
+        <span style="color: #8b949e;">// pirate persona for all subsequent requests.</span>
+        <span style="color: #c9d1d9;">console</span>.<span style="color: #d2a8ff;">log</span>(<span style="color: #a5d6ff;">'[STEP 3] Configuring the chat session with a system message...'</span>);
+        <span style="color: #ff7b72;">const</span> <span style="color: #79c0ff;">chatSession</span> = <span style="color: #79c0ff;">client</span>.<span style="color: #c9d1d9;">chat</span>.<span style="color: #d2a8ff;">session</span>(MODEL)
             .<span style="color: #d2a8ff;">withSystemMessage</span>(systemPrompt);
 
         <span style="color: #8b949e;">// --- STEP 4: PREPARE THE MESSAGE PAYLOAD ---</span>
-        <span style="color: #c9d1d9;">console.<span style="color: #d2a8ff;">log</span>(<span style="color: #a5d6ff;">'[STEP 4] Creating the message payload...'</span>);
+        <span style="color: #8b949e;">// We create our user message just like before. The SDK will automatically</span>
+        <span style="color: #8b949e;">// prepend the configured system message to the request behind the scenes.</span>
+        <span style="color: #c9d1d9;">console</span>.<span style="color: #d2a8ff;">log</span>(<span style="color: #a5d6ff;">'[STEP 4] Creating the message payload...'</span>);
         <span style="color: #ff7b72;">const</span> <span style="color: #79c0ff;">messages</span> = [
             <span style="color: #d2a8ff;">createUserMessage</span>(userPrompt),
         ];
 
-        <span style="color: #8b949e;">// --- STEP 5: EXECUTE THE REQUEST & PROCESS THE RESPONSE ---</span>
-        <span style="color: #c9d1d9;">console.<span style="color: #d2a8ff;">log</span>(<span style="color: #a5d6ff;">'[STEP 5] Sending request and processing stream...'</span>);
+        <span style="color: #8b949e;">// --- STEP 5: EXECUTE THE REQUEST &amp; PROCESS THE RESPONSE ---</span>
+        <span style="color: #8b949e;">// This part is identical to Lesson 1. The SDK's consistent stream-based</span>
+        <span style="color: #8b949e;">// approach means we don't need to change our processing logic.</span>
+        <span style="color: #c9d1d9;">console</span>.<span style="color: #d2a8ff;">log</span>(<span style="color: #a5d6ff;">'[STEP 5] Sending request and processing stream...'</span>);
         <span style="color: #ff7b72;">let</span> <span style="color: #79c0ff;">finalResponse</span> = <span style="color: #a5d6ff;">''</span>;
-        process.stdout.<span style="color: #d2a8ff;">write</span>(<span style="color: #a5d6ff;">'🤖 Pirate Assistant > '</span>);
+        <span style="color: #c9d1d9;">process</span>.<span style="color: #c9d1d9;">stdout</span>.<span style="color: #d2a8ff;">write</span>(<span style="color: #a5d6ff;">'🤖 Pirate Assistant > '</span>);
 
-        <span style="color: #ff7b72;">for</span> <span style="color: #ff7b72;">await</span> (<span style="color: #ff7b72;">const</span> <span style="color: #79c0ff;">event</span> <span style="color: #ff7b72;">of</span> chatSession.<span style="color: #d2a8ff;">stream</span>(messages)) {
-            <span style="color: #ff7b72;">if</span> (event.type === <span style="color: #a5d6ff;">'text'</span>) {
-                process.stdout.<span style="color: #d2a8ff;">write</span>(event.content);
-                finalResponse += event.content;
+        <span style="color: #ff7b72;">for</span> <span style="color: #ff7b72;">await</span> (<span style="color: #ff7b72;">const</span> <span style="color: #79c0ff;">event</span> <span style="color: #ff7b72;">of</span> <span style="color: #79c0ff;">chatSession</span>.<span style="color: #d2a8ff;">stream</span>(messages)) {
+            <span style="color: #ff7b72;">if</span> (<span style="color: #79c0ff;">event</span>.<span style="color: #c9d1d9;">type</span> === <span style="color: #a5d6ff;">'text'</span>) {
+                <span style="color: #c9d1d9;">process</span>.<span style="color: #c9d1d9;">stdout</span>.<span style="color: #d2a8ff;">write</span>(<span style="color: #79c0ff;">event</span>.<span style="color: #c9d1d9;">content</span>);
+                finalResponse += <span style="color: #79c0ff;">event</span>.<span style="color: #c9d1d9;">content</span>;
             }
         }
-        process.stdout.<span style="color: #d2a8ff;">write</span>(<span style="color: #a5d6ff;">'\n'</span>);
-        <span style="color: #c9d1d9;">console.<span style="color: #d2a8ff;">log</span>(<span style="color: #a5d6ff;">'\n[INFO] Stream finished. Response fully received.'</span>);
+        <span style="color: #c9d1d9;">process</span>.<span style="color: #c9d1d9;">stdout</span>.<span style="color: #d2a8ff;">write</span>(<span style="color: #a5d6ff;">'
+'</span>);
+        <span style="color: #c9d1d9;">console</span>.<span style="color: #d2a8ff;">log</span>(<span style="color: #a5d6ff;">'
+[INFO] Stream finished. Response fully received.'</span>);
+
+
+        <span style="color: #8b949e;">// --- FINAL RESULT ---</span>
+        <span style="color: #c9d1d9;">console</span>.<span style="color: #d2a8ff;">log</span>(<span style="color: #a5d6ff;">'
+
+--- FINAL RESULT ---'</span>);
+        <span style="color: #c9d1d9;">console</span>.<span style="color: #d2a8ff;">log</span>(<span style="color: #a5d6ff;">`📜 System > </span><span style="color: #79c0ff;">${systemPrompt}</span><span style="color: #a5d6ff;">`</span>);
+        <span style="color: #c9d1d9;">console</span>.<span style="color: #d2a8ff;">log</span>(<span style="color: #a5d6ff;">`👤 User > </span><span style="color: #79c0ff;">${userPrompt}</span><span style="color: #a5d6ff;">`</span>);
+        <span style="color: #c9d1d9;">console</span>.<span style="color: #d2a8ff;">log</span>(<span style="color: #a5d6ff;">`🤖 Pirate Assistant > </span><span style="color: #79c0ff;">${finalResponse}</span><span style="color: #a5d6ff;">`</span>);
+        <span style="color: #c9d1d9;">console</span>.<span style="color: #d2a8ff;">log</span>(<span style="color: #a5d6ff;">'--------------------'</span>);
+        <span style="color: #c9d1d9;">console</span>.<span style="color: #d2a8ff;">log</span>(<span style="color: #a5d6ff;">'
+Notice how the response is completely different from Lesson 1, even with the same user prompt!'</span>);
 
     } <span style="color: #ff7b72;">catch</span> (error) {
-        <span style="color: #c9d1d9;">console.<span style="color: #d2a8ff;">error</span>(<span style="color: #a5d6ff;">'\n\n[FATAL ERROR] An error occurred...'</span>);
+        <span style="color: #c9d1d9;">console</span>.<span style="color: #d2a8ff;">error</span>(<span style="color: #a5d6ff;">'
+
+[FATAL ERROR] An error occurred during the operation.'</span>);
+        <span style="color: #c9d1d9;">console</span>.<span style="color: #d2a8ff;">error</span>(<span style="color: #a5d6ff;">'  Message:'</span>, error.message);
+        <span style="color: #ff7b72;">if</span> (error.status) {
+            <span style="color: #c9d1d9;">console</span>.<span style="color: #d2a8ff;">error</span>(<span style="color: #a5d6ff;">'  API Status:'</span>, error.status);
+        }
+        <span style="color: #ff7b72;">if</span> (error.details) {
+            <span style="color: #c9d1d9;">console</span>.<span style="color: #d2a8ff;">error</span>(<span style="color: #a5d6ff;">'  Details:'</span>, JSON.<span style="color: #d2a8ff;">stringify</span>(error.details, <span style="color: #ff7b72;">null</span>, <span style="color: #a5d6ff;">2</span>));
+        }
+        <span style="color: #ff7b72;">if</span> (error.stack) {
+            <span style="color: #c9d1d9;">console</span>.<span style="color: #d2a8ff;">error</span>(<span style="color: #a5d6ff;">'  Stack:'</span>, error.stack);
+        }
+        <span style="color: #c9d1d9;">console</span>.<span style="color: #d2a8ff;">error</span>(<span style="color: #a5d6ff;">'
+  Possible causes: Invalid token, network issues, or an API service problem.'</span>);
+        <span style="color: #c9d1d9;">process</span>.<span style="color: #d2a8ff;">exit</span>(<span style="color: #a5d6ff;">1</span>); <span style="color: #8b949e;">// Exit with a non-zero code to indicate failure.</span>
     }
 }
 
-<span style="color: #d2a8ff;">main</span>().<span style="color: #d2a8ff;">catch</span>(console.error);
+<span style="color: #d2a8ff;">main</span>().<span style="color: #d2a8ff;">catch</span>(<span style="color: #c9d1d9;">console</span>.error);
 </code></pre>
                         </div>
                     </div>

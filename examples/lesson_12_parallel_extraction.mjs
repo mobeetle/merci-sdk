@@ -2,7 +2,7 @@
 // Merci SDK Tutorial: Lesson 12 - Advanced Parallel Extraction
 
 // --- IMPORTS ---
-import { MerciClient, createUserMessage } from '../lib/merci.2.11.0.mjs';
+import { MerciClient, createUserMessage } from '../lib/merci.2.14.0.mjs';
 import { token } from '../secret/token.mjs';
 
 const MODEL = 'google-chat-gemini-flash-2.5';
@@ -12,20 +12,21 @@ const MODEL = 'google-chat-gemini-flash-2.5';
 // We instruct the model to call this tool for EACH item it finds.
 const singleActionItemExtractorTool = {
     name: 'extract_single_action_item',
-    description: 'Extracts a *single* action item from the text. This tool MUST be called for each individual action item found.',
     parameters: {
-        type: 'object',
-        properties: {
-            task: { type: 'string', description: 'A clear description of the action to be taken.' },
-            assigned_to: { type: 'string', description: 'The name of the person responsible for the task.' },
-            due_date: { type: 'string', description: 'The deadline for the task, in YYYY-MM-DD format.' },
-            priority: {
-                type: 'string',
-                description: 'The priority level of the task.',
-                enum: ['High', 'Medium', 'Low']
-            }
-        },
-        required: ['task', 'assigned_to', 'due_date', 'priority']
+        schema: {
+            type: 'object',
+            properties: {
+                task: { type: 'string', description: 'A clear description of the action to be taken.' },
+                assigned_to: { type: 'string', description: 'The name of the person responsible for the task.' },
+                due_date: { type: 'string', description: 'The deadline for the task, in YYYY-MM-DD format.' },
+                priority: {
+                    type: 'string',
+                    description: 'The priority level of the task.',
+                    enum: ['High', 'Medium', 'Low']
+                }
+            },
+            required: ['task', 'assigned_to', 'due_date', 'priority']
+        }
     },
     // NOTE: No `execute` function is needed. We are only intercepting the calls.
 };
@@ -62,7 +63,7 @@ async function main() {
         // --- STEP 3: CONFIGURE THE CHAT SESSION ---
         console.log('[STEP 3] Configuring chat session for parallel tool use...');
         const chatSession = client
-            .chat(MODEL)
+            .chat.session(MODEL)
             .withTools([singleActionItemExtractorTool])
             .withParameters(builder => builder.parallelToolCalls(true));
 

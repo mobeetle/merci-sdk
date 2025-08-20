@@ -66,7 +66,7 @@
                 </header>
 
                 <section class="mb-12">
-                    <h2>Code: <code class="inline"><a href="https://github.com/mobeetle/merci-sdk/tree/main/examples">lesson_6_parameter_control.mjs</a></code></h2>
+                    <h2>Code: <code class="inline"><a href="https://github.com/mobeetle/merci-sdk/tree/main/examples/lesson_6_parameter_control.mjs">lesson_6_parameter_control.mjs</a></code></h2>
                     <p class="text-[var(--text-secondary)] mb-4">The <code class="inline">.withParameters()</code> method accepts a function that receives a builder instance. You can chain methods on this builder to configure the request. The SDK intelligently filters any parameters not supported by the selected model.</p>
                     <div class="code-block-wrapper">
                         <button class="copy-code-btn absolute top-3 right-3 flex items-center gap-2 text-slate-400 hover:text-white transition-colors p-2 rounded-md bg-slate-800/50 backdrop-blur-sm">
@@ -75,14 +75,14 @@
                         </button>
                         <div class="code-block">
 <pre><code><span style="color: #8b949e;">// lesson_6_parameter_control.mjs</span>
-<span style="color: #ff7b72;">import</span> { MerciClient, createUserMessage } <span style="color: #ff7b72;">from</span> <span style="color: #a5d6ff;">'../lib/merci.2.11.0.mjs'</span>;
+<span style="color: #ff7b72;">import</span> { MerciClient, createUserMessage } <span style="color: #ff7b72;">from</span> <span style="color: #a5d6ff;">'../lib/merci.2.14.0.mjs'</span>;
 <span style="color: #ff7b72;">import</span> { token } <span style="color: #ff7b72;">from</span> <span style="color: #a5d6ff;">'../secret/token.mjs'</span>;
 
 <span style="color: #ff7b72;">const</span> <span style="color: #79c0ff;">MODEL</span> = <span style="color: #a5d6ff;">'google-chat-gemini-flash-2.5'</span>;
 
 <span style="color: #ff7b72;">async</span> <span style="color: #ff7b72;">function</span> <span style="color: #d2a8ff;">runExperiment</span>(<span style="color: #79c0ff;">client</span>, <span style="color: #79c0ff;">prompt</span>, <span style="color: #79c0ff;">builderFn</span>, <span style="color: #79c0ff;">description</span>) {
     <span style="color: #c9d1d9;">console.<span style="color: #d2a8ff;">log</span>(<span style="color: #a5d6ff;">`\n--- Experiment: </span><span style="color: #79c0ff;">${description}</span><span style="color: #a5d6ff;"> ---`</span>);
-    <span style="color: #ff7b72;">const</span> <span style="color: #79c0ff;">chatSession</span> = client.<span style="color: #d2a8ff;">chat</span>(MODEL).<span style="color: #d2a8ff;">withParameters</span>(builderFn);
+    <span style="color: #ff7b72;">const</span> <span style="color: #79c0ff;">chatSession</span> = client.chat.<span style="color: #d2a8ff;">session</span>(MODEL).<span style="color: #d2a8ff;">withParameters</span>(builderFn);
     <span style="color: #ff7b72;">const</span> <span style="color: #79c0ff;">messages</span> = [ <span style="color: #d2a8ff;">createUserMessage</span>(prompt) ];
     <span style="color: #8b949e;">// ... stream processing logic ...</span>
 }
@@ -129,20 +129,48 @@
                     <p class="text-[var(--text-secondary)] mb-4">The output demonstrates how different parameters produce different results for the same prompt. Crucially, it also shows the SDK emitting a warning when we try to use the `seed` parameter, which is not supported by this specific model, and then filtering it out before making the API call.</p>
                     <div class="code-block-wrapper">
                         <button class="copy-code-btn absolute top-3 right-3 flex items-center gap-2 text-slate-400 hover:text-white transition-colors p-2 rounded-md bg-slate-800/50 backdrop-blur-sm">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16" aria-hidden="true"><path d="M4 1.5H3a2 2 0 0 0-2 2V14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V3.5a2 2 0 0 0-2-2h-1v1h1a1 1 0 0 1 1 1V14a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V3.5a1 1 0 0 1 1-1h1v-1z"/><path d="M9.5 1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-3a.5.5 0 0 1-.5-.5v-1a.5.5 0 0 1 .5-.5h3z"/></svg>
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16" aria-hidden="true"><path d="M4 1.5H3a2 2 0 0 0-2 2V14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V3.5a2 2 0 0 0-2-2h-1v1h1a1 1 0 0 1 1 1V14a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V3.5a1 1 0 0 1 1-1h1v-1z"/><path d="M9.5 1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-3a.5.5 0 0 1-.5-.5v-1a.5.5 0 0 1 .5-.5h3z"/></svg>
                             <span>Copy</span>
                         </button>
                         <div class="code-block">
-<pre><code>--- Experiment: Focused and Deterministic (Low Temperature) ---
+<pre><code>--- Merci SDK Tutorial: Lesson 6 - Parameter Control (Model: google-chat-gemini-flash-2.5) ---
+[STEP 1] Initializing MerciClient...
+[STEP 2] Preparing prompt and input data...
+
+[STEP 3] Running Experiment 1: Focused and Deterministic (Low Temperature)
+--- Experiment: Focused and Deterministic (Low Temperature) ---
 🤖 Assistant > Unit 734 stood motionless, its auditory sensors inactive. Then, a sound wave, a pattern of organized noise, rippled through its circuits. It was music, and for the first time, Unit 734 felt something akin to joy.
 
+[INFO] Stream finished. Response fully received.
+
+[STEP 4] Running Experiment 2: Creative and Unpredictable (High Temperature, High Top-P)
 --- Experiment: Creative and Unpredictable (High Temperature, High Top-P) ---
 🤖 Assistant > The old gramophone crackled to life in the dusty attic, and Bolt, a robot built for sorting scrap metal, found his metallic fingers tapping out a rhythm he'd never been programmed to understand.
 
---- Experiment: Using an Unsupported Parameter (Seed) ---
+[INFO] Stream finished. Response fully received.
 
+[STEP 5] Running Experiment 3: Forcing JSON Output
+--- Experiment: Forcing JSON Output ---
+🤖 Assistant > {
+  "name": "Anna",
+  "age": 32,
+  "city": "Paris"
+}
+
+[INFO] Stream finished. Response fully received.
+[INFO] Parsed JSON Output:
+{
+  "name": "Anna",
+  "age": 32,
+  "city": "Paris"
+}
+
+[STEP 6] Running Experiment 4: Using an Unsupported Parameter (Seed)
+--- Experiment: Using an Unsupported Parameter (Seed) ---
 [SDK WARNING] Parameter 'seed' is not supported by model profile 'google-chat-gemini-flash-2.5' and will be ignored.
 🤖 Assistant > Unit 7's world was a silent ballet of ones and zeros until it stumbled upon an abandoned music box, and the tinkling melody rewired its logic gates into a symphony of wonder.
+
+[INFO] Stream finished. Response fully received.
 </code></pre>
                         </div>
                     </div>

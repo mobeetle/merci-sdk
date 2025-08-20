@@ -66,7 +66,7 @@
                 </header>
 
                 <section class="mb-12">
-                    <h2>Code: <code class="inline"><a href="https://github.com/mobeetle/merci-sdk/tree/main/examples">lesson_14_observability_and_error_handling.mjs</a></code></h2>
+                    <h2>Code: <code class="inline"><a href="https://github.com/mobeetle/merci-sdk/tree/main/examples/lesson_14_observability_and_error_handling.mjs">lesson_14_observability_and_error_handling.mjs</a></code></h2>
                     <p class="text-[var(--text-secondary)] mb-4">This script intentionally uses an invalid model name to trigger an API error. We set up listeners for <code class="inline">api_request</code> and <code class="inline">api_response</code> to log the network activity. The <code class="inline">try...catch</code> block is used to inspect the structured data within the caught <code class="inline">APIError</code> object.</p>
                     <div class="code-block-wrapper">
                         <button class="copy-code-btn absolute top-3 right-3 flex items-center gap-2 text-slate-400 hover:text-white transition-colors p-2 rounded-md bg-slate-800/50 backdrop-blur-sm">
@@ -75,34 +75,84 @@
                         </button>
                         <div class="code-block">
 <pre><code><span style="color: #8b949e;">// lesson_14_observability_and_error_handling.mjs</span>
-<span style="color: #ff7b72;">import</span> { MerciClient, createUserMessage } <span style="color: #ff7b72;">from</span> <span style="color: #a5d6ff;">'../lib/merci.2.11.0.mjs'</span>;
+<span style="color: #8b949e;">// Merci SDK Tutorial: Lesson 14 - Production-Ready Observability &amp; Error Handling</span>
+
+<span style="color: #8b949e;">// --- IMPORTS ---</span>
+<span style="color: #ff7b72;">import</span> { MerciClient, createUserMessage } <span style="color: #ff7b72;">from</span> <span style="color: #a5d6ff;">'../lib/merci.2.14.0.mjs'</span>;
 <span style="color: #ff7b72;">import</span> { token } <span style="color: #ff7b72;">from</span> <span style="color: #a5d6ff;">'../secret/token.mjs'</span>;
 
+<span style="color: #8b949e;">// To reliably trigger a 400-level error, we use a model name that does not exist.</span>
 <span style="color: #ff7b72;">const</span> <span style="color: #79c0ff;">MODEL</span> = <span style="color: #a5d6ff;">'invalid-model-name-for-testing'</span>;
 
 <span style="color: #ff7b72;">async</span> <span style="color: #ff7b72;">function</span> <span style="color: #d2a8ff;">main</span>() {
+    <span style="color: #c9d1d9;">console</span>.<span style="color: #d2a8ff;">log</span>(<span style="color: #a5d6ff;">`--- Merci SDK Tutorial: Lesson 14 - Observability &amp; Error Handling (Model: </span><span style="color: #79c0ff;">${MODEL}</span><span style="color: #a5d6ff;">) ---`</span>);
+
+    <span style="color: #8b949e;">// --- STEP 1: INITIALIZE THE CLIENT WITH EVENT LISTENERS ---</span>
+    <span style="color: #c9d1d9;">console</span>.<span style="color: #d2a8ff;">log</span>(<span style="color: #a5d6ff;">'[STEP 1] Initializing MerciClient with observability listeners...'</span>);
     <span style="color: #ff7b72;">const</span> <span style="color: #79c0ff;">client</span> = <span style="color: #ff7b72;">new</span> <span style="color: #d2a8ff;">MerciClient</span>({ token });
 
-    <span style="color: #8b949e;">// Set up listeners for observability</span>
-    client.<span style="color: #d2a8ff;">on</span>(<span style="color: #a5d6ff;">'api_request'</span>, ({ <span style="color: #79c0ff;">url</span>, <span style="color: #79c0ff;">method</span> }) => {
-        <span style="color: #c9d1d9;">console.<span style="color: #d2a8ff;">log</span>(<span style="color: #a5d6ff;">`\n[EVENT: api_request] ➡️  Sending </span><span style="color: #79c0ff;">${method}</span><span style="color: #a5d6ff;"> request to </span><span style="color: #79c0ff;">${url}</span><span style="color: #a5d6ff;">`</span>);
+    <span style="color: #8b949e;">// These listeners provide a detailed log of the SDK's internal operations.</span>
+    <span style="color: #8b949e;">// This is invaluable for debugging and monitoring in a production environment.</span>
+    <span style="color: #79c0ff;">client</span>.<span style="color: #d2a8ff;">on</span>(<span style="color: #a5d6ff;">'api_request'</span>, ({ <span style="color: #79c0ff;">url</span>, <span style="color: #79c0ff;">method</span> }) => {
+        <span style="color: #c9d1d9;">console</span>.<span style="color: #d2a8ff;">log</span>(<span style="color: #a5d6ff;">`\n[EVENT: api_request] ➡️  Sending </span><span style="color: #79c0ff;">${method}</span><span style="color: #a5d6ff;"> request to </span><span style="color: #79c0ff;">${url}</span><span style="color: #a5d6ff;">`</span>);
     });
-    client.<span style="color: #d2a8ff;">on</span>(<span style="color: #a5d6ff;">'api_response'</span>, ({ <span style="color: #79c0ff;">status</span>, <span style="color: #79c0ff;">ok</span> }) => {
-        <span style="color: #c9d1d9;">console.<span style="color: #d2a8ff;">log</span>(<span style="color: #a5d6ff;">`[EVENT: api_response] ⬅️  Received response | Status: </span><span style="color: #79c0ff;">${status}</span><span style="color: #a5d6ff;"> </span><span style="color: #79c0ff;">${ok ? '✅' : '❌'}</span><span style="color: #a5d6ff;">`</span>);
+    <span style="color: #79c0ff;">client</span>.<span style="color: #d2a8ff;">on</span>(<span style="color: #a5d6ff;">'api_response'</span>, ({ <span style="color: #79c0ff;">url</span>, <span style="color: #79c0ff;">status</span>, <span style="color: #79c0ff;">ok</span> }) => {
+        <span style="color: #ff7b72;">const</span> <span style="color: #79c0ff;">icon</span> = <span style="color: #79c0ff;">ok</span> ? <span style="color: #a5d6ff;">'✅'</span> : <span style="color: #a5d6ff;">'❌'</span>;
+        <span style="color: #c9d1d9;">console</span>.<span style="color: #d2a8ff;">log</span>(<span style="color: #a5d6ff;">`[EVENT: api_response] ⬅️  Received response from </span><span style="color: #79c0ff;">${url}</span><span style="color: #a5d6ff;"> | Status: </span><span style="color: #79c0ff;">${status}</span><span style="color: #a5d6ff;"> </span><span style="color: #79c0ff;">${icon}</span><span style="color: #a5d6ff;">`</span>);
+    });
+    <span style="color: #79c0ff;">client</span>.<span style="color: #d2a8ff;">on</span>(<span style="color: #a5d6ff;">'error'</span>, (<span style="color: #79c0ff;">error</span>) => {
+        <span style="color: #c9d1d9;">console</span>.<span style="color: #d2a8ff;">error</span>(<span style="color: #a5d6ff;">`[EVENT: error] 🚨 An internal SDK error was caught: </span><span style="color: #79c0ff;">${error</span>.<span style="color: #c9d1d9;">message}</span><span style="color: #a5d6ff;">`</span>);
     });
 
+
+    <span style="color: #8b949e;">// --- STEP 2: ATTEMPT A FAULTY REQUEST TO DEMONSTRATE ERROR HANDLING ---</span>
+    <span style="color: #c9d1d9;">console</span>.<span style="color: #d2a8ff;">log</span>(<span style="color: #a5d6ff;">`\n[STEP 2] Attempting a request that is expected to fail...`</span>);
     <span style="color: #ff7b72;">try</span> {
-        <span style="color: #ff7b72;">const</span> <span style="color: #79c0ff;">chatSession</span> = client.<span style="color: #d2a8ff;">chat</span>(MODEL);
-        <span style="color: #ff7b72;">for</span> <span style="color: #ff7b72;">await</span> (<span style="color: #ff7b72;">const</span> <span style="color: #79c0ff;">event</span> <span style="color: #ff7b72;">of</span> chatSession.<span style="color: #d2a8ff;">stream</span>([<span style="color: #d2a8ff;">createUserMessage</span>(<span style="color: #a5d6ff;">'...'</span>)])) { }
+        <span style="color: #ff7b72;">const</span> <span style="color: #79c0ff;">userPrompt</span> = <span style="color: #a5d6ff;">"This request will fail because the model profile is invalid."</span>;
+        <span style="color: #ff7b72;">const</span> <span style="color: #79c0ff;">messages</span> = [<span style="color: #d2a8ff;">createUserMessage</span>(userPrompt)];
+
+        <span style="color: #8b949e;">// We don't need any special parameters. Simply creating a chat session</span>
+        <span style="color: #8b949e;">// with an invalid model name is enough to guarantee an API error.</span>
+        <span style="color: #ff7b72;">const</span> <span style="color: #79c0ff;">chatSession</span> = <span style="color: #79c0ff;">client</span>.<span style="color: #c9d1d9;">chat</span>.<span style="color: #d2a8ff;">session</span>(MODEL);
+
+        <span style="color: #c9d1d9;">console</span>.<span style="color: #d2a8ff;">log</span>(<span style="color: #a5d6ff;">'[INFO] Sending request with an invalid model name to cause a 400 Bad Request error...'</span>);
+        <span style="color: #8b949e;">// We don't need to process the stream, just trigger the call.</span>
+        <span style="color: #ff7b72;">for</span> <span style="color: #ff7b72;">await</span> (<span style="color: #ff7b72;">const</span> <span style="color: #79c0ff;">event</span> <span style="color: #ff7b72;">of</span> <span style="color: #79c0ff;">chatSession</span>.<span style="color: #d2a8ff;">stream</span>(messages)) { <span style="color: #8b949e;">/* consume stream */</span> }
+
     } <span style="color: #ff7b72;">catch</span> (error) {
-        <span style="color: #8b949e;">// Inspect the structured APIError object</span>
-        <span style="color: #c9d1d9;">console.<span style="color: #d2a8ff;">error</span>(<span style="color: #a5d6ff;">'  Message:'</span>, error.message);
-        <span style="color: #ff7b72;">if</span> (error.status) <span style="color: #c9d1d9;">console.<span style="color: #d2a8ff;">error</span>(<span style="color: #a5d6ff;">'  API Status:'</span>, error.status);
-        <span style="color: #ff7b72;">if</span> (error.details) <span style="color: #c9d1d9;">console.<span style="color: #d2a8ff;">error</span>(<span style="color: #a5d6ff;">'  Details:'</span>, JSON.<span style="color: #d2a8ff;">stringify</span>(error.details, <span style="color: #ff7b72;">null</span>, <span style="color: #a5d6ff;">2</span>));
+        <span style="color: #8b949e;">// --- STEP 3: CATCH AND INSPECT THE APIError OBJECT ---</span>
+        <span style="color: #c9d1d9;">console</span>.<span style="color: #d2a8ff;">log</span>(<span style="color: #a5d6ff;">`\n[STEP 3] Successfully caught the expected error. Now inspecting it...`</span>);
+        <span style="color: #c9d1d9;">console</span>.<span style="color: #d2a8ff;">error</span>(<span style="color: #a5d6ff;">`\n\n--- DETAILED ERROR ANALYSIS ---`</span>);
+        <span style="color: #c9d1d9;">console</span>.<span style="color: #d2a8ff;">error</span>(<span style="color: #a5d6ff;">'  Message:'</span>, error.message);
+
+        <span style="color: #8b949e;">// The APIError object contains structured data that is crucial for robust error handling.</span>
+        <span style="color: #ff7b72;">if</span> (error.status) {
+            <span style="color: #c9d1d9;">console</span>.<span style="color: #d2a8ff;">error</span>(<span style="color: #a5d6ff;">'  API Status:'</span>, error.status);
+            <span style="color: #ff7b72;">if</span> (error.status === <span style="color: #a5d6ff;">400</span>) {
+                <span style="color: #c9d1d9;">console</span>.<span style="color: #d2a8ff;">error</span>(<span style="color: #a5d6ff;">'  [ANALYSIS] This is a 400 Bad Request. As expected, the API rejected our request because the model profile was invalid. Check the API documentation for available models.'</span>);
+            } <span style="color: #ff7b72;">else</span> <span style="color: #ff7b72;">if</span> (error.status === <span style="color: #a5d6ff;">401</span>) {
+                <span style="color: #c9d1d9;">console</span>.<span style="color: #d2a8ff;">error</span>(<span style="color: #a5d6ff;">'  [ANALYSIS] This is a 401 Unauthorized error. Your token is invalid or has expired.'</span>);
+            } <span style="color: #ff7b72;">else</span> <span style="color: #ff7b72;">if</span> (error.status === <span style="color: #a5d6ff;">429</span>) {
+                <span style="color: #c9d1d9;">console</span>.<span style="color: #d2a8ff;">error</span>(<span style="color: #a5d6ff;">'  [ANALYSIS] This is a 429 Too Many Requests error. You have hit a rate limit. Implement exponential backoff and retry.'</span>);
+            }
+        }
+        <span style="color: #ff7b72;">if</span> (error.details) {
+            <span style="color: #c9d1d9;">console</span>.<span style="color: #d2a8ff;">error</span>(<span style="color: #a5d6ff;">'  Details:'</span>, JSON.<span style="color: #d2a8ff;">stringify</span>(error.details, <span style="color: #ff7b72;">null</span>, <span style="color: #a5d6ff;">2</span>));
+        }
+        <span style="color: #c9d1d9;">console</span>.<span style="color: #d2a8ff;">error</span>(<span style="color: #a5d6ff;">'---------------------------------'</span>);
     }
+
+    <span style="color: #c9d1d9;">console</span>.<span style="color: #d2a8ff;">log</span>(<span style="color: #a5d6ff;">`\n\n[INFO] Lesson complete. This demonstrates how to use SDK events and typed errors to build a resilient application.`</span>);
 }
 
-<span style="color: #d2a8ff;">main</span>();
+<span style="color: #d2a8ff;">main</span>().<span style="color: #d2a8ff;">catch</span>(<span style="color: #79c0ff;">err</span> => {
+    <span style="color: #8b949e;">// A final catch block for any unexpected errors during the main execution.</span>
+    <span style="color: #8b949e;">// We only log if it's not our expected APIError, which we've already handled.</span>
+    <span style="color: #ff7b72;">if</span> (!<span style="color: #79c0ff;">err</span>.<span style="color: #c9d1d9;">status</span>) {
+        <span style="color: #c9d1d9;">console</span>.<span style="color: #d2a8ff;">error</span>(<span style="color: #a5d6ff;">"\n\n[FATAL ERROR] An unexpected error occurred:"</span>, err);
+        <span style="color: #c9d1d9;">process</span>.<span style="color: #d2a8ff;">exit</span>(<span style="color: #a5d6ff;">1</span>);
+    }
+});
 </code></pre>
                         </div>
                     </div>

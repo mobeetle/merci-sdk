@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <title>Lesson 21: Task API Observability - Merci SDK</title>
+
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com" rel="preconnect"/>
+    <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+    <link as="style" href="https://fonts.googleapis.com/css2?display=swap&amp;family=Inter%3Awght%40400%3B500%3B600%3B700%3B900&family=Fira+Code%3Awght%40400" onload="this.rel='stylesheet'" rel="stylesheet"/>
+
+    <!-- Scripts & Styles -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="../assets/css/style.css" rel="stylesheet">
+</head>
+<body>
+<!-- Animated Aurora Background -->
+<div class="aurora-background"></div>
+
+<div class="flex min-h-screen flex-col">
+    <!-- Header -->
+    <header class="sticky top-0 z-50 w-full border-b border-[var(--border-color)] bg-[var(--header-background)] backdrop-blur-lg transition-colors duration-300">
+        <div class="container mx-auto flex flex-wrap items-center justify-between px-4 lg:px-8">
+            <div class="flex h-16 items-center">
+                <a class="flex items-center gap-2" href="../index.html">
+                    <img src="../assets/images/merci-sdk-logo.png" alt="Merci SDK Logo" class="h-8 w-12">
+                    <h1 class="text-xl font-bold text-[var(--text-primary)]">Merci SDK</h1>
+                </a>
+            </div>
+            <div class="lg:hidden">
+                <button id="menu-toggle" class="rounded p-2 text-[var(--text-secondary)] hover:bg-slate-200 dark:hover:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-[var(--primary-color)]">
+                    <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path></svg>
+                </button>
+            </div>
+            <div id="menu-content" class="hidden w-full lg:flex lg:w-auto lg:items-center">
+                <nav class="flex w-full flex-col gap-4 border-t border-[var(--border-color)] py-4 lg:w-auto lg:flex-row lg:items-center lg:gap-6 lg:border-none lg:py-0">
+                    <a class="nav-link group" href="../index.html"><span>Overview</span></a>
+                    <a class="nav-link group" href="../getting_started.html"><span>Getting Started</span></a>
+                    <a class="nav-link-active group" href="../tutorials.html"><span>Tutorials</span></a>
+                    <a class="nav-link group" href="../api_reference.html"><span>API Reference</span></a>
+                </nav>
+                <div class="w-full pb-4 lg:w-auto lg:pb-0 lg:pl-4">
+                    <button type="button" class="theme-toggle-btn w-full text-sm font-semibold rounded-md px-3 py-1.5 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-[var(--background-color)] bg-slate-200 text-slate-800 hover:bg-slate-300 focus:ring-slate-500 dark:bg-slate-800 dark:text-slate-200 dark:hover:bg-slate-700 dark:focus:ring-slate-500">
+                        <span class="theme-toggle-text">Dark Mode</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="container mx-auto px-4 py-8 sm:px-6 lg:px-8 flex-grow">
+        <div class="max-w-4xl mx-auto">
+            <div class="mb-8">
+                <nav class="flex items-center gap-2 text-sm font-medium text-[var(--text-secondary)]">
+                    <a class="hover:text-[var(--primary-color)] transition-colors" href="../tutorials.html">Tutorials</a>
+                    <span>/</span>
+                    <span class="text-[var(--text-primary)]">Lesson 21</span>
+                </nav>
+            </div>
+            <article>
+                <header class="mb-8">
+                    <h1 class="text-3xl font-bold tracking-tight text-[var(--text-primary)] mb-2">Lesson 21: Task API Observability</h1>
+                    <p class="text-lg text-[var(--text-secondary)]">This lesson demonstrates how to gain insight into the execution of a task by listening to the full range of events emitted by the Task API's streaming interface.</p>
+                </header>
+
+                <section class="mb-12">
+                    <h2>Code: <code class="inline"><a href="https://github.com/mobeetle/merci-sdk/tree/main/examples/lesson_21_task_observability.mjs">lesson_21_task_observability.mjs</a></code></h2>
+                    <p class="text-[var(--text-secondary)] mb-4">This script executes a code generation task using `.stream()` and uses a `switch` statement to handle and log every possible event type, including `ExecutionMetadata`, `QuotaMetadata`, and `FinishMetadata`.</p>
+                    <div class="code-block-wrapper">
+                        <button class="copy-code-btn absolute top-3 right-3 flex items-center gap-2 text-slate-400 hover:text-white transition-colors p-2 rounded-md bg-slate-800/50 backdrop-blur-sm">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16" aria-hidden="true"><path d="M4 1.5H3a2 2 0 0 0-2 2V14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V3.5a2 2 0 0 0-2-2h-1v1h1a1 1 0 0 1 1 1V14a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V3.5a1 1 0 0 1 1-1h1v-1z"/><path d="M9.5 1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-3a.5.5 0 0 1-.5-.5v-1a.5.5 0 0 1 .5-.5h3z"/></svg>
+                            <span>Copy</span>
+                        </button>
+                        <div class="code-block">
+<pre><code><span style="color: #8b949e;">// lesson_21_task_observability.mjs</span>
+<span style="color: #8b949e;">// Merci SDK Tutorial: Lesson 21 - Task API Observability via Streaming Events</span>
+
+<span style="color: #8b949e;">// --- IMPORTS ---</span>
+<span style="color: #ff7b72;">import</span> { MerciClient } <span style="color: #ff7b72;">from</span> <span style="color: #a5d6ff;">'../lib/merci.2.14.0.mjs'</span>;
+<span style="color: #ff7b72;">import</span> { token } <span style="color: #ff7b72;">from</span> <span style="color: #a5d6ff;">'../secret/token.mjs'</span>;
+
+<span style="color: #ff7b72;">const</span> <span style="color: #79c0ff;">TASK_ID</span> = <span style="color: #a5d6ff;">'code-generate:default'</span>;
+
+<span style="color: #ff7b72;">async</span> <span style="color: #ff7b72;">function</span> <span style="color: #d2a8ff;">main</span>() {
+    <span style="color: #c9d1d9;">console</span>.<span style="color: #d2a8ff;">log</span>(<span style="color: #a5d6ff;">`--- Merci SDK Tutorial: Lesson 21 - Task API Observability (Task: </span><span style="color: #79c0ff;">${TASK_ID}</span><span style="color: #a5d6ff;">) ---`</span>);
+
+    <span style="color: #ff7b72;">try</span> {
+        <span style="color: #8b949e;">// --- STEP 1: INITIALIZE THE CLIENT ---</span>
+        <span style="color: #c9d1d9;">console</span>.<span style="color: #d2a8ff;">log</span>(<span style="color: #a5d6ff;">'[STEP 1] Initializing MerciClient...'</span>);
+        <span style="color: #ff7b72;">const</span> <span style="color: #79c0ff;">client</span> = <span style="color: #ff7b72;">new</span> <span style="color: #d2a8ff;">MerciClient</span>({ token });
+
+        <span style="color: #8b949e;">// --- STEP 2: DEFINE TASK PARAMETERS ---</span>
+        <span style="color: #c9d1d9;">console</span>.<span style="color: #d2a8ff;">log</span>(<span style="color: #a5d6ff;">'
+[STEP 2] Defining simple parameters for the task...'</span>);
+        <span style="color: #ff7b72;">const</span> <span style="color: #79c0ff;">taskParameters</span> = {
+            <span style="color: #c9d1d9;">instructions:</span> <span style="color: #a5d6ff;">"Write a Python function to calculate the factorial of a number using recursion."</span>,
+            <span style="color: #c9d1d9;">language:</span> <span style="color: #a5d6ff;">"python"</span>,
+            <span style="color: #c9d1d9;">prefix:</span> <span style="color: #a5d6ff;">""</span>,
+            <span style="color: #c9d1d9;">suffix:</span> <span style="color: #a5d6ff;">""</span>
+        };
+
+        <span style="color: #8b949e;">// --- STEP 3: STREAM THE TASK AND HANDLE ALL EVENT TYPES ---</span>
+        <span style="color: #c9d1d9;">console</span>.<span style="color: #d2a8ff;">log</span>(<span style="color: #a5d6ff;">`
+[STEP 3] Executing task "</span><span style="color: #79c0ff;">${TASK_ID}</span><span style="color: #a5d6ff;">" with .stream() and listening for all event types...`</span>);
+        <span style="color: #ff7b72;">let</span> <span style="color: #79c0ff;">finalContent</span> = <span style="color: #a5d6ff;">''</span>;
+
+        <span style="color: #ff7b72;">const</span> <span style="color: #79c0ff;">stream</span> = <span style="color: #79c0ff;">client</span>.<span style="color: #c9d1d9;">tasks</span>.<span style="color: #d2a8ff;">stream</span>(TASK_ID, taskParameters);
+        <span style="color: #ff7b72;">for</span> <span style="color: #ff7b72;">await</span> (<span style="color: #ff7b72;">const</span> <span style="color: #79c0ff;">event</span> <span style="color: #ff7b72;">of</span> <span style="color: #79c0ff;">stream</span>) {
+            <span style="color: #8b949e;">// We use a switch statement to handle each event type differently.</span>
+            <span style="color: #ff7b72;">switch</span> (<span style="color: #79c0ff;">event</span>.<span style="color: #c9d1d9;">type</span>) {
+                <span style="color: #ff7b72;">case</span> <span style="color: #a5d6ff;">'Content'</span>:
+                    <span style="color: #8b949e;">// This is the actual output of the task.</span>
+                    finalContent += <span style="color: #79c0ff;">event</span>.<span style="color: #c9d1d9;">content</span>;
+                    <span style="color: #ff7b72;">break</span>;
+
+                <span style="color: #ff7b72;">case</span> <span style="color: #a5d6ff;">'ExecutionMetadata'</span>:
+                    <span style="color: #8b949e;">// This provides insight into the internal state or progress of the task.</span>
+                    <span style="color: #c9d1d9;">console</span>.<span style="color: #d2a8ff;">log</span>(<span style="color: #a5d6ff;">`\n[OBSERVABILITY] Received ExecutionMetadata:`</span>, <span style="color: #79c0ff;">event</span>.<span style="color: #c9d1d9;">data</span>);
+                    <span style="color: #ff7b72;">break</span>;
+
+                <span style="color: #ff7b72;">case</span> <span style="color: #a5d6ff;">'QuotaMetadata'</span>:
+                    <span style="color: #8b949e;">// This tells you about token usage for the task.</span>
+                    <span style="color: #c9d1d9;">console</span>.<span style="color: #d2a8ff;">log</span>(<span style="color: #a5d6ff;">`\n[OBSERVABILITY] Received QuotaMetadata:`</span>, <span style="color: #79c0ff;">event</span>.<span style="color: #c9d1d9;">data</span>);
+                    <span style="color: #ff7b72;">break</span>;
+
+                <span style="color: #ff7b72;">case</span> <span style="color: #a5d6ff;">'FinishMetadata'</span>:
+                    <span style="color: #8b949e;">// This confirms the task has finished and provides the reason.</span>
+                    <span style="color: #c9d1d9;">console</span>.<span style="color: #d2a8ff;">log</span>(<span style="color: #a5d6ff;">`\n[OBSERVABILITY] Received FinishMetadata: Task finished with reason '</span><span style="color: #79c0ff;">${event</span>.<span style="color: #c9d1d9;">data</span>.<span style="color: #c9d1d9;">reason}</span><span style="color: #a5d6ff;">'`</span>);
+                    <span style="color: #ff7b72;">break</span>;
+
+                <span style="color: #ff7b72;">case</span> <span style="color: #a5d6ff;">'FunctionCallMetadata'</span>:
+                    <span style="color: #8b949e;">// Some tasks might internally call functions and report them.</span>
+                    <span style="color: #c9d1d9;">console</span>.<span style="color: #d2a8ff;">log</span>(<span style="color: #a5d6ff;">`\n[OBSERVABILITY] Received FunctionCallMetadata:`</span>, <span style="color: #79c0ff;">event</span>.<span style="color: #c9d1d9;">data</span>);
+                    <span style="color: #ff7b72;">break</span>;
+
+                <span style="color: #ff7b72;">case</span> <span style="color: #a5d6ff;">'UnknownMetadata'</span>:
+                    <span style="color: #8b949e;">// Future-proofing: handle any new, unknown metadata types gracefully.</span>
+                    <span style="color: #c9d1d9;">console</span>.<span style="color: #d2a8ff;">log</span>(<span style="color: #a5d6ff;">`\n[OBSERVABILITY] Received UnknownMetadata:`</span>, <span style="color: #79c0ff;">event</span>.<span style="color: #c9d1d9;">data</span>);
+                    <span style="color: #ff7b72;">break</span>;
+
+                <span style="color: #ff7b72;">default</span>:
+                    <span style="color: #8b949e;">// Log any other event types that might be added in the future.</span>
+                    <span style="color: #c9d1d9;">console</span>.<span style="color: #d2a8ff;">log</span>(<span style="color: #a5d6ff;">`\n[INFO] Received unhandled event type: </span><span style="color: #79c0ff;">${event</span>.<span style="color: #c9d1d9;">type}</span><span style="color: #a5d6ff;">`</span>);
+            }
+        }
+        <span style="color: #c9d1d9;">console</span>.<span style="color: #d2a8ff;">log</span>(<span style="color: #a5d6ff;">'
+[INFO] Stream finished.'</span>);
+
+        <span style="color: #8b949e;">// --- STEP 4: DISPLAY THE FINAL GENERATED CONTENT ---</span>
+        <span style="color: #c9d1d9;">console</span>.<span style="color: #d2a8ff;">log</span>(<span style="color: #a5d6ff;">'
+
+--- FINAL RESULT ---'</span>);
+        <span style="color: #c9d1d9;">console</span>.<span style="color: #d2a8ff;">log</span>(<span style="color: #a5d6ff;">'Final generated content from the task:\n'</span>);
+        <span style="color: #c9d1d9;">console</span>.<span style="color: #d2a8ff;">log</span>(finalContent);
+        <span style="color: #c9d1d9;">console</span>.<span style="color: #d2a8ff;">log</span>(<span style="color: #a5d6ff;">'
+By observing the metadata events, you can build more robust applications that monitor progress and resource usage.'</span>);
+
+    } <span style="color: #ff7b72;">catch</span> (error) {
+        <span style="color: #c9d1d9;">console</span>.<span style="color: #d2a8ff;">error</span>(<span style="color: #a5d6ff;">'
+
+[FATAL ERROR] An error occurred during the operation.'</span>);
+        <span style="color: #c9d1d9;">console</span>.<span style="color: #d2a8ff;">error</span>(<span style="color: #a5d6ff;">'  Message:'</span>, error.message);
+        <span style="color: #ff7b72;">if</span> (error.status) {
+            <span style="color: #c9d1d9;">console</span>.<span style="color: #d2a8ff;">error</span>(<span style="color: #a5d6ff;">'  API Status:'</span>, error.status);
+        }
+        <span style="color: #ff7b72;">if</span> (error.details) {
+            <span style="color: #c9d1d9;">console</span>.<span style="color: #d2a8ff;">error</span>(<span style="color: #a5d6ff;">'  Details:'</span>, JSON.<span style="color: #d2a8ff;">stringify</span>(error.details, <span style="color: #ff7b72;">null</span>, <span style="color: #a5d6ff;">2</span>));
+        }
+        <span style="color: #c9d1d9;">console</span>.<span style="color: #d2a8ff;">error</span>(<span style="color: #a5d6ff;">'
+  Possible causes: Invalid token, network issues, or an API service problem.'</span>);
+        <span style="color: #c9d1d9;">process</span>.<span style="color: #d2a8ff;">exit</span>(<span style="color: #a5d6ff;">1</span>);
+    }
+}
+
+<span style="color: #d2a8ff;">main</span>().<span style="color: #d2a8ff;">catch</span>(<span style="color: #c9d1d9;">console</span>.error);
+</code></pre>
+                        </div>
+                    </div>
+                </section>
+
+                <section>
+                    <h2>Expected Output</h2>
+                    <p class="text-[var(--text-secondary)] mb-4">The output shows not only the generated code but also a log of all the metadata events that occurred during the task's execution, providing a clear picture of the process and resource usage.</p>
+                    <div class="code-block-wrapper">
+                        <button class="copy-code-btn absolute top-3 right-3 flex items-center gap-2 text-slate-400 hover:text-white transition-colors p-2 rounded-md bg-slate-800/50 backdrop-blur-sm">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16" aria-hidden="true"><path d="M4 1.5H3a2 2 0 0 0-2 2V14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V3.5a2 2 0 0 0-2-2h-1v1h1a1 1 0 0 1 1 1V14a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V3.5a1 1 0 0 1 1-1h1v-1z"/><path d="M9.5 1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-3a.5.5 0 0 1-.5-.5v-1a.5.5 0 0 1 .5-.5h3z"/></svg>
+                            <span>Copy</span>
+                        </button>
+                        <div class="code-block">
+<pre><code>--- Merci SDK Tutorial: Lesson 21 - Task API Observability (Task: code-generate:default) ---
+[STEP 1] Initializing MerciClient...
+[STEP 2] Defining simple parameters for the task...
+[STEP 3] Executing task "code-generate:default" with .stream() and listening for all event types...
+
+[OBSERVABILITY] Received ExecutionMetadata: { ... }
+
+[OBSERVABILITY] Received QuotaMetadata: { ... }
+
+[OBSERVABILITY] Received FinishMetadata: Task finished with reason 'end_turn'.
+
+[INFO] Stream finished.
+
+--- FINAL RESULT ---
+Final generated content from the task:
+
+def factorial(n):
+  if n == 0:
+    return 1
+  else:
+    return n * factorial(n-1)
+
+By observing the metadata events, you can build more robust applications that monitor progress and resource usage.
+</code></pre>
+                        </div>
+                    </div>
+                </section>
+            </article>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="border-t border-[var(--border-color)] bg-[var(--card-background)] transition-colors duration-300">
+        <div class="container mx-auto px-4 py-6 sm:px-6 lg:px-8">
+            <p class="text-center text-sm text-[var(--text-secondary)]">© 2025 Lukáš Michna (Mobeetle). All rights reserved.</p>
+        </div>
+    </footer>
+</div>
+
+<script src="../assets/js/script.js"></script>
+</body>
+</html>

@@ -8,7 +8,7 @@
     <!-- Fonts -->
     <link href="https://fonts.googleapis.com" rel="preconnect"/>
     <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
-    <link as="style" href="https://fonts.googleapis.com/css2?display=swap&amp;family=Inter%3Awght%40400%3B500%3B600%3B700%3B900&family=Fira+Code%3Awght%40400" onload="this.rel='stylesheet'" rel="stylesheet"/>
+    <link as="style" href="https://fonts.googleapis.com/css2?display=swap&amp;family=Inter%3Awght%40400%3B500%3B600%3B700%3B900&family=Fira+Code%3Awght%40400" onload="this.rel=\'stylesheet\'" rel="stylesheet"/>
 
     <!-- Scripts & Styles -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -66,7 +66,7 @@
                 </header>
 
                 <section class="mb-12">
-                    <h2>Code: <code class="inline"><a href="https://github.com/mobeetle/merci-sdk/tree/main/examples">lesson_15_manual_tool_loop.mjs</a></code></h2>
+                    <h2>Code: <code class="inline"><a href="https://github.com/mobeetle/merci-sdk/tree/main/examples/lesson_15_manual_tool_loop.mjs">lesson_15_manual_tool_loop.mjs</a></code></h2>
                     <p class="text-[var(--text-secondary)] mb-4">Instead of <code class="inline">.run()</code>, this script uses <code class="inline">.stream()</code> twice. The first call gets the model's request to use a tool. We then execute the tool, add the results to the message history, and make a second <code class="inline">.stream()</code> call to get the final, natural language summary.</p>
                     <div class="code-block-wrapper">
                         <button class="copy-code-btn absolute top-3 right-3 flex items-center gap-2 text-slate-400 hover:text-white transition-colors p-2 rounded-md bg-slate-800/50 backdrop-blur-sm">
@@ -75,34 +75,120 @@
                         </button>
                         <div class="code-block">
 <pre><code><span style="color: #8b949e;">// lesson_15_manual_tool_loop.mjs</span>
-<span style="color: #ff7b72;">import</span> { MerciClient, executeTools, <span style="color: #8b949e;">/* ...message helpers... */</span> } <span style="color: #ff7b72;">from</span> <span style="color: #a5d6ff;">'../lib/merci.2.11.0.mjs'</span>;
+<span style="color: #8b949e;">// Merci SDK Tutorial: Lesson 15 - The Manual Tool-Use Loop</span>
+
+<span style="color: #8b949e;">// --- IMPORTS ---</span>
+<span style="color: #8b949e;">// We need more helpers to manually construct the messages for the tool loop.</span>
+<span style="color: #ff7b72;">import</span> {
+    MerciClient,
+    createUserMessage,
+    executeTools,
+    createAssistantToolCallMessage,
+    createToolResultMessage,
+    createAssistantTextMessage
+} <span style="color: #ff7b72;">from</span> <span style="color: #a5d6ff;">'../lib/merci.2.14.0.mjs'</span>;
+<span style="color: #ff7b72;">import</span> { token } <span style="color: #ff7b72;">from</span> <span style="color: #a5d6ff;">'../secret/token.mjs'</span>;
+
+<span style="color: #ff7b72;">const</span> <span style="color: #79c0ff;">MODEL</span> = <span style="color: #a5d6ff;">'google-chat-gemini-flash-2.5'</span>;
+
+<span style="color: #8b949e;">// --- TOOL DEFINITION ---</span>
+<span style="color: #ff7b72;">const</span> <span style="color: #79c0ff;">weatherTool</span> = {
+    <span style="color: #c9d1d9;">name:</span> <span style="color: #a5d6ff;">'get_current_weather'</span>,
+    <span style="color: #c9d1d9;">parameters:</span> {
+        <span style="color: #c9d1d9;">schema:</span> { <span style="color: #c9d1d9;">type:</span> <span style="color: #a5d6ff;">'object'</span>, <span style="color: #c9d1d9;">properties:</span> { <span style="color: #c9d1d9;">city:</span> { <span style="color: #c9d1d9;">type:</span> <span style="color: #a5d6ff;">'string'</span> } }, <span style="color: #c9d1d9;">required:</span> [<span style="color: #a5d6ff;">'city'</span>] }
+    },
+    <span style="color: #d2a8ff;">execute</span>: <span style="color: #ff7b72;">async</span> ({ <span style="color: #79c0ff;">city</span> }) => {
+        <span style="color: #c9d1d9;">console</span>.<span style="color: #d2a8ff;">log</span>(<span style="color: #a5d6ff;">`\n[TOOL EXECUTING] Getting weather for </span><span style="color: #79c0ff;">${city}</span><span style="color: #a5d6ff;">...`</span>);
+        <span style="color: #ff7b72;">const</span> <span style="color: #79c0ff;">temperatures</span> = { <span style="color: #a5d6ff;">'paris'</span>: { <span style="color: #c9d1d9;">temperature:</span> <span style="color: #a5d6ff;">'14'</span>, <span style="color: #c9d1d9;">unit:</span> <span style="color: #a5d6ff;">'celsius'</span> } };
+        <span style="color: #ff7b72;">return</span> <span style="color: #79c0ff;">temperatures</span>[<span style="color: #79c0ff;">city</span>.<span style="color: #d2a8ff;">toLowerCase</span>()] || { <span style="color: #c9d1d9;">error:</span> <span style="color: #a5d6ff;">'City not found'</span> };
+    },
+};
 
 <span style="color: #ff7b72;">async</span> <span style="color: #ff7b72;">function</span> <span style="color: #d2a8ff;">main</span>() {
-    <span style="color: #ff7b72;">const</span> <span style="color: #79c0ff;">chatSession</span> = client.<span style="color: #d2a8ff;">chat</span>(MODEL).<span style="color: #d2a8ff;">withTools</span>([weatherTool]);
-    <span style="color: #ff7b72;">const</span> <span style="color: #79c0ff;">messages</span> = [<span style="color: #d2a8ff;">createUserMessage</span>(<span style="color: #a5d6ff;">"What's the weather in Paris?"</span>)];
+    <span style="color: #c9d1d9;">console</span>.<span style="color: #d2a8ff;">log</span>(<span style="color: #a5d6ff;">`--- Merci SDK Tutorial: Lesson 15 - The Manual Tool-Use Loop (Model: </span><span style="color: #79c0ff;">${MODEL}</span><span style="color: #a5d6ff;">) ---`</span>);
+    <span style="color: #c9d1d9;">console</span>.<span style="color: #d2a8ff;">log</span>(<span style="color: #a5d6ff;">'This lesson deconstructs the `.run()` agent to show the fundamental steps.'</span>);
 
-    <span style="color: #8b949e;">// 1. First API call to get the tool request</span>
-    <span style="color: #ff7b72;">let</span> <span style="color: #79c0ff;">toolCalls</span> = [];
-    <span style="color: #ff7b72;">for</span> <span style="color: #ff7b72;">await</span> (<span style="color: #ff7b72;">const</span> <span style="color: #79c0ff;">event</span> <span style="color: #ff7b72;">of</span> chatSession.<span style="color: #d2a8ff;">stream</span>(messages)) {
-        <span style="color: #ff7b72;">if</span> (event.type === <span style="color: #a5d6ff;">'tool_calls'</span>) toolCalls = event.calls;
+    <span style="color: #ff7b72;">try</span> {
+        <span style="color: #8b949e;">// --- STEP 1: INITIALIZE CLIENT AND SESSION ---</span>
+        <span style="color: #c9d1d9;">console</span>.<span style="color: #d2a8ff;">log</span>(<span style="color: #a5d6ff;">'\n[STEP 1] Initializing client and configuring session with tools...'</span>);
+        <span style="color: #ff7b72;">const</span> <span style="color: #79c0ff;">client</span> = <span style="color: #ff7b72;">new</span> <span style="color: #d2a8ff;">MerciClient</span>({ token });
+        <span style="color: #ff7b72;">const</span> <span style="color: #79c0ff;">chatSession</span> = <span style="color: #79c0ff;">client</span>.<span style="color: #c9d1d9;">chat</span>.<span style="color: #d2a8ff;">session</span>(MODEL).<span style="color: #d2a8ff;">withTools</span>([weatherTool]);
+
+        <span style="color: #8b949e;">// --- STEP 2: PREPARE INITIAL PROMPT AND MESSAGE HISTORY ---</span>
+        <span style="color: #c9d1d9;">console</span>.<span style="color: #d2a8ff;">log</span>(<span style="color: #a5d6ff;">'[STEP 2] Preparing initial user prompt...'</span>);
+        <span style="color: #ff7b72;">const</span> <span style="color: #79c0ff;">userPrompt</span> = <span style="color: #a5d6ff;">"What's the weather like in Paris?"</span>;
+        <span style="color: #ff7b72;">const</span> <span style="color: #79c0ff;">messages</span> = [<span style="color: #d2a8ff;">createUserMessage</span>(userPrompt)];
+        <span style="color: #c9d1d9;">console</span>.<span style="color: #d2a8ff;">log</span>(<span style="color: #a5d6ff;">`👤 User > </span><span style="color: #79c0ff;">${userPrompt}</span><span style="color: #a5d6ff;">`</span>);
+
+        <span style="color: #8b949e;">// --- STEP 3: FIRST API CALL - GET THE TOOL CALL REQUEST ---</span>
+        <span style="color: #c9d1d9;">console</span>.<span style="color: #d2a8ff;">log</span>(<span style="color: #a5d6ff;">'\n[STEP 3] Making the first API call to get the model\'s tool request...'</span>);
+        <span style="color: #ff7b72;">let</span> <span style="color: #79c0ff;">toolCalls</span> = [];
+        <span style="color: #ff7b72;">let</span> <span style="color: #79c0ff;">assistantFirstResponse</span> = <span style="color: #a5d6ff;">''</span>; <span style="color: #8b949e;">// The model might say something before calling a tool.</span>
+        <span style="color: #c9d1d9;">process</span>.<span style="color: #c9d1d9;">stdout</span>.<span style="color: #d2a8ff;">write</span>(<span style="color: #a5d6ff;">'🤖 Assistant (thinking) > '</span>);
+
+        <span style="color: #ff7b72;">for</span> <span style="color: #ff7b72;">await</span> (<span style="color: #ff7b72;">const</span> <span style="color: #79c0ff;">event</span> <span style="color: #ff7b72;">of</span> <span style="color: #79c0ff;">chatSession</span>.<span style="color: #d2a8ff;">stream</span>(messages)) {
+            <span style="color: #ff7b72;">if</span> (<span style="color: #79c0ff;">event</span>.<span style="color: #c9d1d9;">type</span> === <span style="color: #a5d6ff;">'text'</span>) {
+                <span style="color: #c9d1d9;">process</span>.<span style="color: #c9d1d9;">stdout</span>.<span style="color: #d2a8ff;">write</span>(<span style="color: #79c0ff;">event</span>.<span style="color: #c9d1d9;">content</span>);
+                assistantFirstResponse += <span style="color: #79c0ff;">event</span>.<span style="color: #c9d1d9;">content</span>;
+            } <span style="color: #ff7b72;">else</span> <span style="color: #ff7b72;">if</span> (<span style="color: #79c0ff;">event</span>.<span style="color: #c9d1d9;">type</span> === <span style="color: #a5d6ff;">'tool_calls'</span>) {
+                <span style="color: #c9d1d9;">console</span>.<span style="color: #d2a8ff;">log</span>(<span style="color: #a5d6ff;">`\n[INFO] Intercepted a request to call </span><span style="color: #79c0ff;">${event</span>.<span style="color: #c9d1d9;">calls</span>.<span style="color: #c9d1d9;">length}</span><span style="color: #a5d6ff;"> tool(s).`</span>);
+                toolCalls = <span style="color: #79c0ff;">event</span>.<span style="color: #c9d1d9;">calls</span>;
+            }
+        }
+        <span style="color: #c9d1d9;">process</span>.<span style="color: #c9d1d9;">stdout</span>.<span style="color: #d2a8ff;">write</span>(<span style="color: #a5d6ff;">'\n'</span>);
+
+        <span style="color: #8b949e;">// Add the model's initial text (if any) to history.</span>
+        <span style="color: #ff7b72;">if</span> (assistantFirstResponse) {
+            <span style="color: #79c0ff;">messages</span>.<span style="color: #d2a8ff;">push</span>(<span style="color: #d2a8ff;">createAssistantTextMessage</span>(assistantFirstResponse));
+        }
+
+        <span style="color: #8b949e;">// --- STEP 4: EXECUTE THE TOOL LOCALLY ---</span>
+        <span style="color: #c9d1d9;">console</span>.<span style="color: #d2a8ff;">log</span>(<span style="color: #a5d6ff;">'\n[STEP 4] Executing the requested tool locally...'</span>);
+        <span style="color: #ff7b72;">const</span> <span style="color: #79c0ff;">toolResults</span> = <span style="color: #ff7b72;">await</span> <span style="color: #d2a8ff;">executeTools</span>(toolCalls, [weatherTool]);
+        <span style="color: #c9d1d9;">console</span>.<span style="color: #d2a8ff;">log</span>(<span style="color: #a5d6ff;">'[INFO] Tool execution finished.'</span>);
+
+        <span style="color: #8b949e;">// --- STEP 5: UPDATE MESSAGE HISTORY WITH TOOL RESULTS ---</span>
+        <span style="color: #c9d1d9;">console</span>.<span style="color: #d2a8ff;">log</span>(<span style="color: #a5d6ff;">'[STEP 5] Updating message history with the tool call and its result...'</span>);
+        <span style="color: #79c0ff;">toolResults</span>.<span style="color: #d2a8ff;">forEach</span>((<span style="color: #79c0ff;">result</span>, <span style="color: #79c0ff;">index</span>) => {
+            <span style="color: #ff7b72;">const</span> <span style="color: #79c0ff;">call</span> = <span style="color: #79c0ff;">toolCalls</span>[<span style="color: #79c0ff;">index</span>];
+            <span style="color: #ff7b72;">const</span> <span style="color: #79c0ff;">resultValue</span> = <span style="color: #79c0ff;">result</span>.<span style="color: #c9d1d9;">success</span> ? <span style="color: #79c0ff;">result</span>.<span style="color: #c9d1d9;">result</span> : { <span style="color: #c9d1d9;">error:</span> <span style="color: #79c0ff;">result</span>.<span style="color: #c9d1d9;">error</span> };
+            <span style="color: #79c0ff;">messages</span>.<span style="color: #d2a8ff;">push</span>(<span style="color: #d2a8ff;">createAssistantToolCallMessage</span>(<span style="color: #79c0ff;">call</span>.<span style="color: #c9d1d9;">id</span>, <span style="color: #79c0ff;">call</span>.<span style="color: #c9d1d9;">name</span>, <span style="color: #79c0ff;">call</span>.<span style="color: #c9d1d9;">arguments</span>));
+            <span style="color: #79c0ff;">messages</span>.<span style="color: #d2a8ff;">push</span>(<span style="color: #d2a8ff;">createToolResultMessage</span>(<span style="color: #79c0ff;">call</span>.<span style="color: #c9d1d9;">id</span>, <span style="color: #79c0ff;">call</span>.<span style="color: #c9d1d9;">name</span>, JSON.<span style="color: #d2a8ff;">stringify</span>(resultValue)));
+        });
+        <span style="color: #c9d1d9;">console</span>.<span style="color: #d2a8ff;">log</span>(<span style="color: #a5d6ff;">'[INFO] History updated. Ready for the final API call.'</span>);
+
+        <span style="color: #8b949e;">// --- STEP 6: SECOND API CALL - GET THE FINAL NATURAL LANGUAGE RESPONSE ---</span>
+        <span style="color: #c9d1d9;">console</span>.<span style="color: #d2a8ff;">log</span>(<span style="color: #a5d6ff;">'\n[STEP 6] Making the second API call to get the final summary...'</span>);
+        <span style="color: #ff7b72;">let</span> <span style="color: #79c0ff;">finalResponse</span> = <span style="color: #a5d6ff;">''</span>;
+        <span style="color: #c9d1d9;">process</span>.<span style="color: #c9d1d9;">stdout</span>.<span style="color: #d2a8ff;">write</span>(<span style="color: #a5d6ff;">'🤖 Assistant (summarizing) > '</span>);
+        <span style="color: #ff7b72;">for</span> <span style="color: #ff7b72;">await</span> (<span style="color: #ff7b72;">const</span> <span style="color: #79c0ff;">event</span> <span style="color: #79c0ff;">of</span> <span style="color: #79c0ff;">chatSession</span>.<span style="color: #d2a8ff;">stream</span>(messages)) {
+            <span style="color: #ff7b72;">if</span> (<span style="color: #79c0ff;">event</span>.<span style="color: #c9d1d9;">type</span> === <span style="color: #a5d6ff;">'text'</span>) {
+                <span style="color: #c9d1d9;">process</span>.<span style="color: #c9d1d9;">stdout</span>.<span style="color: #d2a8ff;">write</span>(<span style="color: #79c0ff;">event</span>.<span style="color: #c9d1d9;">content</span>);
+                finalResponse += <span style="color: #79c0ff;">event</span>.<span style="color: #c9d1d9;">content</span>;
+            }
+        }
+        <span style="color: #c9d1d9;">process</span>.<span style="color: #c9d1d9;">stdout</span>.<span style="color: #d2a8ff;">write</span>(<span style="color: #a5d6ff;">'\n'</span>);
+        <span style="color: #c9d1d9;">console</span>.<span style="color: #d2a8ff;">log</span>(<span style="color: #a5d6ff;">'\n[INFO] Stream finished. Response fully received.'</span>);
+
+        <span style="color: #8b949e;">// --- FINAL RESULT ---</span>
+        <span style="color: #c9d1d9;">console</span>.<span style="color: #d2a8ff;">log</span>(<span style="color: #a5d6ff;">'\n\n--- FINAL RESULT ---'</span>);
+        <span style="color: #c9d1d9;">console</span>.<span style="color: #d2a8ff;">log</span>(<span style="color: #a5d6ff;">`👤 User > </span><span style="color: #79c0ff;">${userPrompt}</span><span style="color: #a5d6ff;">`</span>);
+        <span style="color: #c9d1d9;">console</span>.<span style="color: #d2a8ff;">log</span>(<span style="color: #a5d6ff;">`🤖 Assistant > </span><span style="color: #79c0ff;">${finalResponse}</span><span style="color: #a5d6ff;">`</span>);
+        <span style="color: #c9d1d9;">console</span>.<span style="color: #d2a8ff;">log</span>(<span style="color: #a5d6ff;">'--------------------'</span>);
+        <span style="color: #c9d1d9;">console</span>.<span style="color: #d2a8ff;">log</span>(<span style="color: #a5d6ff;">'Notice the two-step process: first the tool call, then the final answer.'</span>);
+
+    } <span style="color: #ff7b72;">catch</span> (error) {
+        <span style="color: #c9d1d9;">console</span>.<span style="color: #d2a8ff;">error</span>(<span style="color: #a5d6ff;">'\n\n[FATAL ERROR] An error occurred during the operation.'</span>);
+        <span style="color: #c9d1d9;">console</span>.<span style="color: #d2a8ff;">error</span>(<span style="color: #a5d6ff;">'  Message:'</span>, error.message);
+        <span style="color: #ff7b72;">if</span> (error.status) { <span style="color: #c9d1d9;">console</span>.<span style="color: #d2a8ff;">error</span>(<span style="color: #a5d6ff;">'  API Status:'</span>, error.status); }
+        <span style="color: #ff7b72;">if</span> (error.details) { <span style="color: #c9d1d9;">console</span>.<span style="color: #d2a8ff;">error</span>(<span style="color: #a5d6ff;">'  Details:'</span>, JSON.<span style="color: #d2a8ff;">stringify</span>(error.details, <span style="color: #ff7b72;">null</span>, <span style="color: #a5d6ff;">2</span>)); }
+        <span style="color: #ff7b72;">if</span> (error.stack) { <span style="color: #c9d1d9;">console</span>.<span style="color: #d2a8ff;">error</span>(<span style="color: #a5d6ff;">'  Stack:'</span>, error.stack); }
+        <span style="color: #c9d1d9;">console</span>.<span style="color: #d2a8ff;">error</span>(<span style="color: #a5d6ff;">'\n  Possible causes: Invalid token, network issues, or an API service problem.'</span>);
+        <span style="color: #c9d1d9;">process</span>.<span style="color: #d2a8ff;">exit</span>(<span style="color: #a5d6ff;">1</span>);
     }
-
-    <span style="color: #8b949e;">// 2. Execute the tool locally</span>
-    <span style="color: #ff7b72;">const</span> <span style="color: #79c0ff;">toolResults</span> = <span style="color: #ff7b72;">await</span> <span style="color: #d2a8ff;">executeTools</span>(toolCalls, [weatherTool]);
-
-    <span style="color: #8b949e;">// 3. Update history with tool call and result messages</span>
-    messages.<span style="color: #d2a8ff;">push</span>(<span style="color: #d2a8ff;">createAssistantToolCallMessage</span>(...));
-    messages.<span style="color: #d2a8ff;">push</span>(<span style="color: #d2a8ff;">createToolResultMessage</span>(...));
-
-    <span style="color: #8b949e;">// 4. Second API call to get the final summary</span>
-    <span style="color: #ff7b72;">let</span> <span style="color: #79c0ff;">finalResponse</span> = <span style="color: #a5d6ff;">''</span>;
-    <span style="color: #ff7b72;">for</span> <span style="color: #ff7b72;">await</span> (<span style="color: #ff7b72;">const</span> <span style="color: #79c0ff;">event</span> <span style="color: #ff7b72;">of</span> chatSession.<span style="color: #d2a8ff;">stream</span>(messages)) {
-        <span style="color: #ff7b72;">if</span> (event.type === <span style="color: #a5d6ff;">'text'</span>) finalResponse += event.content;
-    }
-    <span style="color: #c9d1d9;">console.<span style="color: #d2a8ff;">log</span>(finalResponse);
 }
 
-<span style="color: #d2a8ff;">main</span>();
+<span style="color: #d2a8ff;">main</span>().<span style="color: #d2a8ff;">catch</span>(<span style="color: #c9d1d9;">console</span>.error);
 </code></pre>
                         </div>
                     </div>
@@ -110,14 +196,14 @@
 
                 <section>
                     <h2>Expected Output</h2>
-                    <p class="text-[var(--text-secondary)] mb-4">The manual loop makes the agent's process explicit. The output shows the initial user prompt, the log from the local tool execution, and finally the model's summarized answer based on the tool's result.</p>
+                    <p class="text-[var(--text-secondary)] mb-4">The manual loop makes the agent\'s process explicit. The output shows the initial user prompt, the log from the local tool execution, and finally the model\'s summarized answer based on the tool\'s result.</p>
                     <div class="code-block-wrapper">
                         <button class="copy-code-btn absolute top-3 right-3 flex items-center gap-2 text-slate-400 hover:text-white transition-colors p-2 rounded-md bg-slate-800/50 backdrop-blur-sm">
                             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16" aria-hidden="true"><path d="M4 1.5H3a2 2 0 0 0-2 2V14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V3.5a2 2 0 0 0-2-2h-1v1h1a1 1 0 0 1 1 1V14a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V3.5a1 1 0 0 1 1-1h1v-1z"/><path d="M9.5 1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-3a.5.5 0 0 1-.5-.5v-1a.5.5 0 0 1 .5-.5h3z"/></svg>
                             <span>Copy</span>
                         </button>
                         <div class="code-block">
-<pre><code>👤 User > What's the weather like in Paris?
+<pre><code>👤 User > What\'s the weather like in Paris?
 🤖 Assistant (thinking) >
 [INFO] Intercepted a request to call 1 tool(s).
 
@@ -128,7 +214,7 @@
 🤖 Assistant (summarizing) > The current weather in Paris is 14 degrees Celsius.
 
 --- FINAL RESULT ---
-👤 User > What's the weather like in Paris?
+👤 User > What\'s the weather like in Paris?
 🤖 Assistant > The current weather in Paris is 14 degrees Celsius.
 --------------------
 </code></pre>
@@ -149,4 +235,5 @@
 
 <script src="../assets/js/script.js"></script>
 </body>
+</html>
 </html>

@@ -66,7 +66,7 @@
                 </header>
 
                 <section class="mb-12">
-                    <h2>Code: <code class="inline"><a href="https://github.com/mobeetle/merci-sdk/tree/main/examples">lesson_17_multimodal_agents.mjs</a></code></h2>
+                    <h2>Code: <code class="inline"><a href="https://github.com/mobeetle/merci-sdk/tree/main/examples/lesson_17_multimodal_agents.mjs">lesson_17_multimodal_agents.mjs</a></code></h2>
                     <p class="text-[var(--text-secondary)] mb-4">The key is to construct a message payload containing both the image (via <code class="inline">createMediaMessage</code>) and the user's text prompt. The high-level <code class="inline">.run()</code> agent seamlessly processes this multimodal input, allowing the model to analyze the image and then decide to call the appropriate tool based on its visual understanding.</p>
                     <div class="code-block-wrapper">
                         <button class="copy-code-btn absolute top-3 right-3 flex items-center gap-2 text-slate-400 hover:text-white transition-colors p-2 rounded-md bg-slate-800/50 backdrop-blur-sm">
@@ -75,32 +75,93 @@
                         </button>
                         <div class="code-block">
 <pre><code><span style="color: #8b949e;">// lesson_17_multimodal_agents.mjs</span>
-<span style="color: #ff7b72;">import</span> { MerciClient, createMediaMessage, createUserMessage } <span style="color: #ff7b72;">from</span> <span style="color: #a5d6ff;">'../lib/merci.2.11.0.mjs'</span>;
+<span style="color: #8b949e;">// Merci SDK Tutorial: Lesson 17 - Multimodal Agents (Vision + Tools)</span>
+
+<span style="color: #8b949e;">// --- IMPORTS ---</span>
+<span style="color: #ff7b72;">import</span> { MerciClient, createMediaMessage, createUserMessage } <span style="color: #ff7b72;">from</span> <span style="color: #a5d6ff;">'../lib/merci.2.14.0.mjs'</span>;
 <span style="color: #ff7b72;">import</span> { token } <span style="color: #ff7b72;">from</span> <span style="color: #a5d6ff;">'../secret/token.mjs'</span>;
 
-<span style="color: #ff7b72;">const</span> <span style="color: #79c0ff;">MODEL</span> = <span style="color: #a5d6ff;">'openai-gpt-5-mini'</span>; <span style="color: #8b949e;">// Requires a powerful multimodal model</span>
-<span style="color: #ff7b72;">const</span> <span style="color: #79c0ff;">inventoryTool</span> = { <span style="color: #8b949e;">/* ... */</span> };
+<span style="color: #8b949e;">// This advanced feature requires a powerful multimodal model.</span>
+<span style="color: #ff7b72;">const</span> <span style="color: #79c0ff;">MODEL</span> = <span style="color: #a5d6ff;">'openai-gpt-5-mini'</span>;
+
+<span style="color: #8b949e;">// --- TOOL DEFINITION ---</span>
+<span style="color: #ff7b72;">const</span> <span style="color: #79c0ff;">inventoryTool</span> = {
+    <span style="color: #c9d1d9;">name:</span> <span style="color: #a5d6ff;">'add_product_to_inventory'</span>,
+    <span style="color: #c9d1d9;">parameters:</span> {
+        <span style="color: #c9d1d9;">schema:</span> {
+            <span style="color: #c9d1d9;">type:</span> <span style="color: #a5d6ff;">'object'</span>,
+            <span style="color: #c9d1d9;">properties:</span> {
+                <span style="color: #c9d1d9;">product_name:</span> { <span style="color: #c9d1d9;">type:</span> <span style="color: #a5d6ff;">'string'</span>, <span style="color: #c9d1d9;">description:</span> <span style="color: #a5d6ff;">'The name of the product, e.g., "Tomato Soup".'</span> },
+                <span style="color: #c9d1d9;">brand:</span> { <span style="color: #c9d1d9;">type:</span> <span style="color: #a5d6ff;">'string'</span>, <span style="color: #c9d1d9;">description:</span> <span style="color: #a5d6ff;">'The brand of the product, e.g., "Campbell\'s".'</span> },
+                <span style="color: #c9d1d9;">quantity:</span> { <span style="color: #c9d1d9;">type:</span> <span style="color: #a5d6ff;">'number'</span>, <span style="color: #c9d1d9;">description:</span> <span style="color: #a5d6ff;">'The number of items to add.'</span> },
+            },
+            <span style="color: #c9d1d9;">required:</span> [<span style="color: #a5d6ff;">'product_name'</span>, <span style="color: #a5d6ff;">'brand'</span>, <span style="color: #a5d6ff;">'quantity'</span>],
+        }
+    },
+    <span style="color: #d2a8ff;">execute</span>: <span style="color: #ff7b72;">async</span> ({ <span style="color: #79c0ff;">product_name</span>, <span style="color: #79c0ff;">brand</span>, <span style="color: #79c0ff;">quantity</span> }) => {
+        <span style="color: #c9d1d9;">console</span>.<span style="color: #d2a8ff;">log</span>(<span style="color: #a5d6ff;">`\n[TOOL EXECUTING]  DATABASE WRITE: Adding </span><span style="color: #79c0ff;">${quantity}</span><span style="color: #a5d6ff;"> x </span><span style="color: #79c0ff;">${brand}</span><span style="color: #a5d6ff;"> </span><span style="color: #79c0ff;">${product_name}</span><span style="color: #a5d6ff;">.`</span>);
+        <span style="color: #ff7b72;">return</span> { <span style="color: #c9d1d9;">success:</span> <span style="color: #ff7b72;">true</span>, <span style="color: #c9d1d9;">productId:</span> <span style="color: #a5d6ff;">`prod_</span><span style="color: #79c0ff;">${Date</span>.<span style="color: #d2a8ff;">now</span>()}<span>`</span> };
+    },
+};
 
 <span style="color: #ff7b72;">async</span> <span style="color: #ff7b72;">function</span> <span style="color: #d2a8ff;">main</span>() {
-    <span style="color: #ff7b72;">const</span> <span style="color: #79c0ff;">client</span> = <span style="color: #ff7b72;">new</span> <span style="color: #d2a8ff;">MerciClient</span>({ token });
-    <span style="color: #ff7b72;">const</span> <span style="color: #79c0ff;">imagePath</span> = <span style="color: #a5d6ff;">'./image.png'</span>;
-    <span style="color: #ff7b72;">const</span> <span style="color: #79c0ff;">userPrompt</span> = <span style="color: #a5d6ff;">"Analyze the attached image and use the provided tool to add the product to our inventory."</span>;
+    <span style="color: #c9d1d9;">console</span>.<span style="color: #d2a8ff;">log</span>(<span style="color: #a5d6ff;">`--- Merci SDK Tutorial: Lesson 17 - Multimodal Agents (Model: </span><span style="color: #79c0ff;">${MODEL}</span><span style="color: #a5d6ff;">) ---`</span>);
+    <span style="color: #c9d1d9;">console</span>.<span style="color: #d2a8ff;">log</span>(<span style="color: #a5d6ff;">'NOTE: This lesson requires an `image.png` file in the same directory.'</span>);
 
-    <span style="color: #8b949e;">// Configure the agent with the inventory tool</span>
-    <span style="color: #ff7b72;">const</span> <span style="color: #79c0ff;">agent</span> = client.<span style="color: #d2a8ff;">chat</span>(MODEL).<span style="color: #d2a8ff;">withTools</span>([inventoryTool]);
+    <span style="color: #ff7b72;">try</span> {
+        <span style="color: #8b949e;">// --- STEP 1: INITIALIZE THE CLIENT ---</span>
+        <span style="color: #c9d1d9;">console</span>.<span style="color: #d2a8ff;">log</span>(<span style="color: #a5d6ff;">'\n[STEP 1] Initializing MerciClient...'</span>);
+        <span style="color: #ff7b72;">const</span> <span style="color: #79c0ff;">client</span> = <span style="color: #ff7b72;">new</span> <span style="color: #d2a8ff;">MerciClient</span>({ token });
+        <span style="color: #79c0ff;">client</span>.<span style="color: #d2a8ff;">on</span>(<span style="color: #a5d6ff;">'tool_start'</span>, ({ <span style="color: #79c0ff;">calls</span> }) => {
+            <span style="color: #c9d1d9;">console</span>.<span style="color: #d2a8ff;">log</span>(<span style="color: #a5d6ff;">`\n[EVENT: tool_start] Model is calling '</span><span style="color: #79c0ff;">${calls</span>[<span style="color: #a5d6ff;">0</span>].<span style="color: #c9d1d9;">name}</span><span style="color: #a5d6ff;">' with args: </span><span style="color: #79c0ff;">${calls</span>[<span style="color: #a5d6ff;">0</span>].<span style="color: #c9d1d9;">arguments}</span><span style="color: #a5d6ff;">`</span>);
+        });
 
-    <span style="color: #8b949e;">// Create the message payload with both image and text</span>
-    <span style="color: #ff7b72;">const</span> <span style="color: #79c0ff;">messages</span> = [
-        <span style="color: #ff7b72;">await</span> <span style="color: #d2a8ff;">createMediaMessage</span>(imagePath),
-        <span style="color: #d2a8ff;">createUserMessage</span>(userPrompt)
-    ];
+        <span style="color: #8b949e;">// --- STEP 2: PREPARE PROMPT, IMAGE, AND TOOL ---</span>
+        <span style="color: #c9d1d9;">console</span>.<span style="color: #d2a8ff;">log</span>(<span style="color: #a5d6ff;">'[STEP 2] Preparing image, prompt, and tool definition...'</span>);
+        <span style="color: #ff7b72;">const</span> <span style="color: #79c0ff;">imagePath</span> = <span style="color: #a5d6ff;">'./image.png'</span>;
+        <span style="color: #ff7b72;">const</span> <span style="color: #79c0ff;">userPrompt</span> = <span style="color: #a5d6ff;">"Analyze the attached image and use the provided tool to add the product to our inventory."</span>;
+        <span style="color: #ff7b72;">const</span> <span style="color: #79c0ff;">tools</span> = [inventoryTool];
 
-    <span style="color: #8b949e;">// Run the agent</span>
-    <span style="color: #ff7b72;">const</span> <span style="color: #79c0ff;">finalAnswer</span> = <span style="color: #ff7b72;">await</span> agent.<span style="color: #d2a8ff;">run</span>(messages);
-    <span style="color: #c9d1d9;">console.<span style="color: #d2a8ff;">log</span>(<span style="color: #a5d6ff;">`🤖 Assistant > </span><span style="color: #79c0ff;">${finalAnswer}</span><span style="color: #a5d6ff;">`</span>);
+        <span style="color: #8b949e;">// --- STEP 3: CONFIGURE THE MULTIMODAL AGENT ---</span>
+        <span style="color: #c9d1d9;">console</span>.<span style="color: #d2a8ff;">log</span>(<span style="color: #a5d6ff;">'[STEP 3] Configuring the agent with the inventory tool...'</span>);
+        <span style="color: #ff7b72;">const</span> <span style="color: #79c0ff;">agent</span> = <span style="color: #79c0ff;">client</span>.<span style="color: #c9d1d9;">chat</span>.<span style="color: #d2a8ff;">session</span>(MODEL).<span style="color: #d2a8ff;">withTools</span>(tools);
+
+        <span style="color: #8b949e;">// --- STEP 4: PREPARE THE MULTIMODAL MESSAGE PAYLOAD ---</span>
+        <span style="color: #c9d1d9;">console</span>.<span style="color: #d2a8ff;">log</span>(<span style="color: #a5d6ff;">'[STEP 4] Creating the message payload with both image and text...'</span>);
+        <span style="color: #ff7b72;">const</span> <span style="color: #79c0ff;">messages</span> = [
+            <span style="color: #ff7b72;">await</span> <span style="color: #d2a8ff;">createMediaMessage</span>(imagePath),
+            <span style="color: #d2a8ff;">createUserMessage</span>(userPrompt)
+        ];
+
+        <span style="color: #8b949e;">// --- STEP 5: RUN THE AGENT ---</span>
+        <span style="color: #c9d1d9;">console</span>.<span style="color: #d2a8ff;">log</span>(<span style="color: #a5d6ff;">'[STEP 5] Running the agent. The model will first see the image, then decide to call the tool...'</span>);
+        <span style="color: #ff7b72;">const</span> <span style="color: #79c0ff;">finalAnswer</span> = <span style="color: #ff7b72;">await</span> <span style="color: #79c0ff;">agent</span>.<span style="color: #d2a8ff;">run</span>(messages);
+
+        <span style="color: #8b949e;">// --- FINAL RESULT ---</span>
+        <span style="color: #c9d1d9;">console</span>.<span style="color: #d2a8ff;">log</span>(<span style="color: #a5d6ff;">'\n\n--- FINAL RESULT ---'</span>);
+        <span style="color: #c9d1d9;">console</span>.<span style="color: #d2a8ff;">log</span>(<span style="color: #a5d6ff;">`🖼️ Media > </span><span style="color: #79c0ff;">${imagePath}</span><span style="color: #a5d6ff;">`</span>);
+        <span style="color: #c9d1d9;">console</span>.<span style="color: #d2a8ff;">log</span>(<span style="color: #a5d6ff;">`👤 User > </span><span style="color: #79c0ff;">${userPrompt}</span><span style="color: #a5d6ff;">`</span>);
+        <span style="color: #c9d1d9;">console</span>.<span style="color: #d2a8ff;">log</span>(<span style="color: #a5d6ff;">`🤖 Assistant > </span><span style="color: #79c0ff;">${finalAnswer}</span><span style="color: #a5d6ff;">`</span>);
+        <span style="color: #c9d1d9;">console</span>.<span style="color: #d2a8ff;">log</span>(<span style="color: #a5d6ff;">'--------------------'</span>);
+        <span style="color: #c9d1d9;">console</span>.<span style="color: #d2a8ff;">log</span>(<span style="color: #a5d6ff;">'The model successfully interpreted the image content and used it to populate the tool\'s arguments.'</span>);
+
+    } <span style="color: #ff7b72;">catch</span> (error) {
+        <span style="color: #ff7b72;">if</span> (error.code === <span style="color: #a5d6ff;">'ENOENT'</span>) {
+            <span style="color: #c9d1d9;">console</span>.<span style="color: #d2a8ff;">error</span>(<span style="color: #a5d6ff;">`\n[FATAL ERROR] Image file not found at "</span><span style="color: #79c0ff;">${error</span>.<span style="color: #c9d1d9;">path}</span><span style="color: #a5d6ff;">"`</span>);
+            <span style="color: #c9d1d9;">console</span>.<span style="color: #d2a8ff;">error</span>(<span style="color: #a5d6ff;">'  Please make sure an `image.png` file exists before running the script.'</span>);
+            <span style="color: #c9d1d9;">process</span>.<span style="color: #d2a8ff;">exit</span>(<span style="color: #a5d6ff;">1</span>);
+        }
+        <span style="color: #c9d1d9;">console</span>.<span style="color: #d2a8ff;">error</span>(<span style="color: #a5d6ff;">'\n\n[FATAL ERROR] An error occurred during the operation.'</span>);
+        <span style="color: #c9d1d9;">console</span>.<span style="color: #d2a8ff;">error</span>(<span style="color: #a5d6ff;">'  Message:'</span>, error.message);
+        <span style="color: #ff7b72;">if</span> (error.status) { <span style="color: #c9d1d9;">console</span>.<span style="color: #d2a8ff;">error</span>(<span style="color: #a5d6ff;">'  API Status:'</span>, error.status); }
+        <span style="color: #ff7b72;">if</span> (error.details) { <span style="color: #c9d1d9;">console</span>.<span style="color: #d2a8ff;">error</span>(<span style="color: #a5d6ff;">'  Details:'</span>, JSON.<span style="color: #d2a8ff;">stringify</span>(error.details, <span style="color: #ff7b72;">null</span>, <span style="color: #a5d6ff;">2</span>)); }
+        <span style="color: #ff7b72;">if</span> (error.stack) { <span style="color: #c9d1d9;">console</span>.<span style="color: #d2a8ff;">error</span>(<span style="color: #a5d6ff;">'  Stack:'</span>, error.stack); }
+        <span style="color: #c9d1d9;">console</span>.<span style="color: #d2a8ff;">error</span>(<span style="color: #a5d6ff;">'\n  Possible causes: Invalid token, network issues, or an API service problem.'</span>);
+        <span style="color: #c9d1d9;">process</span>.<span style="color: #d2a8ff;">exit</span>(<span style="color: #a5d6ff;">1</span>);
+    }
 }
 
-<span style="color: #d2a8ff;">main</span>();
+<span style="color: #d2a8ff;">main</span>().<span style="color: #d2a8ff;">catch</span>(<span style="color: #c9d1d9;">console</span>.error);
 </code></pre>
                         </div>
                     </div>

@@ -3,10 +3,11 @@
 
 // --- IMPORTS ---
 // We import helpers for each distinct message type we will send.
-import { MerciClient, createMediaMessage, createUserMessage } from '../lib/merci.2.11.0.mjs';
+import { MerciClient, createMediaMessage, createUserMessage } from '../lib/merci.2.14.0.mjs';
 import { token } from '../secret/token.mjs';
 
-const MODEL = 'openai-gpt-5-mini';
+// const MODEL = 'openai-gpt-5-mini';
+const MODEL = 'google-chat-gemini-flash-2.5';
 
 async function main() {
     console.log(`--- Merci SDK Tutorial: Lesson 4 - Media Messages (Model: ${MODEL}) ---`);
@@ -25,7 +26,7 @@ async function main() {
         // --- STEP 3: CONFIGURE THE CHAT SESSION ---
         // No special configuration is needed on the session itself, just the right model.
         console.log('[STEP 3] Configuring the chat session...');
-        const chatSession = client.chat(MODEL);
+        const chatSession = client.chat.session(MODEL);
 
         // --- STEP 4: PREPARE THE MESSAGE PAYLOAD ---
         // THIS IS THE MOST IMPORTANT PART OF THE LESSON.

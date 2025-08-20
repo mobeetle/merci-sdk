@@ -2,24 +2,23 @@
 // Merci SDK Tutorial: Lesson 6 - The Parameter Builder Pattern
 
 // --- IMPORTS ---
-import { MerciClient, createUserMessage } from '../lib/merci.2.11.0.mjs';
+import { MerciClient, createUserMessage } from '../lib/merci.2.14.0.mjs';
 import { token } from '../secret/token.mjs';
 
 const MODEL = 'google-chat-gemini-flash-2.5';
-
 
 /**
  * A reusable helper function to run a chat experiment with specific parameters.
  * @param {MerciClient} client - The initialized Merci client.
  * @param {string} prompt - The user prompt.
- * @param {(builder: import('../lib/merci.2.11.0.mjs').ParameterBuilder) => any} builderFn - A function that aconfigures the ParameterBuilder.
+ * @param {(builder: import('../back/merci.2.11.0.mjs').ParameterBuilder) => any} builderFn - A function that configures the ParameterBuilder.
  * @param {string} description - A description of the experiment.
  */
 async function runExperiment(client, prompt, builderFn, description) {
     console.log(`\n--- Experiment: ${description} ---`);
 
     // STEP 3: Configure the session with parameters using the builder pattern.
-    const chatSession = client.chat(MODEL).withParameters(builderFn);
+    const chatSession = client.chat.session(MODEL).withParameters(builderFn);
     // STEP 4: Prepare the message payload.
     const messages = [createUserMessage(prompt)];
 
@@ -33,6 +32,7 @@ async function runExperiment(client, prompt, builderFn, description) {
         }
     }
     process.stdout.write('\n');
+    console.log('\n[INFO] Stream finished. Response fully received.');
     return finalResponse;
 }
 
@@ -44,7 +44,7 @@ async function main() {
         console.log('[STEP 1] Initializing MerciClient...');
         const client = new MerciClient({ token });
         client.on('parameter_warning', (warning) => {
-            console.warn(`\n[SDK WARNING] ${warning.message}`);
+            console.warn(`[SDK WARNING] ${warning.message}`);
         });
 
         // --- STEP 2: DEFINE PROMPT AND INPUT DATA ---
@@ -53,7 +53,7 @@ async function main() {
         const jsonPrompt = "Extract the name, age, and city from this text: 'Anna is 32 and lives in Paris.' into a JSON object.";
 
         // --- EXPERIMENT 1: Focused and Deterministic Output ---
-        console.log('[STEP 3] Configuring the chat session...');
+        console.log('\n[STEP 3] Running Experiment 1: Focused and Deterministic (Low Temperature)');
         await runExperiment(
             client,
             storyPrompt,
@@ -62,7 +62,7 @@ async function main() {
         );
 
         // --- EXPERIMENT 2: Creative and Unpredictable ---
-        console.log('[STEP 4] ...');
+        console.log('\n[STEP 4] Running Experiment 2: Creative and Unpredictable (High Temperature, High Top-P)');
         await runExperiment(
             client,
             storyPrompt,
@@ -71,18 +71,21 @@ async function main() {
         );
 
         // --- EXPERIMENT 3: Forcing JSON Output ---
-        console.log('[STEP 5] ...');
-        await runExperiment(
+        console.log('\n[STEP 5] Running Experiment 3: Forcing JSON Output');
+        const jsonResponse = await runExperiment(
             client,
             jsonPrompt,
             builder => builder.asJson(),
             'Forcing JSON Output'
         );
+        console.log('\n[INFO] Parsed JSON Output:');
+        console.log(JSON.parse(jsonResponse));
+
 
         // --- EXPERIMENT 4: Demonstrating an Unsupported Parameter ---
         // The 'seed' parameter is not supported by this Gemini model.
         // The SDK is smart enough to detect this, emit a warning, and filter it out.
-        console.log('[STEP 6] ...');
+        console.log('\n[STEP 6] Running Experiment 4: Using an Unsupported Parameter (Seed)');
         await runExperiment(
             client,
             storyPrompt,

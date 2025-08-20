@@ -2,7 +2,7 @@
 // Merci SDK Tutorial: Lesson 17 - Multimodal Agents (Vision + Tools)
 
 // --- IMPORTS ---
-import { MerciClient, createMediaMessage, createUserMessage } from '../lib/merci.2.11.0.mjs';
+import { MerciClient, createMediaMessage, createUserMessage } from '../lib/merci.2.14.0.mjs';
 import { token } from '../secret/token.mjs';
 
 // This advanced feature requires a powerful multimodal model.
@@ -11,15 +11,16 @@ const MODEL = 'openai-gpt-5-mini';
 // --- TOOL DEFINITION ---
 const inventoryTool = {
     name: 'add_product_to_inventory',
-    description: 'Adds a product to the company inventory database.',
     parameters: {
-        type: 'object',
-        properties: {
-            product_name: { type: 'string', description: 'The name of the product, e.g., "Tomato Soup".' },
-            brand: { type: 'string', description: 'The brand of the product, e.g., "Campbell\'s".' },
-            quantity: { type: 'number', description: 'The number of items to add.' },
-        },
-        required: ['product_name', 'brand', 'quantity'],
+        schema: {
+            type: 'object',
+            properties: {
+                product_name: { type: 'string', description: 'The name of the product, e.g., "Tomato Soup".' },
+                brand: { type: 'string', description: 'The brand of the product, e.g., "Campbell\'s".' },
+                quantity: { type: 'number', description: 'The number of items to add.' },
+            },
+            required: ['product_name', 'brand', 'quantity'],
+        }
     },
     execute: async ({ product_name, brand, quantity }) => {
         console.log(`\n[TOOL EXECUTING]  DATABASE WRITE: Adding ${quantity} x ${brand} ${product_name}.`);
@@ -47,7 +48,7 @@ async function main() {
 
         // --- STEP 3: CONFIGURE THE MULTIMODAL AGENT ---
         console.log('[STEP 3] Configuring the agent with the inventory tool...');
-        const agent = client.chat(MODEL).withTools(tools);
+        const agent = client.chat.session(MODEL).withTools(tools);
 
         // --- STEP 4: PREPARE THE MULTIMODAL MESSAGE PAYLOAD ---
         console.log('[STEP 4] Creating the message payload with both image and text...');

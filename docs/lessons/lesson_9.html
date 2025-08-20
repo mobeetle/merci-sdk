@@ -8,7 +8,7 @@
     <!-- Fonts -->
     <link href="https://fonts.googleapis.com" rel="preconnect"/>
     <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
-    <link as="style" href="https://fonts.googleapis.com/css2?display=swap&amp;family=Inter%3Awght%40400%3B500%3B600%3B700%3B900&family=Fira+Code%3Awght%40400" onload="this.rel='stylesheet'" rel="stylesheet"/>
+    <link as="style" href="https://fonts.googleapis.com/css2?display=swap&amp;family=Inter%3Awght%40400%3B500%3B600%3B700%3B900&family=Fira+Code%3Awght%40400" onload="this.rel=\'stylesheet\'" rel="stylesheet"/>
 
     <!-- Scripts & Styles -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -66,7 +66,7 @@
                 </header>
 
                 <section class="mb-12">
-                    <h2>Code: <code class="inline"><a href="https://github.com/mobeetle/merci-sdk/tree/main/examples">lesson_9_advanced_parallel_tools.mjs</a></code></h2>
+                    <h2>Code: <code class="inline"><a href="https://github.com/mobeetle/merci-sdk/tree/main/examples/lesson_9_advanced_parallel_tools.mjs">lesson_9_advanced_parallel_tools.mjs</a></code></h2>
                     <p class="text-[var(--text-secondary)] mb-4">By providing a suite of tools and enabling the <code class="inline">.parallelToolCalls(true)</code> parameter, the model can request multiple tool executions in a single turn. The SDK's <code class="inline">.run()</code> method automatically executes these calls concurrently.</p>
                     <div class="code-block-wrapper">
                         <button class="copy-code-btn absolute top-3 right-3 flex items-center gap-2 text-slate-400 hover:text-white transition-colors p-2 rounded-md bg-slate-800/50 backdrop-blur-sm">
@@ -75,34 +75,118 @@
                         </button>
                         <div class="code-block">
 <pre><code><span style="color: #8b949e;">// lesson_9_advanced_parallel_tools.mjs</span>
-<span style="color: #ff7b72;">import</span> { MerciClient } <span style="color: #ff7b72;">from</span> <span style="color: #a5d6ff;">'../lib/merci.2.11.0.mjs'</span>;
+<span style="color: #8b949e;">// Merci SDK Tutorial: Lesson 9 - Advanced Parallel Tool Calls</span>
+
+<span style="color: #8b949e;">// --- IMPORTS ---</span>
+<span style="color: #ff7b72;">import</span> { MerciClient } <span style="color: #ff7b72;">from</span> <span style="color: #a5d6ff;">'../lib/merci.2.14.0.mjs'</span>;
 <span style="color: #ff7b72;">import</span> { token } <span style="color: #ff7b72;">from</span> <span style="color: #a5d6ff;">'../secret/token.mjs'</span>;
 
 <span style="color: #ff7b72;">const</span> <span style="color: #79c0ff;">MODEL</span> = <span style="color: #a5d6ff;">'google-chat-gemini-pro-2.5'</span>;
 
 <span style="color: #8b949e;">// --- TOOL DEFINITIONS ---</span>
-<span style="color: #ff7b72;">const</span> <span style="color: #79c0ff;">weatherTool</span> = { <span style="color: #8b949e;">/* ... */</span> };
-<span style="color: #ff7b72;">const</span> <span style="color: #79c0ff;">flightTool</span> = { <span style="color: #8b949e;">/* ... */</span> };
-<span style="color: #ff7b72;">const</span> <span style="color: #79c0ff;">calculatorTool</span> = { <span style="color: #8b949e;">/* ... */</span> };
+<span style="color: #ff7b72;">const</span> <span style="color: #79c0ff;">weatherTool</span> = {
+    <span style="color: #c9d1d9;">name:</span> <span style="color: #a5d6ff;">'get_current_weather'</span>,
+    <span style="color: #c9d1d9;">parameters:</span> {
+        <span style="color: #c9d1d9;">schema:</span> { <span style="color: #c9d1d9;">type:</span> <span style="color: #a5d6ff;">'object'</span>, <span style="color: #c9d1d9;">properties:</span> { <span style="color: #c9d1d9;">city:</span> { <span style="color: #c9d1d9;">type:</span> <span style="color: #a5d6ff;">'string'</span>, <span style="color: #c9d1d9;">description:</span> <span style="color: #a5d6ff;">'The city name, e.g., Paris'</span> } }, <span style="color: #c9d1d9;">required:</span> [<span style="color: #a5d6ff;">'city'</span>], }
+    },
+    <span style="color: #d2a8ff;">execute</span>: <span style="color: #ff7b72;">async</span> ({ <span style="color: #79c0ff;">city</span> }) => {
+        <span style="color: #c9d1d9;">console</span>.<span style="color: #d2a8ff;">log</span>(<span style="color: #a5d6ff;">`[TOOL START] 🌦️  Checking weather for </span><span style="color: #79c0ff;">${city}</span><span style="color: #a5d6ff;">... (simulating 1.2s delay)`</span>);
+        <span style="color: #ff7b72;">await</span> <span style="color: #ff7b72;">new</span> <span style="color: #d2a8ff;">Promise</span>(<span style="color: #79c0ff;">resolve</span> => <span style="color: #d2a8ff;">setTimeout</span>(resolve, <span style="color: #a5d6ff;">1200</span>)); <span style="color: #8b949e;">// Simulate API call latency</span>
+        <span style="color: #ff7b72;">const</span> <span style="color: #79c0ff;">temperatures</span> = { <span style="color: #a5d6ff;">'london'</span>: { <span style="color: #c9d1d9;">temperature:</span> <span style="color: #a5d6ff;">12</span>, <span style="color: #c9d1d9;">unit:</span> <span style="color: #a5d6ff;">'celsius'</span> }, <span style="color: #a5d6ff;">'paris'</span>: { <span style="color: #c9d1d9;">temperature:</span> <span style="color: #a5d6ff;">18</span>, <span style="color: #c9d1d9;">unit:</span> <span style="color: #a5d6ff;">'celsius'</span> }, <span style="color: #a5d6ff;">'new york'</span>: { <span style="color: #c9d1d9;">temperature:</span> <span style="color: #a5d6ff;">22</span>, <span style="color: #c9d1d9;">unit:</span> <span style="color: #a5d6ff;">'celsius'</span> }, };
+        <span style="color: #ff7b72;">const</span> <span style="color: #79c0ff;">result</span> = <span style="color: #79c0ff;">temperatures</span>[<span style="color: #79c0ff;">city</span>.<span style="color: #d2a8ff;">toLowerCase</span>()] || { <span style="color: #c9d1d9;">error:</span> <span style="color: #a5d6ff;">'City not found'</span> };
+        <span style="color: #c9d1d9;">console</span>.<span style="color: #d2a8ff;">log</span>(<span style="color: #a5d6ff;">`[TOOL END]   🌦️  Weather for </span><span style="color: #79c0ff;">${city}</span><span style="color: #a5d6ff;"> is </span><span style="color: #79c0ff;">${result.temperature}</span><span style="color: #a5d6ff;">°C.`</span>);
+        <span style="color: #ff7b72;">return</span> result;
+    },
+};
+
+<span style="color: #ff7b72;">const</span> <span style="color: #79c0ff;">flightTool</span> = {
+    <span style="color: #c9d1d9;">name:</span> <span style="color: #a5d6ff;">'get_flight_price'</span>,
+    <span style="color: #c9d1d9;">parameters:</span> {
+        <span style="color: #c9d1d9;">schema:</span> { <span style="color: #c9d1d9;">type:</span> <span style="color: #a5d6ff;">'object'</span>, <span style="color: #c9d1d9;">properties:</span> { <span style="color: #c9d1d9;">from:</span> { <span style="color: #c9d1d9;">type:</span> <span style="color: #a5d6ff;">'string'</span>, <span style="color: #c9d1d9;">description:</span> <span style="color: #a5d6ff;">'The departure city.'</span> }, <span style="color: #c9d1d9;">to:</span> { <span style="color: #c9d1d9;">type:</span> <span style="color: #a5d6ff;">'string'</span>, <span style="color: #c9d1d9;">description:</span> <span style="color: #a5d6ff;">'The arrival city.'</span> }, }, <span style="color: #c9d1d9;">required:</span> [<span style="color: #a5d6ff;">'from'</span>, <span style="color: #a5d6ff;">'to'</span>], }
+    },
+    <span style="color: #d2a8ff;">execute</span>: <span style="color: #ff7b72;">async</span> ({ <span style="color: #79c0ff;">from</span>, <span style="color: #79c0ff;">to</span> }) => {
+        <span style="color: #c9d1d9;">console</span>.<span style="color: #d2a8ff;">log</span>(<span style="color: #a5d6ff;">`[TOOL START] ✈️  Checking flight price from </span><span style="color: #79c0ff;">${from}</span><span style="color: #a5d6ff;"> to </span><span style="color: #79c0ff;">${to}</span><span style="color: #a5d6ff;">... (simulating 1.8s delay)`</span>);
+        <span style="color: #ff7b72;">await</span> <span style="color: #ff7b72;">new</span> <span style="color: #d2a8ff;">Promise</span>(<span style="color: #79c0ff;">resolve</span> => <span style="color: #d2a8ff;">setTimeout</span>(resolve, <span style="color: #a5d6ff;">1800</span>)); <span style="color: #8b949e;">// Simulate a longer API call</span>
+        <span style="color: #ff7b72;">const</span> <span style="color: #79c0ff;">price</span> = <span style="color: #c9d1d9;">Math</span>.<span style="color: #d2a8ff;">floor</span>(<span style="color: #c9d1d9;">Math</span>.<span style="color: #d2a8ff;">random</span>() * <span style="color: #a5d6ff;">200</span>) + <span style="color: #a5d6ff;">300</span>; <span style="color: #8b949e;">// Random price for demo</span>
+        <span style="color: #ff7b72;">const</span> <span style="color: #79c0ff;">result</span> = { <span style="color: #c9d1d9;">price</span>, <span style="color: #c9d1d9;">currency:</span> <span style="color: #a5d6ff;">'EUR'</span> };
+        <span style="color: #c9d1d9;">console</span>.<span style="color: #d2a8ff;">log</span>(<span style="color: #a5d6ff;">`[TOOL END]   ✈️  Flight from </span><span style="color: #79c0ff;">${from}</span><span style="color: #a5d6ff;"> to </span><span style="color: #79c0ff;">${to}</span><span style="color: #a5d6ff;"> costs </span><span style="color: #79c0ff;">${result.price}</span><span style="color: #a5d6ff;"> </span><span style="color: #79c0ff;">${result.currency}</span><span style="color: #a5d6ff;">.`</span>);
+        <span style="color: #ff7b72;">return</span> result;
+    },
+};
+
+<span style="color: #ff7b72;">const</span> <span style="color: #79c0ff;">calculatorTool</span> = {
+    <span style="color: #c9d1d9;">name:</span> <span style="color: #a5d6ff;">'calculate_total_cost'</span>,
+    <span style="color: #c9d1d9;">parameters:</span> {
+        <span style="color: #c9d1d9;">schema:</span> { <span style="color: #c9d1d9;">type:</span> <span style="color: #a5d6ff;">'object'</span>, <span style="color: #c9d1d9;">properties:</span> { <span style="color: #c9d1d9;">numbers:</span> { <span style="color: #c9d1d9;">type:</span> <span style="color: #a5d6ff;">'array'</span>, <span style="color: #c9d1d9;">items:</span> { <span style="color: #c9d1d9;">type:</span> <span style="color: #a5d6ff;">'number'</span> }, <span style="color: #c9d1d9;">description:</span> <span style="color: #a5d6ff;">'An array of numbers to sum up.'</span> } }, <span style="color: #c9d1d9;">required:</span> [<span style="color: #a5d6ff;">'numbers'</span>], }
+    },
+    <span style="color: #d2a8ff;">execute</span>: ({ <span style="color: #79c0ff;">numbers</span> }) => {
+        <span style="color: #c9d1d9;">console</span>.<span style="color: #d2a8ff;">log</span>(<span style="color: #a5d6ff;">`[TOOL START] 🧮  Calculating sum of [</span><span style="color: #79c0ff;">${numbers</span>.<span style="color: #d2a8ff;">join</span>(<span style="color: #a5d6ff;">', '</span>)}<span style="color: #a5d6ff;">]... (simulating 0.1s delay)`</span>);
+        <span style="color: #ff7b72;">const</span> <span style="color: #79c0ff;">total</span> = <span style="color: #79c0ff;">numbers</span>.<span style="color: #d2a8ff;">reduce</span>((<span style="color: #79c0ff;">acc</span>, <span style="color: #79c0ff;">num</span>) => <span style="color: #79c0ff;">acc</span> + <span style="color: #79c0ff;">num</span>, <span style="color: #a5d6ff;">0</span>);
+        <span style="color: #ff7b72;">const</span> <span style="color: #79c0ff;">result</span> = { <span style="color: #c9d1d9;">total</span> };
+        <span style="color: #c9d1d9;">console</span>.<span style="color: #d2a8ff;">log</span>(<span style="color: #a5d6ff;">`[TOOL END]   🧮  Calculation result is </span><span style="color: #79c0ff;">${total}</span><span style="color: #a5d6ff;">.`</span>);
+        <span style="color: #ff7b72;">return</span> result;
+    }
+};
 
 <span style="color: #ff7b72;">async</span> <span style="color: #ff7b72;">function</span> <span style="color: #d2a8ff;">main</span>() {
-    <span style="color: #ff7b72;">const</span> <span style="color: #79c0ff;">client</span> = <span style="color: #ff7b72;">new</span> <span style="color: #d2a8ff;">MerciClient</span>({ token });
-    client.<span style="color: #d2a8ff;">on</span>(<span style="color: #a5d6ff;">'tool_start'</span>, <span style="color: #8b949e;">/* ... */</span>);
-    client.<span style="color: #d2a8ff;">on</span>(<span style="color: #a5d6ff;">'tool_finish'</span>, <span style="color: #8b949e;">/* ... */</span>);
+    <span style="color: #c9d1d9;">console</span>.<span style="color: #d2a8ff;">log</span>(<span style="color: #a5d6ff;">`--- Merci SDK Lesson 9: Advanced Parallel Tool Calls (Model: </span><span style="color: #79c0ff;">${MODEL}</span><span style="color: #a5d6ff;">) ---`</span>);
 
-    <span style="color: #ff7b72;">const</span> <span style="color: #79c0ff;">allTools</span> = [weatherTool, flightTool, calculatorTool];
-    <span style="color: #ff7b72;">const</span> <span style="color: #79c0ff;">userPrompt</span> = <span style="color: #a5d6ff;">"What's the weather in Paris, how much is a flight from London to Paris, and what is the total cost if I also need to buy a souvenir for 25 EUR?"</span>;
+    <span style="color: #ff7b72;">try</span> {
+        <span style="color: #8b949e;">// --- STEP 1: INITIALIZE THE CLIENT ---</span>
+        <span style="color: #c9d1d9;">console</span>.<span style="color: #d2a8ff;">log</span>(<span style="color: #a5d6ff;">'[STEP 1] Initializing MerciClient...'</span>);
+        <span style="color: #ff7b72;">const</span> <span style="color: #79c0ff;">client</span> = <span style="color: #ff7b72;">new</span> <span style="color: #d2a8ff;">MerciClient</span>({ token });
+        <span style="color: #79c0ff;">client</span>.<span style="color: #d2a8ff;">on</span>(<span style="color: #a5d6ff;">'tool_start'</span>, ({ <span style="color: #79c0ff;">calls</span> }) => { <span style="color: #c9d1d9;">console</span>.<span style="color: #d2a8ff;">log</span>(<span style="color: #a5d6ff;">`\n[EVENT: tool_start] 🤖 Model has requested </span><span style="color: #79c0ff;">${calls</span>.<span style="color: #c9d1d9;">length}</span><span style="color: #a5d6ff;"> tool(s) to be run in parallel.`</span>); <span style="color: #79c0ff;">calls</span>.<span style="color: #d2a8ff;">forEach</span>(<span style="color: #79c0ff;">call</span> => <span style="color: #c9d1d9;">console</span>.<span style="color: #d2a8ff;">log</span>(<span style="color: #a5d6ff;">`  - Calling Tool: </span><span style="color: #79c0ff;">${call</span>.<span style="color: #c9d1d9;">name}</span><span style="color: #a5d6ff;"> with args: </span><span style="color: #79c0ff;">${call</span>.<span style="color: #c9d1d9;">arguments}</span><span style="color: #a5d6ff;">`</span>)); });
+        <span style="color: #79c0ff;">client</span>.<span style="color: #d2a8ff;">on</span>(<span style="color: #a5d6ff;">'tool_finish'</span>, ({ <span style="color: #79c0ff;">results</span> }) => { <span style="color: #c9d1d9;">console</span>.<span style="color: #d2a8ff;">log</span>(<span style="color: #a5d6ff;">`[EVENT: tool_finish] ✅ Finished executing </span><span style="color: #79c0ff;">${results</span>.<span style="color: #c9d1d9;">length}</span><span style="color: #a5d6ff;"> tool(s).`</span>); });
 
-    <span style="color: #ff7b72;">const</span> <span style="color: #79c0ff;">agent</span> = client
-        .<span style="color: #d2a8ff;">chat</span>(MODEL)
-        .<span style="color: #d2a8ff;">withTools</span>(allTools)
-        .<span style="color: #d2a8ff;">withParameters</span>(<span style="color: #79c0ff;">builder</span> => builder.<span style="color: #d2a8ff;">parallelToolCalls</span>(<span style="color: #ff7b72;">true</span>));
+        <span style="color: #8b949e;">// --- STEP 2: DEFINE PROMPT AND TOOLS ---</span>
+        <span style="color: #c9d1d9;">console</span>.<span style="color: #d2a8ff;">log</span>(<span style="color: #a5d6ff;">'[STEP 2] Preparing prompt and tools...'</span>);
+        <span style="color: #ff7b72;">const</span> <span style="color: #79c0ff;">allTools</span> = [weatherTool, flightTool, calculatorTool];
+        <span style="color: #ff7b72;">const</span> <span style="color: #79c0ff;">userPrompt</span> = <span style="color: #a5d6ff;">"What's the weather in Paris, how much is a flight from London to Paris, and what is the total cost if I also need to buy a souvenir for 25 EUR?"</span>;
 
-    <span style="color: #ff7b72;">const</span> <span style="color: #79c0ff;">finalAnswer</span> = <span style="color: #ff7b72;">await</span> agent.<span style="color: #d2a8ff;">run</span>(userPrompt);
-    <span style="color: #c9d1d9;">console.<span style="color: #d2a8ff;">log</span>(<span style="color: #a5d6ff;">`🤖 Assistant > </span><span style="color: #79c0ff;">${finalAnswer}</span><span style="color: #a5d6ff;">`</span>);
+        <span style="color: #8b949e;">// --- STEP 3: CONFIGURE THE CHAT SESSION (AGENT) ---</span>
+        <span style="color: #c9d1d9;">console</span>.<span style="color: #d2a8ff;">log</span>(<span style="color: #a5d6ff;">'[STEP 3] Configuring the agent for parallel tool calls...'</span>);
+        <span style="color: #ff7b72;">const</span> <span style="color: #79c0ff;">agent</span> = <span style="color: #79c0ff;">client</span>
+            .<span style="color: #c9d1d9;">chat</span>.<span style="color: #d2a8ff;">session</span>(MODEL)
+            .<span style="color: #d2a8ff;">withTools</span>(allTools)
+            .<span style="color: #d2a8ff;">withParameters</span>(<span style="color: #79c0ff;">builder</span> => <span style="color: #79c0ff;">builder</span>.<span style="color: #d2a8ff;">parallelToolCalls</span>(<span style="color: #ff7b72;">true</span>));
+
+        <span style="color: #8b949e;">// --- STEPS 4 &amp; 5: RUN THE AGENT ---</span>
+        <span style="color: #c9d1d9;">console</span>.<span style="color: #d2a8ff;">log</span>(<span style="color: #a5d6ff;">'[STEP 4] Running the agent...'</span>);
+        <span style="color: #c9d1d9;">console</span>.<span style="color: #d2a8ff;">log</span>(<span style="color: #a5d6ff;">`\n👤 User > </span><span style="color: #79c0ff;">${userPrompt}</span><span style="color: #a5d6ff;">\n`</span>);
+        <span style="color: #ff7b72;">const</span> <span style="color: #79c0ff;">startTime</span> = <span style="color: #c9d1d9;">Date</span>.<span style="color: #d2a8ff;">now</span>();
+        <span style="color: #ff7b72;">const</span> <span style="color: #79c0ff;">finalAnswer</span> = <span style="color: #ff7b72;">await</span> <span style="color: #79c0ff;">agent</span>.<span style="color: #d2a8ff;">run</span>(userPrompt);
+        <span style="color: #ff7b72;">const</span> <span style="color: #79c0ff;">endTime</span> = <span style="color: #c9d1d9;">Date</span>.<span style="color: #d2a8ff;">now</span>();
+
+        <span style="color: #8b949e;">// --- STEP 6: DISPLAY THE FINAL OUTPUT ---</span>
+        <span style="color: #c9d1d9;">console</span>.<span style="color: #d2a8ff;">log</span>(<span style="color: #a5d6ff;">'[STEP 5] Analyzing results...'</span>);
+        <span style="color: #ff7b72;">const</span> <span style="color: #79c0ff;">duration</span> = ((<span style="color: #79c0ff;">endTime</span> - <span style="color: #79c0ff;">startTime</span>) / <span style="color: #a5d6ff;">1000</span>).<span style="color: #d2a8ff;">toFixed</span>(<span style="color: #a5d6ff;">2</span>);
+        <span style="color: #c9d1d9;">console</span>.<span style="color: #d2a8ff;">log</span>(<span style="color: #a5d6ff;">'\n\n--- FINAL RESULT ---'</span>);
+        <span style="color: #c9d1d9;">console</span>.<span style="color: #d2a8ff;">log</span>(<span style="color: #a5d6ff;">`🤖 Assistant > </span><span style="color: #79c0ff;">${finalAnswer}</span><span style="color: #a5d6ff;">`</span>);
+        <span style="color: #c9d1d9;">console</span>.<span style="color: #d2a8ff;">log</span>(<span style="color: #a5d6ff;">'--------------------------------------------------'</span>);
+        <span style="color: #c9d1d9;">console</span>.<span style="color: #d2a8ff;">log</span>(<span style="color: #a5d6ff;">`✅ Total execution time: </span><span style="color: #79c0ff;">${duration}</span><span style="color: #a5d6ff;"> seconds.`</span>);
+        <span style="color: #c9d1d9;">console</span>.<span style="color: #d2a8ff;">log</span>(<span style="color: #a5d6ff;">'Individual tool delays: 1.2s + 1.8s + 0.1s = 3.1s'</span>);
+        <span style="color: #c9d1d9;">console</span>.<span style="color: #d2a8ff;">log</span>(<span style="color: #a5d6ff;">'Notice the total time is close to the longest single tool delay (1.8s), not the sum of all delays.'</span>);
+        <span style="color: #c9d1d9;">console</span>.<span style="color: #d2a8ff;">log</span>(<span style="color: #a5d6ff;">'This demonstrates that the SDK executed the tool calls concurrently.'</span>);
+        <span style="color: #c9d1d9;">console</span>.<span style="color: #d2a8ff;">log</span>(<span style="color: #a5d6ff;">'--------------------------------------------------'</span>);
+
+    } <span style="color: #ff7b72;">catch</span> (error) {
+        <span style="color: #c9d1d9;">console</span>.<span style="color: #d2a8ff;">error</span>(<span style="color: #a5d6ff;">'\n\n[FATAL ERROR] An error occurred during the operation.'</span>);
+        <span style="color: #c9d1d9;">console</span>.<span style="color: #d2a8ff;">error</span>(<span style="color: #a5d6ff;">'  Message:'</span>, error.message);
+        <span style="color: #ff7b72;">if</span> (error.status) {
+            <span style="color: #c9d1d9;">console</span>.<span style="color: #d2a8ff;">error</span>(<span style="color: #a5d6ff;">'  API Status:'</span>, error.status);
+        }
+        <span style="color: #ff7b72;">if</span> (error.details) {
+            <span style="color: #c9d1d9;">console</span>.<span style="color: #d2a8ff;">error</span>(<span style="color: #a5d6ff;">'  Details:'</span>, JSON.<span style="color: #d2a8ff;">stringify</span>(error.details, <span style="color: #ff7b72;">null</span>, <span style="color: #a5d6ff;">2</span>));
+        }
+        <span style="color: #ff7b72;">if</span> (error.stack) {
+            <span style="color: #c9d1d9;">console</span>.<span style="color: #d2a8ff;">error</span>(<span style="color: #a5d6ff;">'  Stack:'</span>, error.stack);
+        }
+        <span style="color: #c9d1d9;">console</span>.<span style="color: #d2a8ff;">error</span>(<span style="color: #a5d6ff;">'\n  Possible causes: Invalid token, network issues, or an API service problem.'</span>);
+        <span style="color: #c9d1d9;">process</span>.<span style="color: #d2a8ff;">exit</span>(<span style="color: #a5d6ff;">1</span>); <span style="color: #8b949e;">// Exit with a non-zero code to indicate failure.</span>
+    }
 }
 
-<span style="color: #d2a8ff;">main</span>();
+<span style="color: #d2a8ff;">main</span>().<span style="color: #d2a8ff;">catch</span>(<span style="color: #c9d1d9;">console</span>.error);
 </code></pre>
                         </div>
                     </div>

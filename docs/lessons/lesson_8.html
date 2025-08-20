@@ -66,7 +66,7 @@
                 </header>
 
                 <section class="mb-12">
-                    <h2>Code: <code class="inline"><a href="https://github.com/mobeetle/merci-sdk/tree/main/examples">lesson_8_tool_usage.mjs</a></code></h2>
+                    <h2>Code: <code class="inline"><a href="https://github.com/mobeetle/merci-sdk/tree/main/examples/lesson_8_tool_usage.mjs">lesson_8_tool_usage.mjs</a></code></h2>
                     <p class="text-[var(--text-secondary)] mb-4">The <code class="inline">.run()</code> method is the simplest way to create an agent. It automatically handles the entire multi-step process: sending the prompt, receiving the model's decision to call a tool, executing the tool, sending the result back, and returning the final, synthesized answer.</p>
                     <div class="code-block-wrapper">
                         <button class="copy-code-btn absolute top-3 right-3 flex items-center gap-2 text-slate-400 hover:text-white transition-colors p-2 rounded-md bg-slate-800/50 backdrop-blur-sm">
@@ -75,35 +75,99 @@
                         </button>
                         <div class="code-block">
 <pre><code><span style="color: #8b949e;">// lesson_8_tool_usage.mjs</span>
-<span style="color: #ff7b72;">import</span> { MerciClient } <span style="color: #ff7b72;">from</span> <span style="color: #a5d6ff;">'../lib/merci.2.11.0.mjs'</span>;
+<span style="color: #8b949e;">// Merci SDK Tutorial: Lesson 8 - Basic Tool Usage</span>
+
+<span style="color: #8b949e;">// --- IMPORTS ---</span>
+<span style="color: #8b949e;">// For the high-level .run() agent, we only need the client and token.</span>
+<span style="color: #8b949e;">// The SDK handles the creation of tool messages internally.</span>
+<span style="color: #ff7b72;">import</span> { MerciClient, createUserMessage } <span style="color: #ff7b72;">from</span> <span style="color: #a5d6ff;">'../lib/merci.2.14.0.mjs'</span>;
 <span style="color: #ff7b72;">import</span> { token } <span style="color: #ff7b72;">from</span> <span style="color: #a5d6ff;">'../secret/token.mjs'</span>;
 
-<span style="color: #8b949e;">// 1. Define a tool the model can use</span>
+<span style="color: #ff7b72;">const</span> <span style="color: #79c0ff;">MODEL</span> = <span style="color: #a5d6ff;">'google-chat-gemini-flash-2.5'</span>;
+
+<span style="color: #8b949e;">// --- TOOL DEFINITION ---</span>
+<span style="color: #8b949e;">// A simple, reusable tool for this lesson.</span>
 <span style="color: #ff7b72;">const</span> <span style="color: #79c0ff;">weatherTool</span> = {
     <span style="color: #c9d1d9;">name:</span> <span style="color: #a5d6ff;">'get_current_weather'</span>,
     <span style="color: #c9d1d9;">description:</span> <span style="color: #a5d6ff;">'Get the current weather for a specified city.'</span>,
-    <span style="color: #c9d1d9;">parameters: { <span style="color: #8b949e;">/* ... JSON Schema ... */</span> },
+    <span style="color: #c9d1d9;">parameters:</span> {
+        <span style="color: #c9d1d9;">schema:</span> {
+            <span style="color: #c9d1d9;">type:</span> <span style="color: #a5d6ff;">'object'</span>,
+            <span style="color: #c9d1d9;">properties:</span> {
+                <span style="color: #c9d1d9;">city:</span> { <span style="color: #c9d1d9;">type:</span> <span style="color: #a5d6ff;">'string'</span>, <span style="color: #c9d1d9;">description:</span> <span style="color: #a5d6ff;">'The city name, e.g., "San Francisco".'</span> }
+            },
+            <span style="color: #c9d1d9;">required:</span> [<span style="color: #a5d6ff;">'city'</span>],
+        }
+    },
     <span style="color: #d2a8ff;">execute</span>: <span style="color: #ff7b72;">async</span> ({ <span style="color: #79c0ff;">city</span> }) => {
-        <span style="color: #8b949e;">// ... logic to fetch weather ...</span>
-        <span style="color: #ff7b72;">return</span> { <span style="color: #c9d1d9;">temperature:</span> <span style="color: #a5d6ff;">'14'</span>, <span style="color: #c9d1d9;">unit:</span> <span style="color: #a5d6ff;">'celsius'</span>, <span style="color: #c9d1d9;">forecast:</span> <span style="color: #a5d6ff;">'sunny'</span> };
+        <span style="color: #c9d1d9;">console</span>.<span style="color: #d2a8ff;">log</span>(<span style="color: #a5d6ff;">`[TOOL EXECUTING] Getting weather for </span><span style="color: #79c0ff;">${city}</span><span style="color: #a5d6ff;">...`</span>);
+        <span style="color: #ff7b72;">const</span> <span style="color: #79c0ff;">temperatures</span> = {
+            <span style="color: #a5d6ff;">'tokyo'</span>: { <span style="color: #c9d1d9;">temperature:</span> <span style="color: #a5d6ff;">'15'</span>, <span style="color: #c9d1d9;">unit:</span> <span style="color: #a5d6ff;">'celsius'</span>, <span style="color: #c9d1d9;">forecast:</span> <span style="color: #a5d6ff;">'clear skies'</span> },
+            <span style="color: #a5d6ff;">'london'</span>: { <span style="color: #c9d1d9;">temperature:</span> <span style="color: #a5d6ff;">'12'</span>, <span style="color: #c9d1d9;">unit:</span> <span style="color: #a5d6ff;">'celsius'</span>, <span style="color: #c9d1d9;">forecast:</span> <span style="color: #a5d6ff;">'cloudy'</span> },
+            <span style="color: #a5d6ff;">'paris'</span>: { <span style="color: #c9d1d9;">temperature:</span> <span style="color: #a5d6ff;">'14'</span>, <span style="color: #c9d1d9;">unit:</span> <span style="color: #a5d6ff;">'celsius'</span>, <span style="color: #c9d1d9;">forecast:</span> <span style="color: #a5d6ff;">'sunny'</span> },
+        };
+        <span style="color: #ff7b72;">const</span> <span style="color: #79c0ff;">result</span> = <span style="color: #79c0ff;">temperatures</span>[<span style="color: #79c0ff;">city</span>.<span style="color: #d2a8ff;">toLowerCase</span>()] || { <span style="color: #c9d1d9;">error:</span> <span style="color: #a5d6ff;">'City not found'</span> };
+        <span style="color: #c9d1d9;">console</span>.<span style="color: #d2a8ff;">log</span>(<span style="color: #a5d6ff;">`[TOOL RESULT] For </span><span style="color: #79c0ff;">${city}</span><span style="color: #a5d6ff;">:`</span>, result);
+        <span style="color: #ff7b72;">return</span> result;
     },
 };
 
 <span style="color: #ff7b72;">async</span> <span style="color: #ff7b72;">function</span> <span style="color: #d2a8ff;">main</span>() {
-    <span style="color: #ff7b72;">const</span> <span style="color: #79c0ff;">client</span> = <span style="color: #ff7b72;">new</span> <span style="color: #d2a8ff;">MerciClient</span>({ token });
-    <span style="color: #ff7b72;">const</span> <span style="color: #79c0ff;">userPrompt</span> = <span style="color: #a5d6ff;">"What's the weather like in Paris?"</span>;
+    <span style="color: #c9d1d9;">console</span>.<span style="color: #d2a8ff;">log</span>(<span style="color: #a5d6ff;">`--- Merci SDK Tutorial: Lesson 8 - Basic Tool Usage (Model: </span><span style="color: #79c0ff;">${MODEL}</span><span style="color: #a5d6ff;">) ---`</span>);
 
-    <span style="color: #8b949e;">// 2. Configure the agent with the tool</span>
-    <span style="color: #ff7b72;">const</span> <span style="color: #79c0ff;">agent</span> = client
-        .<span style="color: #d2a8ff;">chat</span>(<span style="color: #a5d6ff;">'google-chat-gemini-flash-2.5'</span>)
-        .<span style="color: #d2a8ff;">withTools</span>([weatherTool]);
+    <span style="color: #ff7b72;">try</span> {
+        <span style="color: #8b949e;">// --- STEP 1: INITIALIZE THE CLIENT ---</span>
+        <span style="color: #8b949e;">// We add event listeners for observability to see the agent's actions.</span>
+        <span style="color: #c9d1d9;">console</span>.<span style="color: #d2a8ff;">log</span>(<span style="color: #a5d6ff;">'[STEP 1] Initializing MerciClient...'</span>);
+        <span style="color: #ff7b72;">const</span> <span style="color: #79c0ff;">client</span> = <span style="color: #ff7b72;">new</span> <span style="color: #d2a8ff;">MerciClient</span>({ token });
+        <span style="color: #79c0ff;">client</span>.<span style="color: #d2a8ff;">on</span>(<span style="color: #a5d6ff;">'tool_start'</span>, ({ <span style="color: #79c0ff;">calls</span> }) => <span style="color: #c9d1d9;">console</span>.<span style="color: #d2a8ff;">log</span>(<span style="color: #a5d6ff;">`\n[EVENT: tool_start] Model requested to call '</span><span style="color: #79c0ff;">${calls[0].name}</span><span style="color: #a5d6ff;">'`</span>));
+        <span style="color: #79c0ff;">client</span>.<span style="color: #d2a8ff;">on</span>(<span style="color: #a5d6ff;">'tool_finish'</span>, ({ <span style="color: #79c0ff;">results</span> }) => <span style="color: #c9d1d9;">console</span>.<span style="color: #d2a8ff;">log</span>(<span style="color: #a5d6ff;">`[EVENT: tool_finish] Finished executing tool.`</span>));
 
-    <span style="color: #8b949e;">// 3. Run the agent to get the final answer</span>
-    <span style="color: #ff7b72;">const</span> <span style="color: #79c0ff;">finalAnswer</span> = <span style="color: #ff7b72;">await</span> agent.<span style="color: #d2a8ff;">run</span>(userPrompt);
-    <span style="color: #c9d1d9;">console.<span style="color: #d2a8ff;">log</span>(<span style="color: #a5d6ff;">`🤖 Assistant > </span><span style="color: #79c0ff;">${finalAnswer}</span><span style="color: #a5d6ff;">`</span>);
+        <span style="color: #8b949e;">// --- STEP 2: DEFINE PROMPT AND TOOLS ---</span>
+        <span style="color: #8b949e;">// The prompt should require the model to use the provided tool.</span>
+        <span style="color: #c9d1d9;">console</span>.<span style="color: #d2a8ff;">log</span>(<span style="color: #a5d6ff;">'[STEP 2] Preparing prompt and tool definition...'</span>);
+        <span style="color: #ff7b72;">const</span> <span style="color: #79c0ff;">userPrompt</span> = <span style="color: #a5d6ff;">"What's the weather like in Paris?"</span>;
+        <span style="color: #ff7b72;">const</span> <span style="color: #79c0ff;">tools</span> = [weatherTool];
+
+        <span style="color: #8b949e;">// --- STEP 3: CONFIGURE THE AGENT ---</span>
+        <span style="color: #8b949e;">// This is the core of the lesson. We create an "agent" by equipping</span>
+        <span style="color: #8b949e;">// a chat session with our tool(s).</span>
+        <span style="color: #c9d1d9;">console</span>.<span style="color: #d2a8ff;">log</span>(<span style="color: #a5d6ff;">'[STEP 3] Configuring the agent with the weather tool...'</span>);
+        <span style="color: #ff7b72;">const</span> <span style="color: #79c0ff;">agent</span> = <span style="color: #79c0ff;">client</span>
+            .<span style="color: #c9d1d9;">chat</span>.<span style="color: #d2a8ff;">session</span>(MODEL)
+            .<span style="color: #d2a8ff;">withTools</span>(tools);
+
+        <span style="color: #8b949e;">// --- STEPS 4 &amp; 5: RUN THE AGENT ---</span>
+        <span style="color: #8b949e;">// The `.run()` method handles the entire multi-step process automatically.</span>
+        <span style="color: #c9d1d9;">console</span>.<span style="color: #d2a8ff;">log</span>(<span style="color: #a5d6ff;">'[STEP 4] Running the agent to get the final answer...'</span>);
+        <span style="color: #c9d1d9;">console</span>.<span style="color: #d2a8ff;">log</span>(<span style="color: #a5d6ff;">`\n👤 User > </span><span style="color: #79c0ff;">${userPrompt}</span><span style="color: #a5d6ff;">`</span>);
+        <span style="color: #ff7b72;">const</span> <span style="color: #79c0ff;">finalAnswer</span> = <span style="color: #ff7b72;">await</span> <span style="color: #79c0ff;">agent</span>.<span style="color: #d2a8ff;">run</span>(userPrompt);
+
+        <span style="color: #8b949e;">// --- STEP 6: DISPLAY THE FINAL OUTPUT ---</span>
+        <span style="color: #8b949e;">// The `finalAnswer` is the LLM's natural language response based on the tool output.</span>
+        <span style="color: #c9d1d9;">console</span>.<span style="color: #d2a8ff;">log</span>(<span style="color: #a5d6ff;">'\n\n--- FINAL RESULT ---'</span>);
+        <span style="color: #c9d1d9;">console</span>.<span style="color: #d2a8ff;">log</span>(<span style="color: #a5d6ff;">`👤 User > </span><span style="color: #79c0ff;">${userPrompt}</span><span style="color: #a5d6ff;">`</span>);
+        <span style="color: #c9d1d9;">console</span>.<span style="color: #d2a8ff;">log</span>(<span style="color: #a5d6ff;">`🤖 Assistant > </span><span style="color: #79c0ff;">${finalAnswer}</span><span style="color: #a5d6ff;">`</span>);
+        <span style="color: #c9d1d9;">console</span>.<span style="color: #d2a8ff;">log</span>(<span style="color: #a5d6ff;">'--------------------'</span>);
+
+    } <span style="color: #ff7b72;">catch</span> (error) {
+        <span style="color: #c9d1d9;">console</span>.<span style="color: #d2a8ff;">error</span>(<span style="color: #a5d6ff;">'\n\n[FATAL ERROR] An error occurred during the operation.'</span>);
+        <span style="color: #c9d1d9;">console</span>.<span style="color: #d2a8ff;">error</span>(<span style="color: #a5d6ff;">'  Message:'</span>, error.message);
+        <span style="color: #ff7b72;">if</span> (error.status) {
+            <span style="color: #c9d1d9;">console</span>.<span style="color: #d2a8ff;">error</span>(<span style="color: #a5d6ff;">'  API Status:'</span>, error.status);
+        }
+        <span style="color: #ff7b72;">if</span> (error.details) {
+            <span style="color: #c9d1d9;">console</span>.<span style="color: #d2a8ff;">error</span>(<span style="color: #a5d6ff;">'  Details:'</span>, JSON.<span style="color: #d2a8ff;">stringify</span>(error.details, <span style="color: #ff7b72;">null</span>, <span style="color: #a5d6ff;">2</span>));
+        }
+        <span style="color: #ff7b72;">if</span> (error.stack) {
+            <span style="color: #c9d1d9;">console</span>.<span style="color: #d2a8ff;">error</span>(<span style="color: #a5d6ff;">'  Stack:'</span>, error.stack);
+        }
+        <span style="color: #c9d1d9;">console</span>.<span style="color: #d2a8ff;">error</span>(<span style="color: #a5d6ff;">'\n  Possible causes: Invalid token, network issues, or an API service problem.'</span>);
+        <span style="color: #c9d1d9;">process</span>.<span style="color: #d2a8ff;">exit</span>(<span style="color: #a5d6ff;">1</span>); <span style="color: #8b949e;">// Exit with a non-zero code to indicate failure.</span>
+    }
 }
 
-<span style="color: #d2a8ff;">main</span>();
+<span style="color: #d2a8ff;">main</span>().<span style="color: #d2a8ff;">catch</span>(<span style="color: #c9d1d9;">console</span>.error);
 </code></pre>
                         </div>
                     </div>

@@ -2,7 +2,7 @@
 // Merci SDK Tutorial: Lesson 9 - Advanced Parallel Tool Calls
 
 // --- IMPORTS ---
-import { MerciClient } from '../lib/merci.2.11.0.mjs';
+import { MerciClient } from '../lib/merci.2.14.0.mjs';
 import { token } from '../secret/token.mjs';
 
 const MODEL = 'google-chat-gemini-pro-2.5';
@@ -10,8 +10,9 @@ const MODEL = 'google-chat-gemini-pro-2.5';
 // --- TOOL DEFINITIONS ---
 const weatherTool = {
     name: 'get_current_weather',
-    description: 'Get the current weather for a specified city.',
-    parameters: { type: 'object', properties: { city: { type: 'string', description: 'The city name, e.g., Paris' } }, required: ['city'], },
+    parameters: {
+        schema: { type: 'object', properties: { city: { type: 'string', description: 'The city name, e.g., Paris' } }, required: ['city'], }
+    },
     execute: async ({ city }) => {
         console.log(`[TOOL START] 🌦️  Checking weather for ${city}... (simulating 1.2s delay)`);
         await new Promise(resolve => setTimeout(resolve, 1200)); // Simulate API call latency
@@ -24,8 +25,9 @@ const weatherTool = {
 
 const flightTool = {
     name: 'get_flight_price',
-    description: 'Get the flight price for a given origin and destination.',
-    parameters: { type: 'object', properties: { from: { type: 'string', description: 'The departure city.' }, to: { type: 'string', description: 'The arrival city.' }, }, required: ['from', 'to'], },
+    parameters: {
+        schema: { type: 'object', properties: { from: { type: 'string', description: 'The departure city.' }, to: { type: 'string', description: 'The arrival city.' }, }, required: ['from', 'to'], }
+    },
     execute: async ({ from, to }) => {
         console.log(`[TOOL START] ✈️  Checking flight price from ${from} to ${to}... (simulating 1.8s delay)`);
         await new Promise(resolve => setTimeout(resolve, 1800)); // Simulate a longer API call
@@ -38,8 +40,9 @@ const flightTool = {
 
 const calculatorTool = {
     name: 'calculate_total_cost',
-    description: 'Calculates the sum of a list of numbers. Useful for totaling sums.',
-    parameters: { type: 'object', properties: { numbers: { type: 'array', items: { type: 'number' }, description: 'An array of numbers to sum up.' } }, required: ['numbers'], },
+    parameters: {
+        schema: { type: 'object', properties: { numbers: { type: 'array', items: { type: 'number' }, description: 'An array of numbers to sum up.' } }, required: ['numbers'], }
+    },
     execute: ({ numbers }) => {
         console.log(`[TOOL START] 🧮  Calculating sum of [${numbers.join(', ')}]... (simulating 0.1s delay)`);
         const total = numbers.reduce((acc, num) => acc + num, 0);
@@ -67,7 +70,7 @@ async function main() {
         // --- STEP 3: CONFIGURE THE CHAT SESSION (AGENT) ---
         console.log('[STEP 3] Configuring the agent for parallel tool calls...');
         const agent = client
-            .chat(MODEL)
+            .chat.session(MODEL)
             .withTools(allTools)
             .withParameters(builder => builder.parallelToolCalls(true));
 

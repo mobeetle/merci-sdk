@@ -3,7 +3,7 @@
 
 // --- IMPORTS ---
 // We import the main client and a helper function for creating messages.
-import { MerciClient, createUserMessage } from '../lib/merci.2.11.0.mjs';
+import { MerciClient, createUserMessage } from '../lib/merci.2.14.0.mjs';
 import { token } from '../secret/token.mjs';
 
 const MODEL = 'google-chat-gemini-flash-2.5';
@@ -26,7 +26,7 @@ async function main() {
         // For this basic lesson, we only need to select the model profile.
         // No extra configuration (.withTools(), .withSystemMessage(), etc.) is needed.
         console.log('[STEP 3] Configuring the chat session...');
-        const chatSession = client.chat(MODEL);
+        const chatSession = client.chat.session(MODEL);
 
         // --- STEP 4: PREPARE THE MESSAGE PAYLOAD ---
         // The SDK expects an array of message objects. We use the `createUserMessage`

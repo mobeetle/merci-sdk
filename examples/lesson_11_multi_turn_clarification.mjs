@@ -9,7 +9,7 @@ import {
     createToolResultMessage,
     createUserMessage,
     createAssistantTextMessage
-} from '../lib/merci.2.11.0.mjs';
+} from '../lib/merci.2.14.0.mjs';
 import { token } from '../secret/token.mjs';
 import * as readline from 'node:readline/promises';
 import { stdin as input, stdout as output } from 'node:process';
@@ -19,16 +19,17 @@ const MODEL = 'google-chat-gemini-flash-2.5';
 // --- TOOL DEFINITION ---
 const calendarTool = {
     name: 'create_calendar_event',
-    description: 'Schedules a new event in the user\'s calendar.',
     parameters: {
-        type: 'object',
-        properties: {
-            title: { type: 'string', description: 'The title of the event.' },
-            date: { type: 'string', description: 'The date of the event in YYYY-MM-DD format.' },
-            time: { type: 'string', description: 'The start time of the event (e.g., "14:30").' },
-            duration_minutes: { type: 'number', description: 'The duration of the event in minutes.' },
-        },
-        required: ['title', 'date', 'time', 'duration_minutes'],
+        schema: {
+            type: 'object',
+            properties: {
+                title: { type: 'string', description: 'The title of the event.' },
+                date: { type: 'string', description: 'The date of the event in YYYY-MM-DD format.' },
+                time: { type: 'string', description: 'The start time of the event (e.g., "14:30").' },
+                duration_minutes: { type: 'number', description: 'The duration of the event in minutes.' },
+            },
+            required: ['title', 'date', 'time', 'duration_minutes'],
+        }
     },
     execute: async ({ title, date, time, duration_minutes }) => {
         console.log(`\n[TOOL EXECUTE] ✅ Success! Creating event: "${title}" on ${date} at ${time} for ${duration_minutes} minutes.`);
@@ -47,7 +48,7 @@ async function main() {
         // --- STEP 1: INITIALIZE CLIENT AND CONFIGURE SESSION ---
         console.log('[STEP 1] Initializing client and configuring session...');
         const client = new MerciClient({ token });
-        const chatSession = client.chat(MODEL).withTools([calendarTool]);
+        const chatSession = client.chat.session(MODEL).withTools([calendarTool]);
 
         // --- INTERACTIVE LOOP (STEPS 2, 3, 4, 5) ---
         let userInput = "Can you add an event to my calendar?"; // Initial prompt

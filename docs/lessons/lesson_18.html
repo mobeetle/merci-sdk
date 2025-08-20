@@ -8,7 +8,7 @@
     <!-- Fonts -->
     <link href="https://fonts.googleapis.com" rel="preconnect"/>
     <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
-    <link as="style" href="https://fonts.googleapis.com/css2?display=swap&amp;family=Inter%3Awght%40400%3B500%3B600%3B700%3B900&family=Fira+Code%3Awght%40400" onload="this.rel='stylesheet'" rel="stylesheet"/>
+    <link as="style" href="https://fonts.googleapis.com/css2?display=swap&amp;family=Inter%3Awght%40400%3B500%3B600%3B700%3B900&family=Fira+Code%3Awght%40400" onload="this.rel=\'stylesheet\'" rel="stylesheet"/>
 
     <!-- Scripts & Styles -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -66,7 +66,7 @@
                 </header>
 
                 <section class="mb-12">
-                    <h2>Code: <code class="inline"><a href="https://github.com/mobeetle/merci-sdk/tree/main/examples">lesson_18_dynamic_tool_selection.mjs</a></code></h2>
+                    <h2>Code: <code class="inline"><a href="https://github.com/mobeetle/merci-sdk/tree/main/examples/lesson_18_dynamic_tool_selection.mjs">lesson_18_dynamic_tool_selection.mjs</a></code></h2>
                     <p class="text-[var(--text-secondary)] mb-4">This pattern introduces a "router" function (<code class="inline">selectToolsForPrompt</code>) that runs *before* the agent is configured. It analyzes the user's prompt to select a small subset of relevant tools from a larger library. This reduces the amount of information sent to the model, improving performance and accuracy.</p>
                     <div class="code-block-wrapper">
                         <button class="copy-code-btn absolute top-3 right-3 flex items-center gap-2 text-slate-400 hover:text-white transition-colors p-2 rounded-md bg-slate-800/50 backdrop-blur-sm">
@@ -75,42 +75,183 @@
                         </button>
                         <div class="code-block">
 <pre><code><span style="color: #8b949e;">// lesson_18_dynamic_tool_selection.mjs</span>
-<span style="color: #ff7b72;">import</span> { MerciClient } <span style="color: #ff7b72;">from</span> <span style="color: #a5d6ff;">'../lib/merci.2.11.0.mjs'</span>;
+<span style="color: #8b949e;">// Merci SDK Tutorial: Lesson 18 - Dynamic Tool Selection for Context-Aware Agents</span>
+
+<span style="color: #8b949e;">// --- IMPORTS ---</span>
+<span style="color: #ff7b72;">import</span> {
+    MerciClient,
+    createUserMessage,
+    executeTools,
+    createAssistantToolCallMessage,
+    createToolResultMessage,
+    createAssistantTextMessage
+} <span style="color: #ff7b72;">from</span> <span style="color: #a5d6ff;">'../lib/merci.2.14.0.mjs'</span>;
 <span style="color: #ff7b72;">import</span> { token } <span style="color: #ff7b72;">from</span> <span style="color: #a5d6ff;">'../secret/token.mjs'</span>;
 
-<span style="color: #8b949e;">// 1. Create a comprehensive tool library</span>
-<span style="color: #ff7b72;">const</span> <span style="color: #79c0ff;">toolLibrary</span> = { <span style="color: #c9d1d9;">calendar:</span> [...], <span style="color: #c9d1d9;">email:</span> [...], <span style="color: #c9d1d9;">database:</span> [...] };
+<span style="color: #ff7b72;">const</span> <span style="color: #79c0ff;">MODEL</span> = <span style="color: #a5d6ff;">'google-chat-gemini-flash-2.5'</span>;
 
-<span style="color: #8b949e;">// 2. Create a "router" to select relevant tools</span>
+<span style="color: #8b949e;">// --- STEP 1: CREATE A COMPREHENSIVE TOOL LIBRARY ---</span>
+<span style="color: #8b949e;">// In a real application, these would be in separate modules.</span>
+<span style="color: #ff7b72;">const</span> <span style="color: #79c0ff;">toolLibrary</span> = {
+    <span style="color: #c9d1d9;">calendar:</span> [{
+        <span style="color: #c9d1d9;">name:</span> <span style="color: #a5d6ff;">'create_event'</span>,
+        <span style="color: #c9d1d9;">parameters:</span> { <span style="color: #c9d1d9;">schema:</span> { <span style="color: #c9d1d9;">type:</span> <span style="color: #a5d6ff;">'object'</span>, <span style="color: #c9d1d9;">properties:</span> { <span style="color: #c9d1d9;">title:</span> { <span style="color: #c9d1d9;">type:</span> <span style="color: #a5d6ff;">'string'</span> } }, <span style="color: #c9d1d9;">required:</span> [<span style="color: #a5d6ff;">'title'</span>] } },
+        <span style="color: #d2a8ff;">execute</span>: <span style="color: #ff7b72;">async</span> ({ <span style="color: #79c0ff;">title</span> }) => ({ <span style="color: #c9d1d9;">status:</span> <span style="color: #a5d6ff;">`event '</span><span style="color: #79c0ff;">${title}</span><span style="color: #a5d6ff;">' created`</span> }),
+    }],
+    <span style="color: #c9d1d9;">email:</span> [{
+        <span style="color: #c9d1d9;">name:</span> <span style="color: #a5d6ff;">'send_email'</span>,
+        <span style="color: #c9d1d9;">parameters:</span> { <span style="color: #c9d1d9;">schema:</span> { <span style="color: #c9d1d9;">type:</span> <span style="color: #a5d6ff;">'object'</span>, <span style="color: #c9d1d9;">properties:</span> { <span style="color: #c9d1d9;">recipient:</span> { <span style="color: #c9d1d9;">type:</span> <span style="color: #a5d6ff;">'string'</span> } }, <span style="color: #c9d1d9;">required:</span> [<span style="color: #a5d6ff;">'recipient'</span>] } },
+        <span style="color: #d2a8ff;">execute</span>: <span style="color: #ff7b72;">async</span> ({ <span style="color: #79c0ff;">recipient</span> }) => ({ <span style="color: #c9d1d9;">status:</span> <span style="color: #a5d6ff;">`email sent to </span><span style="color: #79c0ff;">${recipient}</span><span style="color: #a5d6ff;">`</span> }),
+    }],
+    <span style="color: #c9d1d9;">database:</span> [{
+        <span style="color: #c9d1d9;">name:</span> <span style="color: #a5d6ff;">'query_users'</span>,
+        <span style="color: #c9d1d9;">parameters:</span> { <span style="color: #c9d1d9;">schema:</span> { <span style="color: #c9d1d9;">type:</span> <span style="color: #a5d6ff;">'object'</span>, <span style="color: #c9d1d9;">properties:</span> { <span style="color: #c9d1d9;">query:</span> { <span style="color: #c9d1d9;">type:</span> <span style="color: #a5d6ff;">'string'</span> } }, <span style="color: #c9d1d9;">required:</span> [<span style="color: #a5d6ff;">'query'</span>] } },
+        <span style="color: #d2a8ff;">execute</span>: <span style="color: #ff7b72;">async</span> ({ <span style="color: #79c0ff;">query</span> }) => ({ <span style="color: #c9d1d9;">results:</span> [{ <span style="color: #c9d1d9;">id:</span> <span style="color: #a5d6ff;">1</span>, <span style="color: #c9d1d9;">name:</span> <span style="color: #a5d6ff;">'Alice'</span> }] }),
+    }],
+};
+
+<span style="color: #8b949e;">// --- STEP 2: CREATE A "ROUTER" TO SELECT RELEVANT TOOLS ---</span>
+<span style="color: #8b949e;">/**</span>
+<span style="color: #8b949e;"> * Analyzes a prompt and returns a subset of tools relevant to the user's request.</span>
+<span style="color: #8b949e;"> * @param {string} prompt The user's input.</span>
+<span style="color: #8b949e;"> * @returns {Array&lt;object>} An array of tool definitions.</span>
+<span style="color: #8b949e;"> */</span>
 <span style="color: #ff7b72;">function</span> <span style="color: #d2a8ff;">selectToolsForPrompt</span>(<span style="color: #79c0ff;">prompt</span>) {
-    <span style="color: #c9d1d9;">console.<span style="color: #d2a8ff;">log</span>(<span style="color: #a5d6ff;">'\n[ROUTER] Analyzing prompt to select relevant tools...'</span>);
+    <span style="color: #c9d1d9;">console</span>.<span style="color: #d2a8ff;">log</span>(<span style="color: #a5d6ff;">'
+[ROUTER] Analyzing prompt to select relevant tools...'</span>);
     <span style="color: #ff7b72;">const</span> <span style="color: #79c0ff;">selectedTools</span> = [];
-    <span style="color: #ff7b72;">const</span> <span style="color: #79c0ff;">lowerCasePrompt</span> = prompt.<span style="color: #d2a8ff;">toLowerCase</span>();
+    <span style="color: #ff7b72;">const</span> <span style="color: #79c0ff;">lowerCasePrompt</span> = <span style="color: #79c0ff;">prompt</span>.<span style="color: #d2a8ff;">toLowerCase</span>();
 
-    <span style="color: #ff7b72;">if</span> (lowerCasePrompt.<span style="color: #d2a8ff;">includes</span>(<span style="color: #a5d6ff;">'database'</span>)) {
-        selectedTools.<span style="color: #d2a8ff;">push</span>(...toolLibrary.database);
+    <span style="color: #ff7b72;">if</span> (<span style="color: #79c0ff;">lowerCasePrompt</span>.<span style="color: #d2a8ff;">includes</span>(<span style="color: #a5d6ff;">'meeting'</span>) || <span style="color: #79c0ff;">lowerCasePrompt</span>.<span style="color: #d2a8ff;">includes</span>(<span style="color: #a5d6ff;">'schedule'</span>) || <span style="color: #79c0ff;">lowerCasePrompt</span>.<span style="color: #d2a8ff;">includes</span>(<span style="color: #a5d6ff;">'event'</span>)) {
+        <span style="color: #79c0ff;">selectedTools</span>.<span style="color: #d2a8ff;">push</span>(...<span style="color: #79c0ff;">toolLibrary</span>.<span style="color: #c9d1d9;">calendar</span>);
     }
-    <span style="color: #8b949e;">// ... other conditions for email, calendar etc.</span>
+    <span style="color: #ff7b72;">if</span> (<span style="color: #79c0ff;">lowerCasePrompt</span>.<span style="color: #d2a8ff;">includes</span>(<span style="color: #a5d6ff;">'email'</span>) || <span style="color: #79c0ff;">lowerCasePrompt</span>.<span style="color: #d2a8ff;">includes</span>(<span style="color: #a5d6ff;">'send'</span>)) {
+        <span style="color: #79c0ff;">selectedTools</span>.<span style="color: #d2a8ff;">push</span>(...<span style="color: #79c0ff;">toolLibrary</span>.<span style="color: #c9d1d9;">email</span>);
+    }
+    <span style="color: #ff7b72;">if</span> (<span style="color: #79c0ff;">lowerCasePrompt</span>.<span style="color: #d2a8ff;">includes</span>(<span style="color: #a5d6ff;">'database'</span>) || <span style="color: #79c0ff;">lowerCasePrompt</span>.<span style="color: #d2a8ff;">includes</span>(<span style="color: #a5d6ff;">'users'</span>) || <span style="color: #79c0ff;">lowerCasePrompt</span>.<span style="color: #d2a8ff;">includes</span>(<span style="color: #a5d6ff;">'query'</span>)) {
+        <span style="color: #79c0ff;">selectedTools</span>.<span style="color: #d2a8ff;">push</span>(...<span style="color: #79c0ff;">toolLibrary</span>.<span style="color: #c9d1d9;">database</span>);
+    }
 
-    <span style="color: #c9d1d9;">console.<span style="color: #d2a8ff;">log</span>(<span style="color: #a5d6ff;">`[ROUTER] Selected tools: [</span><span style="color: #79c0ff;">${selectedTools.map(t => t.name).join(', ')}</span><span style="color: #a5d6ff;">]`</span>);
+    <span style="color: #ff7b72;">if</span> (<span style="color: #79c0ff;">selectedTools</span>.<span style="color: #c9d1d9;">length</span> === <span style="color: #a5d6ff;">0</span>) {
+        <span style="color: #c9d1d9;">console</span>.<span style="color: #d2a8ff;">log</span>(<span style="color: #a5d6ff;">'[ROUTER] No specific tools matched. Proceeding without tools.'</span>);
+        <span style="color: #ff7b72;">return</span> [];
+    }
+
+    <span style="color: #c9d1d9;">console</span>.<span style="color: #d2a8ff;">log</span>(<span style="color: #a5d6ff;">`[ROUTER] Selected tools: [</span><span style="color: #79c0ff;">${selectedTools</span>.<span style="color: #d2a8ff;">map</span>(<span style="color: #79c0ff;">t</span> => <span style="color: #79c0ff;">t</span>.<span style="color: #c9d1d9;">name</span>).<span style="color: #d2a8ff;">join</span>(<span style="color: #a5d6ff;">', '</span>)}<span style="color: #a5d6ff;">]`</span>);
     <span style="color: #ff7b72;">return</span> selectedTools;
 }
 
+
 <span style="color: #ff7b72;">async</span> <span style="color: #ff7b72;">function</span> <span style="color: #d2a8ff;">main</span>() {
-    <span style="color: #ff7b72;">const</span> <span style="color: #79c0ff;">client</span> = <span style="color: #ff7b72;">new</span> <span style="color: #d2a8ff;">MerciClient</span>({ token });
-    <span style="color: #ff7b72;">const</span> <span style="color: #79c0ff;">userPrompt</span> = <span style="color: #a5d6ff;">"Can you query the database for all active users?"</span>;
+    <span style="color: #c9d1d9;">console</span>.<span style="color: #d2a8ff;">log</span>(<span style="color: #a5d6ff;">`--- Merci SDK Tutorial: Lesson 18 - Dynamic Tool Selection (Model: </span><span style="color: #79c0ff;">${MODEL}</span><span style="color: #a5d6ff;">) ---`</span>);
 
-    <span style="color: #8b949e;">// 3. Dynamically select tools based on the prompt</span>
-    <span style="color: #ff7b72;">const</span> <span style="color: #79c0ff;">relevantTools</span> = <span style="color: #d2a8ff;">selectToolsForPrompt</span>(userPrompt);
+    <span style="color: #ff7b72;">try</span> {
+        <span style="color: #8b949e;">// --- STEP 3: INITIALIZE THE CLIENT ---</span>
+        <span style="color: #c9d1d9;">console</span>.<span style="color: #d2a8ff;">log</span>(<span style="color: #a5d6ff;">'
+[STEP 3] Initializing MerciClient...'</span>);
+        <span style="color: #ff7b72;">const</span> <span style="color: #79c0ff;">client</span> = <span style="color: #ff7b72;">new</span> <span style="color: #d2a8ff;">MerciClient</span>({ token });
+        <span style="color: #79c0ff;">client</span>.<span style="color: #d2a8ff;">on</span>(<span style="color: #a5d6ff;">'tool_start'</span>, ({ <span style="color: #79c0ff;">calls</span> }) => {
+            <span style="color: #c9d1d9;">console</span>.<span style="color: #d2a8ff;">log</span>(<span style="color: #a5d6ff;">`
+[EVENT: tool_start] Model is calling the dynamically selected tool: '</span><span style="color: #79c0ff;">${calls</span>[<span style="color: #a5d6ff;">0</span>].<span style="color: #c9d1d9;">name}</span><span style="color: #a5d6ff;">'`</span>);
+        });
 
-    <span style="color: #8b949e;">// 4. Configure the agent with ONLY the relevant tools</span>
-    <span style="color: #ff7b72;">const</span> <span style="color: #79c0ff;">agent</span> = client.<span style="color: #d2a8ff;">chat</span>(MODEL).<span style="color: #d2a8ff;">withTools</span>(relevantTools);
+        <span style="color: #8b949e;">// --- STEP 4: DEFINE PROMPT ---</span>
+        <span style="color: #c9d1d9;">console</span>.<span style="color: #d2a8ff;">log</span>(<span style="color: #a5d6ff;">'[STEP 4] Preparing user prompt...'</span>);
+        <span style="color: #ff7b72;">const</span> <span style="color: #79c0ff;">userPrompt</span> = <span style="color: #a5d6ff;">"Use the 'query_users' tool to find all active users in the database. Once you have the results, provide a concise summary of the active users found."</span>;
 
-    <span style="color: #ff7b72;">const</span> <span style="color: #79c0ff;">finalAnswer</span> = <span style="color: #ff7b72;">await</span> agent.<span style="color: #d2a8ff;">run</span>(userPrompt);
-    <span style="color: #c9d1d9;">console.<span style="color: #d2a8ff;">log</span>(<span style="color: #a5d6ff;">`🤖 Assistant > </span><span style="color: #79c0ff;">${finalAnswer}</span><span style="color: #a5d6ff;">`</span>);
+        <span style="color: #8b949e;">// --- STEP 5: DYNAMICALLY SELECT TOOLS BASED ON THE PROMPT ---</span>
+        <span style="color: #8b949e;">// This is the core of the lesson. The router runs *before* we configure the agent.</span>
+        <span style="color: #ff7b72;">const</span> <span style="color: #79c0ff;">relevantTools</span> = <span style="color: #d2a8ff;">selectToolsForPrompt</span>(userPrompt);
+
+        <span style="color: #8b949e;">// --- STEP 6: CONFIGURE THE AGENT WITH THE SELECTED TOOLS ---</span>
+        <span style="color: #c9d1d9;">console</span>.<span style="color: #d2a8ff;">log</span>(<span style="color: #a5d6ff;">'
+[STEP 6] Configuring the agent with ONLY the relevant tools...'</span>);
+        <span style="color: #ff7b72;">const</span> <span style="color: #79c0ff;">agent</span> = <span style="color: #79c0ff;">client</span>.<span style="color: #c9d1d9;">chat</span>.<span style="color: #d2a8ff;">session</span>(MODEL).<span style="color: #d2a8ff;">withTools</span>(relevantTools);
+
+        <span style="color: #8b949e;">// --- STEP 7: RUN THE AGENT (Manual Loop) ---</span>
+        <span style="color: #c9d1d9;">console</span>.<span style="color: #d2a8ff;">log</span>(<span style="color: #a5d6ff;">'[STEP 7] Running the context-aware agent (manual loop)...'</span>);
+        <span style="color: #c9d1d9;">console</span>.<span style="color: #d2a8ff;">log</span>(<span style="color: #a5d6ff;">`
+👤 User > </span><span style="color: #79c0ff;">${userPrompt}</span><span style="color: #a5d6ff;">`</span>);
+
+        <span style="color: #ff7b72;">let</span> <span style="color: #79c0ff;">messagesForToolCall</span> = [<span style="color: #d2a8ff;">createUserMessage</span>(userPrompt)];
+        <span style="color: #ff7b72;">let</span> <span style="color: #79c0ff;">finalAnswer</span> = <span style="color: #a5d6ff;">''</span>;
+
+        <span style="color: #8b949e;">// First turn: Force tool choice if relevantTools are found</span>
+        <span style="color: #ff7b72;">const</span> <span style="color: #79c0ff;">chatSessionForToolCall</span> = <span style="color: #79c0ff;">client</span>.<span style="color: #c9d1d9;">chat</span>.<span style="color: #d2a8ff;">session</span>(MODEL)
+            .<span style="color: #d2a8ff;">withTools</span>(relevantTools)
+            .<span style="color: #d2a8ff;">withParameters</span>(<span style="color: #79c0ff;">builder</span> => {
+                <span style="color: #ff7b72;">if</span> (<span style="color: #79c0ff;">relevantTools</span>.<span style="color: #c9d1d9;">length</span> > <span style="color: #a5d6ff;">0</span>) {
+                    <span style="color: #79c0ff;">builder</span>.<span style="color: #d2a8ff;">toolChoiceRequired</span>(<span style="color: #ff7b72;">true</span>);
+                }
+                <span style="color: #ff7b72;">return</span> <span style="color: #79c0ff;">builder</span>; <span style="color: #8b949e;">// Explicitly return the builder</span>
+            });
+
+        <span style="color: #c9d1d9;">console</span>.<span style="color: #d2a8ff;">log</span>(<span style="color: #a5d6ff;">'[INFO] Sending initial request to potentially force tool call...'</span>);
+        <span style="color: #ff7b72;">let</span> <span style="color: #79c0ff;">toolCalls</span> = [];
+        <span style="color: #ff7b72;">for</span> <span style="color: #ff7b72;">await</span> (<span style="color: #ff7b72;">const</span> <span style="color: #79c0ff;">event</span> <span style="color: #ff7b72;">of</span> <span style="color: #79c0ff;">chatSessionForToolCall</span>.<span style="color: #d2a8ff;">stream</span>(messagesForToolCall)) {
+            <span style="color: #ff7b72;">if</span> (<span style="color: #79c0ff;">event</span>.<span style="color: #c9d1d9;">type</span> === <span style="color: #a5d6ff;">'tool_calls'</span>) {
+                <span style="color: #c9d1d9;">console</span>.<span style="color: #d2a8ff;">log</span>(<span style="color: #a5d6ff;">`
+[EVENT: tool_start] Model decided to call tool: '</span><span style="color: #79c0ff;">${event</span>.<span style="color: #c9d1d9;">calls</span>[<span style="color: #a5d6ff;">0</span>].<span style="color: #c9d1d9;">name}</span><span style="color: #a5d6ff;">'`</span>);
+                toolCalls = <span style="color: #79c0ff;">event</span>.<span style="color: #c9d1d9;">calls</span>;
+            }
+        }
+
+        <span style="color: #ff7b72;">if</span> (<span style="color: #79c0ff;">toolCalls</span>.<span style="color: #c9d1d9;">length</span> > <span style="color: #a5d6ff;">0</span>) {
+            <span style="color: #c9d1d9;">console</span>.<span style="color: #d2a8ff;">log</span>(<span style="color: #a5d6ff;">'[INFO] Executing tool locally...'</span>);
+            <span style="color: #ff7b72;">const</span> <span style="color: #79c0ff;">toolResults</span> = <span style="color: #ff7b72;">await</span> <span style="color: #d2a8ff;">executeTools</span>(toolCalls, relevantTools);
+
+            <span style="color: #8b949e;">// Add tool call and result to messages history</span>
+            <span style="color: #79c0ff;">toolResults</span>.<span style="color: #d2a8ff;">forEach</span>((<span style="color: #79c0ff;">result</span>, <span style="color: #79c0ff;">index</span>) => {
+                <span style="color: #ff7b72;">const</span> <span style="color: #79c0ff;">call</span> = <span style="color: #79c0ff;">toolCalls</span>[<span style="color: #79c0ff;">index</span>];
+                <span style="color: #ff7b72;">const</span> <span style="color: #79c0ff;">resultValue</span> = <span style="color: #79c0ff;">result</span>.<span style="color: #c9d1d9;">success</span> ? <span style="color: #79c0ff;">result</span>.<span style="color: #c9d1d9;">result</span> : { <span style="color: #c9d1d9;">error:</span> <span style="color: #79c0ff;">result</span>.<span style="color: #c9d1d9;">error</span> || <span style="color: #a5d6ff;">'Unknown execution error'</span> };
+                <span style="color: #79c0ff;">messagesForToolCall</span>.<span style="color: #d2a8ff;">push</span>(<span style="color: #d2a8ff;">createAssistantToolCallMessage</span>(<span style="color: #79c0ff;">call</span>.<span style="color: #c9d1d9;">id</span>, <span style="color: #79c0ff;">call</span>.<span style="color: #c9d1d9;">name</span>, <span style="color: #79c0ff;">call</span>.<span style="color: #c9d1d9;">arguments</span>));
+                <span style="color: #79c0ff;">messagesForToolCall</span>.<span style="color: #d2a8ff;">push</span>(<span style="color: #d2a8ff;">createToolResultMessage</span>(<span style="color: #79c0ff;">call</span>.<span style="color: #c9d1d9;">id</span>, <span style="color: #79c0ff;">call</span>.<span style="color: #c9d1d9;">name</span>, JSON.<span style="color: #d2a8ff;">stringify</span>(resultValue)));
+            });
+
+            <span style="color: #8b949e;">// Second turn: Allow model to generate text response (no forced tool choice)</span>
+            <span style="color: #c9d1d9;">console</span>.<span style="color: #d2a8ff;">log</span>(<span style="color: #a5d6ff;">'[INFO] Sending tool results back to model for final text response...'</span>);
+            <span style="color: #ff7b72;">const</span> <span style="color: #79c0ff;">chatSessionForText</span> = <span style="color: #79c0ff;">client</span>.<span style="color: #c9d1d9;">chat</span>.<span style="color: #d2a8ff;">session</span>(MODEL)
+                .<span style="color: #d2a8ff;">withTools</span>(relevantTools); <span style="color: #8b949e;">// Keep tools available, but don't force choice</span>
+
+            <span style="color: #ff7b72;">for</span> <span style="color: #ff7b72;">await</span> (<span style="color: #ff7b72;">const</span> <span style="color: #79c0ff;">event</span> <span style="color: #ff7b72;">of</span> <span style="color: #79c0ff;">chatSessionForText</span>.<span style="color: #d2a8ff;">stream</span>(messagesForToolCall)) {
+                <span style="color: #ff7b72;">if</span> (<span style="color: #79c0ff;">event</span>.<span style="color: #c9d1d9;">type</span> === <span style="color: #a5d6ff;">'text'</span>) {
+                    finalAnswer += <span style="color: #79c0ff;">event</span>.<span style="color: #c9d1d9;">content</span>;
+                }
+            }
+        } <span style="color: #ff7b72;">else</span> {
+            <span style="color: #8b949e;">// If no tool calls were made (e.g., no relevant tools or model chose not to use tool in optional mode)</span>
+            <span style="color: #8b949e;">// We need to get the direct text response from the first turn.</span>
+            <span style="color: #ff7b72;">const</span> <span style="color: #79c0ff;">chatSessionForText</span> = <span style="color: #79c0ff;">client</span>.<span style="color: #c9d1d9;">chat</span>.<span style="color: #d2a8ff;">session</span>(MODEL).<span style="color: #d2a8ff;">withTools</span>(relevantTools);
+            <span style="color: #ff7b72;">for</span> <span style="color: #ff7b72;">await</span> (<span style="color: #ff7b72;">const</span> <span style="color: #79c0ff;">event</span> <span style="color: #ff7b72;">of</span> <span style="color: #79c0ff;">chatSessionForText</span>.<span style="color: #d2a8ff;">stream</span>(messagesForToolCall)) {
+                <span style="color: #ff7b72;">if</span> (<span style="color: #79c0ff;">event</span>.<span style="color: #c9d1d9;">type</span> === <span style="color: #a5d6ff;">'text'</span>) {
+                    finalAnswer += <span style="color: #79c0ff;">event</span>.<span style="color: #c9d1d9;">content</span>;
+                }
+            }
+        }
+
+        <span style="color: #8b949e;">// --- FINAL RESULT ---</span>
+        <span style="color: #c9d1d9;">console</span>.<span style="color: #d2a8ff;">log</span>(<span style="color: #a5d6ff;">'
+
+--- FINAL RESULT ---'</span>);
+        <span style="color: #c9d1d9;">console</span>.<span style="color: #d2a8ff;">log</span>(<span style="color: #a5d6ff;">`👤 User > </span><span style="color: #79c0ff;">${userPrompt}</span><span style="color: #a5d6ff;">`</span>);
+        <span style="color: #c9d1d9;">console</span>.<span style="color: #d2a8ff;">log</span>(<span style="color: #a5d6ff;">'--------------------'</span>);
+        <span style="color: #c9d1d9;">console</span>.<span style="color: #d2a8ff;">log</span>(<span style="color: #a5d6ff;">'The agent successfully used the `query_users` tool because the router identified it as relevant, while ignoring the irrelevant email and calendar tools.'</span>);
+
+    } <span style="color: #ff7b72;">catch</span> (error) {
+        <span style="color: #c9d1d9;">console</span>.<span style="color: #d2a8ff;">error</span>(<span style="color: #a5d6ff;">'
+
+[FATAL ERROR] An error occurred during the operation.'</span>);
+        <span style="color: #c9d1d9;">console</span>.<span style="color: #d2a8ff;">error</span>(<span style="color: #a5d6ff;">'  Message:'</span>, error.message);
+        <span style="color: #ff7b72;">if</span> (error.status) { <span style="color: #c9d1d9;">console</span>.<span style="color: #d2a8ff;">error</span>(<span style="color: #a5d6ff;">'  API Status:'</span>, error.status); }
+        <span style="color: #ff7b72;">if</span> (error.details) { <span style="color: #c9d1d9;">console</span>.<span style="color: #d2a8ff;">error</span>(<span style="color: #a5d6ff;">'  Details:'</span>, JSON.<span style="color: #d2a8ff;">stringify</span>(error.details, <span style="color: #ff7b72;">null</span>, <span style="color: #a5d6ff;">2</span>)); }
+        <span style="color: #ff7b72;">if</span> (error.stack) { <span style="color: #c9d1d9;">console</span>.<span style="color: #d2a8ff;">error</span>(<span style="color: #a5d6ff;">'  Stack:'</span>, error.stack); }
+        <span style="color: #c9d1d9;">console</span>.<span style="color: #d2a8ff;">error</span>(<span style="color: #a5d6ff;">'
+  Possible causes: Invalid token, network issues, or an API service problem.'</span>);
+        <span style="color: #c9d1d9;">process</span>.<span style="color: #d2a8ff;">exit</span>(<span style="color: #a5d6ff;">1</span>);
+    }
 }
 
-<span style="color: #d2a8ff;">main</span>();
+<span style="color: #d2a8ff;">main</span>().<span style="color: #d2a8ff;">catch</span>(<span style="color: #c9d1d9;">console</span>.error);
 </code></pre>
                         </div>
                     </div>
@@ -118,7 +259,7 @@
 
                 <section>
                     <h2>Expected Output</h2>
-                    <p class="text-[var(--text-secondary)] mb-4">The script first analyzes the prompt "Can you query the database...". The router function identifies the keyword "database" and selects only the `query_users` tool. The agent is then initialized with just this single tool, ignoring the irrelevant calendar and email tools, before making the API call.</p>
+                    <p class="text-[var(--text-secondary)] mb-4">The script first analyzes the prompt \"Can you query the database...\". The router function identifies the keyword \"database\" and selects only the `query_users` tool. The agent is then initialized with just this single tool, ignoring the irrelevant calendar and email tools, before making the API call.</p>
                     <div class="code-block-wrapper">
                         <button class="copy-code-btn absolute top-3 right-3 flex items-center gap-2 text-slate-400 hover:text-white transition-colors p-2 rounded-md bg-slate-800/50 backdrop-blur-sm">
                             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16" aria-hidden="true"><path d="M4 1.5H3a2 2 0 0 0-2 2V14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V3.5a2 2 0 0 0-2-2h-1v1h1a1 1 0 0 1 1 1V14a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V3.5a1 1 0 0 1 1-1h1v-1z"/><path d="M9.5 1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-3a.5.5 0 0 1-.5-.5v-1a.5.5 0 0 1 .5-.5h3z"/></svg>
@@ -133,7 +274,7 @@
 
 👤 User > Can you query the database for all active users?
 
-[EVENT: tool_start] Model is calling the dynamically selected tool: 'query_users'
+[EVENT: tool_start] Model is calling the dynamically selected tool: \'query_users\'
 
 --- FINAL RESULT ---
 👤 User > Can you query the database for all active users?

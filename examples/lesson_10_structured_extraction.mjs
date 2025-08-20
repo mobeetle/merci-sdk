@@ -2,7 +2,7 @@
 // Merci SDK Tutorial: Lesson 10 - Structured Extraction from Text
 
 // --- IMPORTS ---
-import { MerciClient, createUserMessage } from '../lib/merci.2.11.0.mjs';
+import { MerciClient, createUserMessage } from '../lib/merci.2.14.0.mjs';
 import { token } from '../secret/token.mjs';
 
 const MODEL = 'google-chat-gemini-flash-2.5';
@@ -11,30 +11,31 @@ const MODEL = 'google-chat-gemini-flash-2.5';
 // NOTE: No `execute` function is needed for this pattern!
 const actionItemExtractorTool = {
     name: 'extract_action_items',
-    description: 'A tool to hold the extracted action items from a text.',
     parameters: {
-        type: 'object',
-        properties: {
-            action_items: {
-                type: 'array',
-                description: 'An array of all action items found in the text.',
-                items: {
-                    type: 'object',
-                    properties: {
-                        task: { type: 'string', description: 'A clear description of the action to be taken.' },
-                        assigned_to: { type: 'string', description: 'The name of the person responsible for the task.' },
-                        due_date: { type: 'string', description: 'The deadline for the task, in YYYY-MM-DD format.' },
-                        priority: {
-                            type: 'string',
-                            description: 'The priority level of the task.',
-                            enum: ['High', 'Medium', 'Low']
-                        }
-                    },
-                    required: ['task', 'assigned_to', 'due_date', 'priority']
+        schema: {
+            type: 'object',
+            properties: {
+                action_items: {
+                    type: 'array',
+                    description: 'An array of all action items found in the text.',
+                    items: {
+                        type: 'object',
+                        properties: {
+                            task: { type: 'string', description: 'A clear description of the action to be taken.' },
+                            assigned_to: { type: 'string', description: 'The name of the person responsible for the task.' },
+                            due_date: { type: 'string', description: 'The deadline for the task, in YYYY-MM-DD format.' },
+                            priority: {
+                                type: 'string',
+                                description: 'The priority level of the task.',
+                                enum: ['High', 'Medium', 'Low']
+                            }
+                        },
+                        required: ['task', 'assigned_to', 'due_date', 'priority']
+                    }
                 }
-            }
-        },
-        required: ['action_items']
+            },
+            required: ['action_items']
+        }
     },
 };
 
@@ -60,7 +61,7 @@ async function main() {
 
         // --- STEP 3: CONFIGURE THE CHAT SESSION ---
         console.log('[STEP 3] Configuring the chat session with the extraction tool...');
-        const chatSession = client.chat(MODEL).withTools([actionItemExtractorTool]);
+        const chatSession = client.chat.session(MODEL).withTools([actionItemExtractorTool]);
 
         // --- STEP 4: PREPARE THE MESSAGE PAYLOAD ---
         console.log('[STEP 4] Creating the message payload...');

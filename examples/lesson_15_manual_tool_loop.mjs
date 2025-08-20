@@ -10,7 +10,7 @@ import {
     createAssistantToolCallMessage,
     createToolResultMessage,
     createAssistantTextMessage
-} from '../lib/merci.2.11.0.mjs';
+} from '../lib/merci.2.14.0.mjs';
 import { token } from '../secret/token.mjs';
 
 const MODEL = 'google-chat-gemini-flash-2.5';
@@ -18,10 +18,12 @@ const MODEL = 'google-chat-gemini-flash-2.5';
 // --- TOOL DEFINITION ---
 const weatherTool = {
     name: 'get_current_weather',
-    description: 'Get the current weather for a specified city.',
-    parameters: { type: 'object', properties: { city: { type: 'string' } }, required: ['city'] },
+    parameters: {
+        schema: { type: 'object', properties: { city: { type: 'string' } }, required: ['city'] }
+    },
     execute: async ({ city }) => {
-        console.log(`\n[TOOL EXECUTING] Getting weather for ${city}...`);
+        console.log(`
+[TOOL EXECUTING] Getting weather for ${city}...`);
         const temperatures = { 'paris': { temperature: '14', unit: 'celsius' } };
         return temperatures[city.toLowerCase()] || { error: 'City not found' };
     },
@@ -35,7 +37,7 @@ async function main() {
         // --- STEP 1: INITIALIZE CLIENT AND SESSION ---
         console.log('\n[STEP 1] Initializing client and configuring session with tools...');
         const client = new MerciClient({ token });
-        const chatSession = client.chat(MODEL).withTools([weatherTool]);
+        const chatSession = client.chat.session(MODEL).withTools([weatherTool]);
 
         // --- STEP 2: PREPARE INITIAL PROMPT AND MESSAGE HISTORY ---
         console.log('[STEP 2] Preparing initial user prompt...');

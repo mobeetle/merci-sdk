@@ -3,7 +3,7 @@
 
 // --- IMPORTS ---
 // We import the same tools as before.
-import { MerciClient, createUserMessage } from '../lib/merci.2.11.0.mjs';
+import { MerciClient, createUserMessage } from '../lib/merci.2.14.0.mjs';
 import { token } from '../secret/token.mjs';
 
 const MODEL = 'google-chat-gemini-flash-2.5';
@@ -29,7 +29,7 @@ async function main() {
         // is chained after `.chat()`. This configures the session to use our
         // pirate persona for all subsequent requests.
         console.log('[STEP 3] Configuring the chat session with a system message...');
-        const chatSession = client.chat(MODEL)
+        const chatSession = client.chat.session(MODEL)
             .withSystemMessage(systemPrompt);
 
         // --- STEP 4: PREPARE THE MESSAGE PAYLOAD ---

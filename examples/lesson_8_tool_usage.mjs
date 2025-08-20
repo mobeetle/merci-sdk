@@ -4,7 +4,7 @@
 // --- IMPORTS ---
 // For the high-level .run() agent, we only need the client and token.
 // The SDK handles the creation of tool messages internally.
-import { MerciClient, createUserMessage } from '../lib/merci.2.11.0.mjs';
+import { MerciClient, createUserMessage } from '../lib/merci.2.14.0.mjs';
 import { token } from '../secret/token.mjs';
 
 const MODEL = 'google-chat-gemini-flash-2.5';
@@ -15,11 +15,13 @@ const weatherTool = {
     name: 'get_current_weather',
     description: 'Get the current weather for a specified city.',
     parameters: {
-        type: 'object',
-        properties: {
-            city: { type: 'string', description: 'The city name, e.g., "San Francisco".' }
-        },
-        required: ['city'],
+        schema: {
+            type: 'object',
+            properties: {
+                city: { type: 'string', description: 'The city name, e.g., "San Francisco".' }
+            },
+            required: ['city'],
+        }
     },
     execute: async ({ city }) => {
         console.log(`[TOOL EXECUTING] Getting weather for ${city}...`);
@@ -56,7 +58,7 @@ async function main() {
         // a chat session with our tool(s).
         console.log('[STEP 3] Configuring the agent with the weather tool...');
         const agent = client
-            .chat(MODEL)
+            .chat.session(MODEL)
             .withTools(tools);
 
         // --- STEPS 4 & 5: RUN THE AGENT ---

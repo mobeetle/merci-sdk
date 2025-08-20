@@ -66,8 +66,8 @@
                 </header>
 
                 <section class="mb-12">
-                    <h2>Code: <code class="inline"><a href="https://github.com/mobeetle/merci-sdk/tree/main/examples">lesson_3_model_selection.mjs</a></code></h2>
-                    <p class="text-[var(--text-secondary)] mb-4">The key here is the array of model names. The script iterates through this list, passing each model name to the <code class="inline">client.chat()</code> method to create a new session for each experiment.</p>
+                    <h2>Code: <code class="inline"><a href="https://github.com/mobeetle/merci-sdk/tree/main/examples/lesson_3_model_selection.mjs">lesson_3_model_selection.mjs</a></code></h2>
+                    <p class="text-[var(--text-secondary)] mb-4">The key here is the array of model names. The script iterates through this list, passing each model name to the <code class="inline">client.chat.session()</code> method to create a new session for each experiment.</p>
                     <div class="code-block-wrapper">
                         <button class="copy-code-btn absolute top-3 right-3 flex items-center gap-2 text-slate-400 hover:text-white transition-colors p-2 rounded-md bg-slate-800/50 backdrop-blur-sm">
                             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16" aria-hidden="true"><path d="M4 1.5H3a2 2 0 0 0-2 2V14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V3.5a2 2 0 0 0-2-2h-1v1h1a1 1 0 0 1 1 1V14a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V3.5a1 1 0 0 1 1-1h1v-1z"/><path d="M9.5 1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-3a.5.5 0 0 1-.5-.5v-1a.5.5 0 0 1 .5-.5h3z"/></svg>
@@ -78,7 +78,7 @@
 <span style="color: #8b949e;">// Merci SDK Tutorial: Lesson 3 - Model Selection</span>
 
 <span style="color: #8b949e;">// --- IMPORTS ---</span>
-<span style="color: #ff7b72;">import</span> { MerciClient, createUserMessage } <span style="color: #ff7b72;">from</span> <span style="color: #a5d6ff;">'../lib/merci.2.11.0.mjs'</span>;
+<span style="color: #ff7b72;">import</span> { MerciClient, createUserMessage } <span style="color: #ff7b72;">from</span> <span style="color: #a5d6ff;">'../lib/merci.2.14.0.mjs'</span>;
 <span style="color: #ff7b72;">import</span> { token } <span style="color: #ff7b72;">from</span> <span style="color: #a5d6ff;">'../secret/token.mjs'</span>;
 
 <span style="color: #ff7b72;">const</span> <span style="color: #79c0ff;">MODELS_TO_TEST</span> = [
@@ -88,8 +88,8 @@
 ];
 
 <span style="color: #ff7b72;">async</span> <span style="color: #ff7b72;">function</span> <span style="color: #d2a8ff;">runModelExperiment</span>(<span style="color: #79c0ff;">client</span>, <span style="color: #79c0ff;">modelName</span>, <span style="color: #79c0ff;">prompt</span>) {
-    <span style="color: #c9d1d9;">console.<span style="color: #d2a8ff;">log</span>(<span style="color: #a5d6ff;">`\n--- Experiment: Running prompt with </span><span style="color: #79c0ff;">${modelName}</span><span style="color: #a5d6ff;"> ---`</span>);
-    <span style="color: #ff7b72;">const</span> <span style="color: #79c0ff;">chatSession</span> = client.<span style="color: #d2a8ff;">chat</span>(modelName);
+    <span style="color: #c9d1d9;">console</span>.<span style="color: #d2a8ff;">log</span>(<span style="color: #a5d6ff;">`\n--- Experiment: Running prompt with </span><span style="color: #79c0ff;">${modelName}</span><span style="color: #a5d6ff;"> ---`</span>);
+    <span style="color: #ff7b72;">const</span> <span style="color: #79c0ff;">chatSession</span> = <span style="color: #79c0ff;">client</span>.<span style="color: #c9d1d9;">chat</span>.<span style="color: #d2a8ff;">session</span>(modelName);
     <span style="color: #ff7b72;">const</span> <span style="color: #79c0ff;">messages</span> = [ <span style="color: #d2a8ff;">createUserMessage</span>(prompt) ];
     <span style="color: #8b949e;">// ... stream processing logic ...</span>
 }
@@ -103,7 +103,7 @@
     }
 }
 
-<span style="color: #d2a8ff;">main</span>().<span style="color: #d2a8ff;">catch</span>(console.error);
+<span style="color: #d2a8ff;">main</span>().<span style="color: #d2a8ff;">catch</span>(<span style="color: #c9d1d9;">console</span>.error);
 </code></pre>
                         </div>
                     </div>

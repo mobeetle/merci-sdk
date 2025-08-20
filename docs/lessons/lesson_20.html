@@ -3,12 +3,12 @@
 <head>
     <meta charset="utf-8"/>
     <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-    <title>Lesson 4: Media Messages - Merci SDK</title>
+    <title>Lesson 20: Advanced Code Generation - Merci SDK</title>
 
     <!-- Fonts -->
     <link href="https://fonts.googleapis.com" rel="preconnect"/>
     <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
-    <link as="style" href="https://fonts.googleapis.com/css2?display=swap&amp;family=Inter%3Awght%40400%3B500%3B600%3B700%3B900&family=Fira+Code%3Awght%40400" onload="this.rel=\'stylesheet\'" rel="stylesheet"/>
+    <link as="style" href="https://fonts.googleapis.com/css2?display=swap&amp;family=Inter%3Awght%40400%3B500%3B600%3B700%3B900&family=Fira+Code%3Awght%40400" onload="this.rel='stylesheet'" rel="stylesheet"/>
 
     <!-- Scripts & Styles -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -56,97 +56,87 @@
                 <nav class="flex items-center gap-2 text-sm font-medium text-[var(--text-secondary)]">
                     <a class="hover:text-[var(--primary-color)] transition-colors" href="../tutorials.html">Tutorials</a>
                     <span>/</span>
-                    <span class="text-[var(--text-primary)]">Lesson 4</span>
+                    <span class="text-[var(--text-primary)]">Lesson 20</span>
                 </nav>
             </div>
             <article>
                 <header class="mb-8">
-                    <h1 class="text-3xl font-bold tracking-tight text-[var(--text-primary)] mb-2">Lesson 4: Media Messages (Multimodality)</h1>
-                    <p class="text-lg text-[var(--text-secondary)]">This lesson demonstrates the correct way to send images to a multimodal (vision-capable) LLM using the SDK's built-in message helpers.</p>
+                    <h1 class="text-3xl font-bold tracking-tight text-[var(--text-primary)] mb-2">Lesson 20: Advanced Code Generation</h1>
+                    <p class="text-lg text-[var(--text-secondary)]">This lesson shows how to perform sophisticated "fill-in-the-middle" code generation by providing the Task API with a prefix and a suffix.</p>
                 </header>
 
                 <section class="mb-12">
-                    <h2>Code: <code class="inline"><a href="https://github.com/mobeetle/merci-sdk/tree/main/examples/lesson_4_media_messages.mjs">lesson_4_media_messages.mjs</a></code></h2>
-                    <p class="text-[var(--text-secondary)] mb-4">The most important part of this lesson is the message payload. To link an image with a question, you send the media message first, followed immediately by the user message in the same request array.</p>
+                    <h2>Code: <code class="inline"><a href="https://github.com/mobeetle/merci-sdk/tree/main/examples/lesson_20_advanced_code_generation.mjs">lesson_20_advanced_code_generation.mjs</a></code></h2>
+                    <p class="text-[var(--text-secondary)] mb-4">This script defines a `prefix` (the start of a class) and a `suffix` (the end of a class) and instructs the `code-generate:default` task to write the code that completes the class definition.</p>
                     <div class="code-block-wrapper">
                         <button class="copy-code-btn absolute top-3 right-3 flex items-center gap-2 text-slate-400 hover:text-white transition-colors p-2 rounded-md bg-slate-800/50 backdrop-blur-sm">
                             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16" aria-hidden="true"><path d="M4 1.5H3a2 2 0 0 0-2 2V14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V3.5a2 2 0 0 0-2-2h-1v1h1a1 1 0 0 1 1 1V14a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V3.5a1 1 0 0 1 1-1h1v-1z"/><path d="M9.5 1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-3a.5.5 0 0 1-.5-.5v-1a.5.5 0 0 1 .5-.5h3z"/></svg>
                             <span>Copy</span>
                         </button>
                         <div class="code-block">
-<pre><code><span style="color: #8b949e;">// lesson_4_media_messages.mjs</span>
-<span style="color: #8b949e;">// Merci SDK Tutorial: Lesson 4 - Using Media Messages (Multimodality)</span>
+<pre><code><span style="color: #8b949e;">// lesson_20_advanced_code_generation.mjs</span>
+<span style="color: #8b949e;">// Merci SDK Tutorial: Lesson 20 - Advanced Code Generation with the Task API</span>
 
 <span style="color: #8b949e;">// --- IMPORTS ---</span>
-<span style="color: #8b949e;">// We import helpers for each distinct message type we will send.</span>
-<span style="color: #ff7b72;">import</span> { MerciClient, createMediaMessage, createUserMessage } <span style="color: #ff7b72;">from</span> <span style="color: #a5d6ff;">'../lib/merci.2.14.0.mjs'</span>;
+<span style="color: #ff7b72;">import</span> { MerciClient } <span style="color: #ff7b72;">from</span> <span style="color: #a5d6ff;">'../lib/merci.2.14.0.mjs'</span>;
 <span style="color: #ff7b72;">import</span> { token } <span style="color: #ff7b72;">from</span> <span style="color: #a5d6ff;">'../secret/token.mjs'</span>;
 
-<span style="color: #ff7b72;">const</span> <span style="color: #79c0ff;">MODEL</span> = <span style="color: #a5d6ff;">'openai-gpt-5-mini'</span>;
+<span style="color: #ff7b72;">const</span> <span style="color: #79c0ff;">TASK_ID</span> = <span style="color: #a5d6ff;">'code-generate:default'</span>;
 
 <span style="color: #ff7b72;">async</span> <span style="color: #ff7b72;">function</span> <span style="color: #d2a8ff;">main</span>() {
-    <span style="color: #c9d1d9;">console</span>.<span style="color: #d2a8ff;">log</span>(<span style="color: #a5d6ff;">`--- Merci SDK Tutorial: Lesson 4 - Media Messages (Model: </span><span style="color: #79c0ff;">${MODEL}</span><span style="color: #a5d6ff;">) ---`</span>);
+    <span style="color: #c9d1d9;">console</span>.<span style="color: #d2a8ff;">log</span>(<span style="color: #a5d6ff;">`--- Merci SDK Tutorial: Lesson 20 - Advanced Code Generation (Task: </span><span style="color: #79c0ff;">${TASK_ID}</span><span style="color: #a5d6ff;">) ---`</span>);
 
     <span style="color: #ff7b72;">try</span> {
         <span style="color: #8b949e;">// --- STEP 1: INITIALIZE THE CLIENT ---</span>
         <span style="color: #c9d1d9;">console</span>.<span style="color: #d2a8ff;">log</span>(<span style="color: #a5d6ff;">'[STEP 1] Initializing MerciClient...'</span>);
         <span style="color: #ff7b72;">const</span> <span style="color: #79c0ff;">client</span> = <span style="color: #ff7b72;">new</span> <span style="color: #d2a8ff;">MerciClient</span>({ token });
 
-        <span style="color: #8b949e;">// --- STEP 2: DEFINE PROMPT AND INPUT DATA ---</span>
-        <span style="color: #8b949e;">// We define the path to our local image and the text prompt that refers to it.</span>
-        <span style="color: #c9d1d9;">console</span>.<span style="color: #d2a8ff;">log</span>(<span style="color: #a5d6ff;">'[STEP 2] Preparing prompt and input data...'</span>);
-        <span style="color: #ff7b72;">const</span> <span style="color: #79c0ff;">imagePath</span> = <span style="color: #a5d6ff;">'./image.png'</span>;
-        <span style="color: #ff7b72;">const</span> <span style="color: #79c0ff;">userPrompt</span> = <span style="color: #a5d6ff;">"What is in this image? Describe it in a single, detailed sentence."</span>;
-
-        <span style="color: #8b949e;">// --- STEP 3: CONFIGURE THE CHAT SESSION ---</span>
-        <span style="color: #8b949e;">// No special configuration is needed on the session itself, just the right model.</span>
-        <span style="color: #c9d1d9;">console</span>.<span style="color: #d2a8ff;">log</span>(<span style="color: #a5d6ff;">'[STEP 3] Configuring the chat session...'</span>);
-        <span style="color: #ff7b72;">const</span> <span style="color: #79c0ff;">chatSession</span> = <span style="color: #79c0ff;">client</span>.<span style="color: #c9d1d9;">chat</span>.<span style="color: #d2a8ff;">session</span>(MODEL);
-
-        <span style="color: #8b949e;">// --- STEP 4: PREPARE THE MESSAGE PAYLOAD ---</span>
-        <span style="color: #8b949e;">// THIS IS THE MOST IMPORTANT PART OF THE LESSON.</span>
-        <span style="color: #8b949e;">// To link an image with a question, you send the media message first,</span>
-        <span style="color: #8b949e;">// followed immediately by the user message in the same request.</span>
-        <span style="color: #c9d1d9;">console</span>.<span style="color: #d2a8ff;">log</span>(<span style="color: #a5d6ff;">'[STEP 4] Building the message array with separate media and user messages...'</span>);
-        <span style="color: #ff7b72;">const</span> <span style="color: #79c0ff;">messages</span> = [
-            <span style="color: #ff7b72;">await</span> <span style="color: #d2a8ff;">createMediaMessage</span>(imagePath),
-            <span style="color: #d2a8ff;">createUserMessage</span>(userPrompt)
-        ];
-
-        <span style="color: #8b949e;">// --- STEP 5: EXECUTE THE REQUEST &amp; PROCESS THE RESPONSE ---</span>
-        <span style="color: #c9d1d9;">console</span>.<span style="color: #d2a8ff;">log</span>(<span style="color: #a5d6ff;">'[STEP 5] Sending multimodal request and processing stream...'</span>);
-        <span style="color: #ff7b72;">let</span> <span style="color: #79c0ff;">finalResponse</span> = <span style="color: #a5d6ff;">''</span>;
-        <span style="color: #c9d1d9;">process</span>.<span style="color: #c9d1d9;">stdout</span>.<span style="color: #d2a8ff;">write</span>(<span style="color: #a5d6ff;">'🤖 Vision Assistant > '</span>);
-
-        <span style="color: #ff7b72;">for</span> <span style="color: #ff7b72;">await</span> (<span style="color: #ff7b72;">const</span> <span style="color: #79c0ff;">event</span> <span style="color: #ff7b72;">of</span> <span style="color: #79c0ff;">chatSession</span>.<span style="color: #d2a8ff;">stream</span>(messages)) {
-            <span style="color: #ff7b72;">if</span> (<span style="color: #79c0ff;">event</span>.<span style="color: #c9d1d9;">type</span> === <span style="color: #a5d6ff;">'text'</span>) {
-                <span style="color: #c9d1d9;">process</span>.<span style="color: #c9d1d9;">stdout</span>.<span style="color: #d2a8ff;">write</span>(<span style="color: #79c0ff;">event</span>.<span style="color: #c9d1d9;">content</span>);
-                finalResponse += <span style="color: #79c0ff;">event</span>.<span style="color: #c9d1d9;">content</span>;
-            }
-        }
-        <span style="color: #c9d1d9;">process</span>.<span style="color: #c9d1d9;">stdout</span>.<span style="color: #d2a8ff;">write</span>(<span style="color: #a5d6ff;">'
-'</span>);
+        <span style="color: #8b949e;">// --- STEP 2: DEFINE THE CODE CONTEXT (PREFIX &amp; SUFFIX) ---</span>
         <span style="color: #c9d1d9;">console</span>.<span style="color: #d2a8ff;">log</span>(<span style="color: #a5d6ff;">'
-[INFO] Stream finished. Response fully received.'</span>);
+[STEP 2] Defining the context for code generation...'</span>);
+        <span style="color: #ff7b72;">const</span> <span style="color: #79c0ff;">prefix</span> = <span style="color: #a5d6ff;">`
+class DataProcessor {
+    constructor(data) {
+        this.data = data;
+    }
 
+    // TODO: Implement the 'calculate_average' method
+`</span>;
+        <span style="color: #ff7b72;">const</span> <span style="color: #79c0ff;">suffix</span> = <span style="color: #a5d6ff;">`
+}
+`</span>;
+        <span style="color: #8b949e;">// The task is to generate the code that fits between the prefix and suffix.</span>
+        <span style="color: #ff7b72;">const</span> <span style="color: #79c0ff;">instructions</span> = <span style="color: #a5d6ff;">"Implement the 'calculate_average' method. It should take a 'column_name' string as an argument, access the data via 'this.data', and return the average of the values in that column. The data is an array of objects. Include JSDoc comments."</span>;
 
-        <span style="color: #8b949e;">// --- FINAL RESULT ---</span>
+        <span style="color: #ff7b72;">const</span> <span style="color: #79c0ff;">taskParameters</span> = {
+            <span style="color: #c9d1d9;">instructions</span>,
+            <span style="color: #c9d1d9;">language:</span> <span style="color: #a5d6ff;">"javascript"</span>,
+            <span style="color: #c9d1d9;">prefix</span>,
+            <span style="color: #c9d1d9;">suffix</span>
+        };
+
+        <span style="color: #c9d1d9;">console</span>.<span style="color: #d2a8ff;">log</span>(<span style="color: #a5d6ff;">'Instructions:'</span>, instructions);
+
+        <span style="color: #8b949e;">// --- STEP 3: EXECUTE THE TASK ---</span>
+        <span style="color: #c9d1d9;">console</span>.<span style="color: #d2a8ff;">log</span>(<span style="color: #a5d6ff;">`\n[STEP 3] Executing task "</span><span style="color: #79c0ff;">${TASK_ID}</span><span style="color: #a5d6ff;">" with .execute() to get the full result...`</span>);
+        <span style="color: #ff7b72;">const</span> <span style="color: #79c0ff;">result</span> = <span style="color: #ff7b72;">await</span> <span style="color: #79c0ff;">client</span>.<span style="color: #c9d1d9;">tasks</span>.<span style="color: #d2a8ff;">execute</span>(TASK_ID, taskParameters);
+        <span style="color: #c9d1d9;">console</span>.<span style="color: #d2a8ff;">log</span>(<span style="color: #a5d6ff;">'[INFO] Task execution finished.'</span>);
+
+        <span style="color: #8b949e;">// --- STEP 4: ASSEMBLE AND DISPLAY THE FINAL CODE ---</span>
+        <span style="color: #c9d1d9;">console</span>.<span style="color: #d2a8ff;">log</span>(<span style="color: #a5d6ff;">'
+[STEP 4] Assembling the final code...'</span>);
+        <span style="color: #ff7b72;">const</span> <span style="color: #79c0ff;">generatedCode</span> = <span style="color: #79c0ff;">result</span>.<span style="color: #c9d1d9;">content</span>;
+        <span style="color: #ff7b72;">const</span> <span style="color: #79c0ff;">finalCode</span> = <span style="color: #79c0ff;">prefix</span> + <span style="color: #79c0ff;">generatedCode</span> + <span style="color: #79c0ff;">suffix</span>;
+
         <span style="color: #c9d1d9;">console</span>.<span style="color: #d2a8ff;">log</span>(<span style="color: #a5d6ff;">'
 
 --- FINAL RESULT ---'</span>);
-        <span style="color: #c9d1d9;">console</span>.<span style="color: #d2a8ff;">log</span>(<span style="color: #a5d6ff;">`🖼️ Media > </span><span style="color: #79c0ff;">${imagePath}</span><span style="color: #a5d6ff;">`</span>);
-        <span style="color: #c9d1d9;">console</span>.<span style="color: #d2a8ff;">log</span>(<span style="color: #a5d6ff;">`👤 User > </span><span style="color: #79c0ff;">${userPrompt}</span><span style="color: #a5d6ff;">`</span>);
-        <span style="color: #c9d1d9;">console</span>.<span style="color: #d2a8ff;">log</span>(<span style="color: #a5d6ff;">`🤖 Vision Assistant > </span><span style="color: #79c0ff;">${finalResponse}</span><span style="color: #a5d6ff;">`</span>);
-        <span style="color: #c9d1d9;">console</span>.<span style="color: #d2a8ff;">log</span>(<span style="color: #a5d6ff;">'--------------------'</span>);
+        <span style="color: #c9d1d9;">console</span>.<span style="color: #d2a8ff;">log</span>(<span style="color: #a5d6ff;">'The Task API successfully generated the missing method within the class structure:\n'</span>);
+        <span style="color: #c9d1d9;">console</span>.<span style="color: #d2a8ff;">log</span>(<span style="color: #a5d6ff;">'-------------------- CODE START --------------------'</span>);
+        <span style="color: #c9d1d9;">console</span>.<span style="color: #d2a8ff;">log</span>(finalCode);
+        <span style="color: #c9d1d9;">console</span>.<span style="color: #d2a8ff;">log</span>(<span style="color: #a5d6ff;">'--------------------- CODE END ---------------------'</span>);
 
     } <span style="color: #ff7b72;">catch</span> (error) {
-        <span style="color: #8b949e;">// --- ROBUST ERROR HANDLING ---</span>
-        <span style="color: #ff7b72;">if</span> (error.code === <span style="color: #a5d6ff;">'ENOENT'</span>) {
-            <span style="color: #c9d1d9;">console</span>.<span style="color: #d2a8ff;">error</span>(<span style="color: #a5d6ff;">`
-[FATAL ERROR] Image file not found at "</span><span style="color: #79c0ff;">${error.path}</span><span style="color: #a5d6ff;">"`</span>);
-            <span style="color: #c9d1d9;">console</span>.<span style="color: #d2a8ff;">error</span>(<span style="color: #a5d6ff;">'  Please make sure the image file exists before running the script.'</span>);
-            <span style="color: #c9d1d9;">process</span>.<span style="color: #d2a8ff;">exit</span>(<span style="color: #a5d6ff;">1</span>);
-        }
         <span style="color: #c9d1d9;">console</span>.<span style="color: #d2a8ff;">error</span>(<span style="color: #a5d6ff;">'
 
 [FATAL ERROR] An error occurred during the operation.'</span>);
@@ -174,25 +164,47 @@
 
                 <section>
                     <h2>Expected Output</h2>
-                    <p class="text-[var(--text-secondary)] mb-4">Assuming you have an `image.png` file showing a can of Campbell's Tomato Soup, the model will analyze the image and provide a textual description.</p>
+                    <p class="text-[var(--text-secondary)] mb-4">The output shows the fully assembled code, with the AI-generated `calculate_average` method correctly inserted between the prefix and suffix, demonstrating the power of context-aware code generation.</p>
                     <div class="code-block-wrapper">
                         <button class="copy-code-btn absolute top-3 right-3 flex items-center gap-2 text-slate-400 hover:text-white transition-colors p-2 rounded-md bg-slate-800/50 backdrop-blur-sm">
                             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16" aria-hidden="true"><path d="M4 1.5H3a2 2 0 0 0-2 2V14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V3.5a2 2 0 0 0-2-2h-1v1h1a1 1 0 0 1 1 1V14a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V3.5a1 1 0 0 1 1-1h1v-1z"/><path d="M9.5 1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-3a.5.5 0 0 1-.5-.5v-1a.5.5 0 0 1 .5-.5h3z"/></svg>
                             <span>Copy</span>
                         </button>
                         <div class="code-block">
-<pre><code>--- FINAL RESULT ---
-🖼️ Media > ./image.png
-👤 User > What is in this image? Describe it in a single, detailed sentence.
-🤖 Vision Assistant > The image displays a classic red and white can of Campbell's condensed Tomato Soup sitting on a flat surface.
---------------------
+<pre><code>--- Merci SDK Tutorial: Lesson 20 - Advanced Code Generation (Task: code-generate:default) ---
+[STEP 1] Initializing MerciClient...
+[STEP 2] Defining the context for code generation...
+Instructions: Implement the 'calculate_average' method. It should take a 'column_name' string as an argument, access the data via 'this.data', and return the average of the values in that column. The data is an array of objects. Include JSDoc comments.
+[STEP 3] Executing task "code-generate:default" with .execute() to get the full result...
+[INFO] Task execution finished.
+[STEP 4] Assembling the final code...
+
+--- FINAL RESULT ---
+The Task API successfully generated the missing method within the class structure:
+
+-------------------- CODE START --------------------
+class DataProcessor {
+    constructor(data) {
+        this.data = data;
+    }
+
+    // TODO: Implement the 'calculate_average' method
+    /**
+     * Calculates the average of a given column.
+     * @param {string} column_name The name of the column to calculate the average of.
+     * @returns {number} The average of the values in the column.
+     */
+    calculate_average(column_name) {
+        const values = this.data.map(item => item[column_name]);
+        const sum = values.reduce((a, b) => a + b, 0);
+        return sum / values.length;
+    }
+
+}
+--------------------- CODE END ---------------------
 </code></pre>
                         </div>
                     </div>
-                </section>
-                <section>
-                    <h2>Prerequisite</h2>
-                    <p class="text-[var(--text-secondary)] mb-4">Before running, you must create an image file named <code class="inline">image.png</code> in the same directory as the script, or change the <code class="inline">imagePath</code> variable to point to an existing image.</p>
                 </section>
             </article>
         </div>
